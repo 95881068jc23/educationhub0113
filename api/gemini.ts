@@ -39,9 +39,63 @@ export default async function handler(
       return response.status(400).json({ error: '缺少 contents 参数' });
     }
 
+    // 规范化 contents 格式
+    // 支持多种输入格式：
+    // 1. [{ role: "user", parts: [...] }] - 正确格式
+    // 2. [{ text: "..." }] - 需要转换
+    // 3. { parts: [...] } - 需要转换
+    // 4. "string" - 需要转换
+    let normalizedContents: any[];
+    
+    if (typeof contents === 'string') {
+      // 字符串格式：转换为标准格式
+      normalizedContents = [{
+        role: 'user',
+        parts: [{ text: contents }]
+      }];
+    } else if (Array.isArray(contents)) {
+      // 数组格式：检查每个元素
+      normalizedContents = contents.map((item: any) => {
+        if (item.role && item.parts) {
+          // 已经是正确格式
+          return item;
+        } else if (item.text) {
+          // { text: "..." } 格式
+          return {
+            role: 'user',
+            parts: [{ text: item.text }]
+          };
+        } else if (item.parts) {
+          // { parts: [...] } 格式
+          return {
+            role: 'user',
+            parts: item.parts
+          };
+        } else {
+          // 未知格式，尝试作为 parts
+          return {
+            role: 'user',
+            parts: Array.isArray(item) ? item : [item]
+          };
+        }
+      });
+    } else if (contents.parts) {
+      // 对象格式：{ parts: [...] }
+      normalizedContents = [{
+        role: 'user',
+        parts: contents.parts
+      }];
+    } else {
+      // 其他格式，尝试直接使用
+      normalizedContents = [{
+        role: 'user',
+        parts: [contents]
+      }];
+    }
+
     // 构建 Gemini API 请求体
     const requestBody: any = {
-      contents,
+      contents: normalizedContents,
     };
 
     // 处理 systemInstruction - 如果是字符串，转换为 Content 格式
