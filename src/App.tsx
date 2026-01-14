@@ -3,9 +3,11 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, BookOpen, FileText, UserCheck, MessageSquare, Briefcase } from 'lucide-react';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AuditedRoute } from './components/auth/AuditedRoute';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { Navbar } from './components/Navbar';
+import { AdminPanel } from './pages/Admin/AdminPanel';
 
 // Placeholders for Apps (We will implement these later)
 const PlannerApp = React.lazy(() => import('./apps/planner/App'));
@@ -139,14 +141,26 @@ const App = () => {
           }
         />
         
-        {/* Protected Routes - Gemini Chat Apps */}
+        {/* Protected Routes - Admin Panel */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Protected Routes - Gemini Chat Apps (Require Authentication + Audit) */}
         <Route
           path="/sales-genius/*"
           element={
             <ProtectedRoute>
-              <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Sales Genius...</div>}>
-                <SalesGeniusApp />
-              </React.Suspense>
+              <AuditedRoute>
+                <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Sales Genius...</div>}>
+                  <SalesGeniusApp />
+                </React.Suspense>
+              </AuditedRoute>
             </ProtectedRoute>
           }
         />
@@ -154,9 +168,11 @@ const App = () => {
           path="/teachers-genius/*"
           element={
             <ProtectedRoute>
-              <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Teachers Genius...</div>}>
-                <TeachersGeniusApp />
-              </React.Suspense>
+              <AuditedRoute>
+                <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Teachers Genius...</div>}>
+                  <TeachersGeniusApp />
+                </React.Suspense>
+              </AuditedRoute>
             </ProtectedRoute>
           }
         />

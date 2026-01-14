@@ -6,7 +6,7 @@ import { Mail, Lock, Loader2, GraduationCap } from 'lucide-react';
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   
   // 如果已登录，重定向到首页或之前访问的页面
   React.useEffect(() => {
@@ -68,6 +68,31 @@ export const Login: React.FC = () => {
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
                 <span className="font-medium">错误：</span>
                 <span>{error}</span>
+              </div>
+            )}
+
+            {/* Audit Status Message */}
+            {isAuthenticated && user && (
+              <div className={`px-4 py-3 rounded-lg text-sm ${
+                user.auditStatus === 1 
+                  ? 'bg-green-50 border border-green-200 text-green-700' 
+                  : user.auditStatus === 2
+                  ? 'bg-red-50 border border-red-200 text-red-700'
+                  : 'bg-yellow-50 border border-yellow-200 text-yellow-700'
+              }`}>
+                <span className="font-medium">
+                  {user.auditStatus === 1 
+                    ? '✓ 审核已通过' 
+                    : user.auditStatus === 2
+                    ? '✗ 审核已拒绝'
+                    : '⏳ 待审核中'}
+                </span>
+                {user.auditStatus === 0 && (
+                  <p className="mt-1 text-xs">您的账户正在审核中，审核通过后即可使用全部功能</p>
+                )}
+                {user.auditStatus === 2 && (
+                  <p className="mt-1 text-xs">您的账户审核未通过，请联系管理员</p>
+                )}
               </div>
             )}
 

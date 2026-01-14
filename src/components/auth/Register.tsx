@@ -7,6 +7,7 @@ export const Register: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [formData, setFormData] = useState({
+    username: '',
     name: '',
     email: '',
     password: '',
@@ -22,6 +23,7 @@ export const Register: React.FC = () => {
 
     try {
       await register({
+        username: formData.username,
         name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -63,6 +65,30 @@ export const Register: React.FC = () => {
                 <span>{error}</span>
               </div>
             )}
+
+            {/* Username Field */}
+            <div>
+              <label htmlFor="username" className="block text-sm font-semibold text-slate-700 mb-2">
+                用户名
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  minLength={3}
+                  value={formData.username}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white text-slate-900 placeholder-slate-400 transition-all"
+                  placeholder="请输入用户名（至少3个字符）"
+                />
+              </div>
+              <p className="mt-1 text-xs text-slate-500">用户名长度至少为 3 个字符</p>
+            </div>
 
             {/* Name Field */}
             <div>

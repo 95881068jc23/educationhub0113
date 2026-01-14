@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { GraduationCap, LogIn, LogOut, User, Menu, X } from 'lucide-react';
+import { GraduationCap, LogIn, LogOut, User, Menu, X, Shield, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useState } from 'react';
 
 export const Navbar: React.FC = () => {
@@ -41,6 +41,42 @@ export const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center gap-6">
             {isAuthenticated ? (
               <>
+                {/* Audit Status Badge */}
+                {user && user.auditStatus !== 1 && (
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium ${
+                    user.auditStatus === 0
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {user.auditStatus === 0 ? (
+                      <>
+                        <Clock className="w-3 h-3" />
+                        <span>待审核</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-3 h-3" />
+                        <span>审核未通过</span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {user && user.auditStatus === 1 && (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+                    <CheckCircle className="w-3 h-3" />
+                    <span>已审核</span>
+                  </div>
+                )}
+                {/* Admin Panel Link */}
+                {user && user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-purple-200"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>管理员后台</span>
+                  </Link>
+                )}
                 <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-lg">
                   <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-brand-600" />
@@ -83,6 +119,43 @@ export const Navbar: React.FC = () => {
           <div className="md:hidden py-4 border-t border-slate-200">
             {isAuthenticated ? (
               <div className="space-y-3">
+                {/* Audit Status Badge */}
+                {user && user.auditStatus !== 1 && (
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
+                    user.auditStatus === 0
+                      ? 'bg-yellow-100 text-yellow-700'
+                      : 'bg-red-100 text-red-700'
+                  }`}>
+                    {user.auditStatus === 0 ? (
+                      <>
+                        <Clock className="w-4 h-4" />
+                        <span>待审核</span>
+                      </>
+                    ) : (
+                      <>
+                        <XCircle className="w-4 h-4" />
+                        <span>审核未通过</span>
+                      </>
+                    )}
+                  </div>
+                )}
+                {user && user.auditStatus === 1 && (
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-100 text-green-700">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>已审核</span>
+                  </div>
+                )}
+                {/* Admin Panel Link */}
+                {user && user.role === 'admin' && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-purple-200"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>管理员后台</span>
+                  </Link>
+                )}
                 <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 rounded-lg">
                   <div className="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5 text-brand-600" />
