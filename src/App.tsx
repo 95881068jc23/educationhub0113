@@ -127,9 +127,17 @@ const App = () => {
       <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Protected Routes - Home Page */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <LandingPage />
+            </ProtectedRoute>
+          }
+        />
         
         {/* Protected Routes - Gemini Chat Apps */}
         <Route
