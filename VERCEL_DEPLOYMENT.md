@@ -1,12 +1,22 @@
 # Vercel 部署配置指南
 
+## 重要更新：使用边缘函数代理
+
+本项目已改造为通过 Vercel 边缘函数（Edge Functions）调用 Gemini API，解决了中国大陆用户无法直接访问 Gemini API 的问题。
+
+### 架构说明
+
+- **前端**：通过 `/api/gemini` 边缘函数调用 Gemini API
+- **后端**：边缘函数在服务器端使用 API Key 调用 Gemini API
+- **优势**：API Key 不会暴露到客户端，更安全；中国大陆用户可以正常访问
+
 ## 环境变量配置
 
 ### 必需的环境变量
 
 在 Vercel 上部署此应用时，**必须**配置以下环境变量：
 
-- **`VITE_API_KEY`**: 您的 Google Gemini API Key
+- **`VITE_API_KEY`** 或 **`API_KEY`**: 您的 Google Gemini API Key（边缘函数会自动读取）
 
 ### 配置步骤
 

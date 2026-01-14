@@ -1,14 +1,7 @@
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GenerateContentResponse } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
-
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 interface GeminiMessageOptions {
   message: string;
@@ -23,9 +16,6 @@ export const sendMessageToGemini = async (
   const { message, images = [], audio, temperature } = options;
 
   try {
-    // Use gemini-2.5-flash for better tool use/multimodal stability in some regions, 
-    // or gemini-3-flash-preview. 
-    // Switching to 2.5-flash specifically for better stability with mixed inputs in this context.
     const modelId = "gemini-3-flash-preview";
 
     const parts: any[] = [];
@@ -71,8 +61,8 @@ export const sendMessageToGemini = async (
     const hasMedia = images.length > 0 || !!audio;
     const tools = hasMedia ? undefined : [{ googleSearch: {} }];
 
-    const ai = getAI();
-    const response = await ai.models.generateContent({
+    // 通过边缘函数调用 Gemini API
+    const response = await callGeminiAPI({
       model: modelId,
       contents: [{
         role: 'user',
@@ -81,32 +71,14 @@ export const sendMessageToGemini = async (
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         tools: tools,
-        // Use provided temperature or default to 0.7
         temperature: temperature ?? 0.7,
       }
     });
 
-    return response;
+    return response as GenerateContentResponse;
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    
-    // 提供更友好的错误信息
-    if (error instanceof Error) {
-      if (error.message.includes("API Key")) {
-        throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY，然后重新部署应用。");
-      }
-      if (error.message.includes("401") || error.message.includes("unauthorized")) {
-        throw new Error("API Key 无效。请检查 Vercel 环境变量中的 VITE_API_KEY 是否正确。");
-      }
-      if (error.message.includes("403") || error.message.includes("forbidden")) {
-        throw new Error("API Key 权限不足或被限制。请检查 Google Cloud Console 中的 API Key 设置。");
-      }
-      if (error.message.includes("429") || error.message.includes("quota")) {
-        throw new Error("API 调用次数已达上限。请稍后再试或检查 API 配额。");
-      }
-    }
-    
     throw error;
   }
 };

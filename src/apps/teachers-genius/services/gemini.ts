@@ -1,14 +1,7 @@
 
-import { GoogleGenAI, GenerateContentResponse, Content } from "@google/genai";
+import { GenerateContentResponse, Content } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from "../constants";
-
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 interface GeminiMessageOptions {
   message: string;
@@ -39,7 +32,6 @@ export const sendMessageToGemini = async (
   const { message, images = [], files = [], audio, temperature, history = [] } = options;
 
   try {
-    // gemini-2.5-flash-preview or gemini-3-flash-preview
     const modelId = "gemini-3-flash-preview";
 
     const currentTurnParts: any[] = [];
@@ -60,32 +52,12 @@ export const sendMessageToGemini = async (
       });
     }
 
-    // Process Files (File Objects)
+    // Process Files (File Objects) - 转换为 base64
     if (files && files.length > 0) {
         for (const file of files) {
-            // If file is large (> 10MB) or is a PDF, use Media Upload API
-            // This bypasses the base64 payload size limit (approx 20MB)
-            if (file.size > 10 * 1024 * 1024 || file.type.includes('pdf')) {
-                try {
-                    const ai = getAI();
-                    const uploadResult = await ai.files.upload({
-                        file: file,
-                        config: { displayName: file.name }
-                    });
-                    
-                    currentTurnParts.push({
-                        fileData: {
-                            mimeType: uploadResult.file.mimeType,
-                            fileUri: uploadResult.file.uri
-                        }
-                    });
-                } catch (uploadError) {
-                    console.error("File upload failed, falling back to inline if possible", uploadError);
-                    // Fallback to inline if upload fails (might fail due to size if it was the reason for upload, but worth a try or just throw)
-                    throw new Error(`Failed to upload large file: ${file.name}`);
-                }
-            } else {
-                // Small file, use inline base64
+            // 注意：大文件（>10MB）可能需要特殊处理，这里先统一转换为 base64
+            // 如果文件太大，可能会失败，建议用户使用较小的文件
+            try {
                 const base64 = await fileToBase64(file);
                 currentTurnParts.push({
                     inlineData: {
@@ -93,6 +65,9 @@ export const sendMessageToGemini = async (
                         data: base64
                     }
                 });
+            } catch (uploadError) {
+                console.error("File conversion failed", uploadError);
+                throw new Error(`文件处理失败: ${file.name}。请尝试使用较小的文件。`);
             }
         }
     }
@@ -128,8 +103,8 @@ export const sendMessageToGemini = async (
       contents = [{ role: 'user', parts: currentTurnParts }];
     }
 
-    const ai = getAI();
-    const response = await ai.models.generateContent({
+    // 通过边缘函数调用 Gemini API
+    const response = await callGeminiAPI({
       model: modelId,
       contents: contents,
       config: {
@@ -139,27 +114,10 @@ export const sendMessageToGemini = async (
       }
     });
 
-    return response;
+    return response as GenerateContentResponse;
 
   } catch (error) {
     console.error("Gemini API Error:", error);
-    
-    // 提供更友好的错误信息
-    if (error instanceof Error) {
-      if (error.message.includes("API Key")) {
-        throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY，然后重新部署应用。");
-      }
-      if (error.message.includes("401") || error.message.includes("unauthorized")) {
-        throw new Error("API Key 无效。请检查 Vercel 环境变量中的 VITE_API_KEY 是否正确。");
-      }
-      if (error.message.includes("403") || error.message.includes("forbidden")) {
-        throw new Error("API Key 权限不足或被限制。请检查 Google Cloud Console 中的 API Key 设置。");
-      }
-      if (error.message.includes("429") || error.message.includes("quota")) {
-        throw new Error("API 调用次数已达上限。请稍后再试或检查 API 配额。");
-      }
-    }
-    
     throw error;
   }
 };

@@ -1,14 +1,7 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { Topic, TopicCategory, TopicSyllabus, StudentProfile, PlannedModule } from "../types";
-
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 /**
  * Robustly extracts JSON from a string that might contain markdown or conversational text.
@@ -66,8 +59,7 @@ export const generateCustomTopics = async (
   `;
 
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model,
       contents: prompt,
       config: { responseMimeType: "application/json" }
@@ -136,8 +128,7 @@ export const generateTopicSyllabus = async (
   `;
 
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model,
       contents: prompt,
       config: { 
@@ -168,8 +159,7 @@ export const generatePlanRationale = async (
   const prompt = `Write a 200-word course design rationale for ${profile.name} (${profile.industry}, ${profile.role}). Focus on how the plan meets their ${profile.learningDirections.join(',')} goals. Bilingual English/Chinese.`;
 
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({ model, contents: prompt });
+    const response = await callGeminiAPI({ model, contents: prompt });
     return response.text || "Failed to generate rationale.";
   } catch (error) {
     return "Error generating rationale.";
@@ -183,8 +173,7 @@ export const generatePathGenerationRationale = async (
   const model = "gemini-3-pro-preview";
   const prompt = `Explain why strategy "${strategy}" was chosen for ${profile.name}. 3-4 sentences. Professional Chinese.`;
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({ model, contents: prompt });
+    const response = await callGeminiAPI({ model, contents: prompt });
     return response.text || "Generated successfully.";
   } catch (e) {
     return "Generated based on selected strategy.";

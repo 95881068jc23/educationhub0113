@@ -1,15 +1,7 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import { ExamType, Language, StudentProfile, PlanItem, Question, SchoolAdmissionProfile } from '../types';
-
-// Helper to ensure API key exists
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key not found");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 // Helper for file parts
 const fileToPart = (base64Data: string, mimeType: string) => {
@@ -29,7 +21,6 @@ export const generateSchoolAdmissionReport = async (
   profile: SchoolAdmissionProfile,
   language: Language
 ): Promise<string> => {
-  const ai = getAI();
   const targetSchoolsStr = profile.targetSchools.join(', ');
   const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -83,9 +74,9 @@ export const generateSchoolAdmissionReport = async (
   **Tone**: Professional, Authoritative, Encouraging but Realistic.
   **Language**: Chinese (Mandarin).`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [{ text: prompt }],
     config: {
         tools: [{ googleSearch: {} }] // Critical for real-time school data
     }
@@ -98,7 +89,6 @@ export const generateSchoolAdmissionReport = async (
 
 // 0.1 Generate Quick Brief (Consultant Cheat Sheet)
 export const generateExamBrief = async (exam: ExamType): Promise<string> => {
-  const ai = getAI();
   const prompt = `You are a Senior Educational Consultant at "Intl. Scholar 麦迩威AI+教育团队".
   Provide a "1-Minute Consultant Quick Brief" for the exam: ${exam}.
   
@@ -112,9 +102,9 @@ export const generateExamBrief = async (exam: ExamType): Promise<string> => {
   
   Goal: Help a sales consultant explain this to a parent in 1 minute.`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [{ text: prompt }],
     config: {
         tools: [{ googleSearch: {} }] // Use search to get latest trends
     }
@@ -125,8 +115,6 @@ export const generateExamBrief = async (exam: ExamType): Promise<string> => {
 
 // 0.2 Generate Detailed Official Guide & Course Design
 export const generateExamFullGuide = async (exam: ExamType, city: string = ""): Promise<string> => {
-  const ai = getAI();
-  
   let examContext: string = exam;
   if (city && city !== "National (Universal)") {
     examContext = `${city} ${exam}`;
@@ -159,9 +147,9 @@ export const generateExamFullGuide = async (exam: ExamType, city: string = ""): 
   
   Make it visually appealing with bullet points and bold text.`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [{ text: prompt }],
     config: {
         tools: [{ googleSearch: {} }] // Use search for accuracy
     }
@@ -176,8 +164,6 @@ export const askExamQuestion = async (
   question: string, 
   history: {role: string, text: string}[]
 ): Promise<string> => {
-  const ai = getAI();
-  
   // Construct a prompt that includes history context
   let historyContext = "";
   if (history.length > 0) {
@@ -194,9 +180,9 @@ export const askExamQuestion = async (
   If the question requires up-to-date data (dates, fees, policy changes), rely on the Google Search tool (Look for 2025-2026 data).
   Keep the answer concise unless asked for details.`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [{ text: prompt }],
     config: {
         tools: [{ googleSearch: {} }]
     }

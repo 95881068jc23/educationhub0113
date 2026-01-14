@@ -1,14 +1,7 @@
 
-import { GoogleGenAI, Type, Schema, Modality } from "@google/genai";
+import { Type, Schema, Modality } from "@google/genai";
 import { GeneratorFormData, ClassType, LessonPlanResponse, ModuleType, TeacherGuideResponse, VoiceConfig, ContentItem, SectionContent, HomeworkCheckResponse, PracticeOption } from "../types";
-
-const getAI = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 // Schemas
 const contentItemSchema: Schema = {

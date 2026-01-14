@@ -1,14 +1,7 @@
 
-import { GoogleGenAI, Type, Schema, Modality } from "@google/genai";
+import { Type, Schema, Modality } from "@google/genai";
 import { OptimizationConfig, OptimizationResult, InterviewMode, InterviewPrep, WritingGuide, AnalysisResult, WritingExerciseFeedback, InterviewDifficulty } from "../types";
-
-const getClient = () => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please provide a valid API Key.");
-  }
-  return new GoogleGenAI({ apiKey });
-};
+import { callGeminiAPI } from "../../../services/geminiProxy";
 
 // --- SCHEMAS ---
 
@@ -138,7 +131,6 @@ const masterSchema: Schema = {
 // --- FUNCTIONS ---
 
 export const processResume = async (config: OptimizationConfig): Promise<OptimizationResult> => {
-  const ai = getClient();
   const modelId = "gemini-3-flash-preview"; 
 
   const contentParts: any[] = [];
@@ -190,7 +182,7 @@ export const processResume = async (config: OptimizationConfig): Promise<Optimiz
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: modelId,
       contents: [
         ...contentParts,
@@ -247,7 +239,6 @@ export const regenerateInterviewQuestions = async (
     config: OptimizationConfig,
     prompt: string
 ): Promise<InterviewPrep> => {
-    const ai = getClient();
     const modelId = "gemini-3-flash-preview";
     
     const difficulty = config.interviewDifficulty || InterviewDifficulty.ADVANCED;
@@ -279,7 +270,7 @@ export const regenerateInterviewQuestions = async (
         For "sampleAnswerEn", provide a high-scoring answer example.
     `;
 
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
         model: modelId,
         contents: [
             { text: `Resume Content: ${currentResult.optimizedContentTarget.substring(0, 5000)}` },
@@ -298,7 +289,6 @@ export const regenerateInterviewQuestions = async (
 };
 
 export const generateWritingGuide = async (config: OptimizationConfig): Promise<WritingGuide> => {
-    const ai = getClient();
     const modelId = "gemini-3-flash-preview";
 
     const schema: Schema = {
@@ -322,7 +312,7 @@ export const generateWritingGuide = async (config: OptimizationConfig): Promise<
         required: ["conceptExplanationCn", "conceptExplanationEn", "exercises"]
     };
 
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
         model: modelId,
         contents: [{ text: "Generate detailed STAR method exercises based on typical resume weaknesses." }],
         config: {
@@ -335,7 +325,6 @@ export const generateWritingGuide = async (config: OptimizationConfig): Promise<
 };
 
 export const evaluateWritingExercise = async (task: string, answer: string): Promise<WritingExerciseFeedback> => {
-  const ai = getClient();
   const modelId = "gemini-3-flash-preview";
 
   const systemInstruction = `
@@ -356,7 +345,7 @@ export const evaluateWritingExercise = async (task: string, answer: string): Pro
   };
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: modelId,
       contents: [{ text: "Evaluate." }],
       config: {
@@ -373,7 +362,6 @@ export const evaluateWritingExercise = async (task: string, answer: string): Pro
 };
 
 export const processVoiceInterview = async (audioBase64: string, question: string, resumeContext: string): Promise<{ textResponse: string }> => {
-  const ai = getClient();
   const modelId = "gemini-3-flash-preview"; 
 
   const prompt = `
@@ -381,7 +369,7 @@ export const processVoiceInterview = async (audioBase64: string, question: strin
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: modelId,
       contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "audio/wav", data: audioBase64 } }] }],
     });
