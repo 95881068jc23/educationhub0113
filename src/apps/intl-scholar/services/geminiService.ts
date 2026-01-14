@@ -76,7 +76,12 @@ export const generateSchoolAdmissionReport = async (
 
   const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: [{ text: prompt }],
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ],
     config: {
         tools: [{ googleSearch: {} }] // Critical for real-time school data
     }
@@ -104,7 +109,12 @@ export const generateExamBrief = async (exam: ExamType): Promise<string> => {
 
   const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: [{ text: prompt }],
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ],
     config: {
         tools: [{ googleSearch: {} }] // Use search to get latest trends
     }
@@ -203,7 +213,6 @@ export const generateNeedsAnalysisReport = async (
   syllabusData?: { base64: string, mimeType: string } | null,
   syllabusText?: string
 ): Promise<string> => {
-  const ai = getAI();
   const langStr = language === 'zh' ? 'Chinese (Simplified)' : 'English';
   const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
   
@@ -331,9 +340,14 @@ export const generateNeedsAnalysisReport = async (
     parts.push(fileToPart(syllabusData.base64, syllabusData.mimeType));
   }
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: { parts },
+    contents: [
+      {
+        role: "user",
+        parts: parts
+      }
+    ],
     config: {
       tools: [{ googleSearch: {} }], // Enable Real-time Search
     }
@@ -351,7 +365,6 @@ export const generateCoursePlan = async (
   fileData?: { base64: string, mimeType: string } | null,
   targetPhase: number = 1 // New parameter to control phase generation
 ): Promise<PlanItem[]> => {
-  const ai = getAI();
   
   const prompt = `Create a detailed **Lesson-by-Lesson** Course Plan for ${exam}.
   Context/Requirements: ${context}
@@ -390,9 +403,14 @@ export const generateCoursePlan = async (
     parts.push(fileToPart(fileData.base64, fileData.mimeType));
   }
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: { parts },
+    contents: [
+      {
+        role: "user",
+        parts: parts
+      }
+    ],
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -428,7 +446,6 @@ export const generateCourseware = async (
   language: Language,
   fileData?: { base64: string, mimeType: string } | null
 ): Promise<string> => {
-  const ai = getAI();
 
   const prompt = `Create a professional lesson plan / courseware for ${exam}.
   Topic: ${topic}
@@ -449,9 +466,14 @@ export const generateCourseware = async (
     parts.push(fileToPart(fileData.base64, fileData.mimeType));
   }
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: { parts }
+    contents: [
+      {
+        role: "user",
+        parts: parts
+      }
+    ]
   });
 
   return response.text || "Failed to generate content.";
@@ -464,8 +486,6 @@ export const generateTeacherGuide = async (
   details: string,
   language: Language
 ): Promise<string> => {
-  const ai = getAI();
-
   const prompt = `Create a "Teacher's Instruction Guide" for the ${exam} topic: "${topic}".
   Context: ${details}
 
@@ -481,9 +501,14 @@ export const generateTeacherGuide = async (
   5. **Differentiation**: How to help struggling students vs advanced students.
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ]
   });
 
   return response.text || "Failed to generate guide.";
@@ -498,7 +523,6 @@ export const generateVocabularyList = async (
   isForTA: boolean,
   quantity: number
 ): Promise<string> => {
-  const ai = getAI();
 
   let prompt = `Generate a specific vocabulary list of exactly ${quantity} words for the ${exam} topic: "${topic}".
   Context: ${details}
@@ -525,9 +549,14 @@ export const generateVocabularyList = async (
     `;
   }
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ]
   });
 
   return response.text || "Failed to generate vocabulary.";
@@ -538,7 +567,6 @@ export const generatePlacementTest = async (
   exam: ExamType,
   language: Language
 ): Promise<Question[]> => {
-  const ai = getAI();
   const langStr = language === 'zh' ? 'Chinese (Simplified)' : 'English';
 
   const prompt = `Generate a placement test for ${exam}.
@@ -554,9 +582,14 @@ export const generatePlacementTest = async (
 
   Language: ${langStr}.`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ],
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -590,7 +623,6 @@ export const generateExamResources = async (
   exam: ExamType,
   language: Language
 ): Promise<string> => {
-  const ai = getAI();
   const langPrompt = language === 'zh' ? 'Chinese (with English source names)' : 'English';
 
   const prompt = `Find and list the top 10 "Global Free Preparation Resources" (websites, pdf archives, tools) for the ${exam} exam.
@@ -611,9 +643,14 @@ export const generateExamResources = async (
   - **Output MUST use standard Markdown Link format: [Title](URL)**.
   - Do not use plain text URLs.`;
 
-  const response = await ai.models.generateContent({
+  const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: prompt,
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      }
+    ],
     config: {
         tools: [{ googleSearch: {} }] // Essential for finding links
     }
