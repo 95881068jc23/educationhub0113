@@ -406,7 +406,7 @@ export const checkHomework = async (data: GeneratorFormData): Promise<HomeworkCh
   return retryWithBackoff(async () => {
       const response = await callGeminiAPI({
           model: model,
-          contents: [{ parts }],
+          contents: [{ parts: parts }],
           config: {
               responseMimeType: "application/json",
               responseSchema: homeworkCheckSchema,
@@ -583,7 +583,7 @@ export const generateLessonPlan = async (data: GeneratorFormData): Promise<Lesso
     
     const response = await callGeminiAPI({
       model: model,
-      contents: [{ parts }],
+      contents: [{ parts: parts }],
       config: {
         responseMimeType: "application/json",
         responseSchema: lessonPlanSchema,

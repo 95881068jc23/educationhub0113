@@ -55,7 +55,7 @@ export default async function handler(
       }
     }
 
-    // 处理 generationConfig - temperature 等参数应该在这里
+    // 处理 generationConfig - temperature、responseMimeType、responseSchema 等参数应该在这里
     const generationConfig: any = {};
     if (config.temperature !== undefined) {
       generationConfig.temperature = config.temperature;
@@ -69,6 +69,13 @@ export default async function handler(
     if (config.maxOutputTokens !== undefined) {
       generationConfig.maxOutputTokens = config.maxOutputTokens;
     }
+    // responseMimeType 和 responseSchema 必须在 generationConfig 中
+    if (config.responseMimeType) {
+      generationConfig.responseMimeType = config.responseMimeType;
+    }
+    if (config.responseSchema) {
+      generationConfig.responseSchema = config.responseSchema;
+    }
     if (Object.keys(generationConfig).length > 0) {
       requestBody.generationConfig = generationConfig;
     }
@@ -76,14 +83,6 @@ export default async function handler(
     // 处理 tools
     if (config.tools) {
       requestBody.tools = config.tools;
-    }
-
-    // 处理 responseMimeType 和 responseSchema
-    if (config.responseMimeType) {
-      requestBody.responseMimeType = config.responseMimeType;
-    }
-    if (config.responseSchema) {
-      requestBody.responseSchema = config.responseSchema;
     }
 
     // 处理 thinkingConfig
