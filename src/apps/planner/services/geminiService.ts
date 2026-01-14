@@ -2,8 +2,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Topic, TopicCategory, TopicSyllabus, StudentProfile, PlannedModule } from "../types";
 
-const apiKey = import.meta.env.VITE_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Robustly extracts JSON from a string that might contain markdown or conversational text.
@@ -61,6 +66,7 @@ export const generateCustomTopics = async (
   `;
 
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
@@ -94,8 +100,6 @@ export const generateTopicSyllabus = async (
   topicContext?: string,
   refinementInstruction?: string
 ): Promise<TopicSyllabus | null> => {
-  if (!apiKey) return null;
-
   const model = "gemini-3-pro-preview";
   const prompt = `
     You are an expert ESL Curriculum Designer. Create a detailed lesson syllabus.
@@ -132,6 +136,7 @@ export const generateTopicSyllabus = async (
   `;
 
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
@@ -159,12 +164,11 @@ export const generatePlanRationale = async (
   profile: StudentProfile,
   modules: PlannedModule[]
 ): Promise<string> => {
-  if (!apiKey) return "API Key missing.";
-
   const model = "gemini-3-pro-preview";
   const prompt = `Write a 200-word course design rationale for ${profile.name} (${profile.industry}, ${profile.role}). Focus on how the plan meets their ${profile.learningDirections.join(',')} goals. Bilingual English/Chinese.`;
 
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({ model, contents: prompt });
     return response.text || "Failed to generate rationale.";
   } catch (error) {
@@ -176,10 +180,10 @@ export const generatePathGenerationRationale = async (
   profile: StudentProfile,
   strategy: string
 ): Promise<string> => {
-  if (!apiKey) return "Logic generation skipped.";
   const model = "gemini-3-pro-preview";
   const prompt = `Explain why strategy "${strategy}" was chosen for ${profile.name}. 3-4 sentences. Professional Chinese.`;
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({ model, contents: prompt });
     return response.text || "Generated successfully.";
   } catch (e) {

@@ -2,7 +2,13 @@
 import { GoogleGenAI, Type, Schema, Modality } from "@google/genai";
 import { GeneratorFormData, ClassType, LessonPlanResponse, ModuleType, TeacherGuideResponse, VoiceConfig, ContentItem, SectionContent, HomeworkCheckResponse, PracticeOption } from "../types";
 
-const apiKey = import.meta.env.VITE_API_KEY;
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error("API Key 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 // Schemas
 const contentItemSchema: Schema = {
@@ -216,8 +222,7 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 10
 }
 
 export const polishContent = async (text: string): Promise<string> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
     
     return retryWithBackoff(async () => {
        const response = await ai.models.generateContent({
@@ -231,8 +236,7 @@ export const polishContent = async (text: string): Promise<string> => {
 };
 
 export const regenerateSectionContent = async (originalItem: ContentItem, instruction: string): Promise<ContentItem> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior ESL Curriculum Designer.
@@ -273,8 +277,7 @@ export const regenerateSectionContent = async (originalItem: ContentItem, instru
 };
 
 export const regenerateModulePractice = async (moduleTitle: string, instruction: string): Promise<PracticeOption[]> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior Adult ESL Activity Designer.
@@ -637,8 +640,7 @@ export const generateLessonPlan = async (data: GeneratorFormData): Promise<Lesso
 };
 
 export const generatePreClass = async (lessonPlan: LessonPlanResponse): Promise<SectionContent> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior ESL Teacher. Generate High-Quality PRE-CLASS Materials (Bilingual).
@@ -681,8 +683,7 @@ export const generatePreClass = async (lessonPlan: LessonPlanResponse): Promise<
 };
 
 export const generatePostClass = async (lessonPlan: LessonPlanResponse): Promise<SectionContent> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior ESL Teacher. Generate High-Quality POST-CLASS Materials (Bilingual).
@@ -732,8 +733,7 @@ export const generatePostClass = async (lessonPlan: LessonPlanResponse): Promise
 };
 
 export const generateGrammar = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `Generate Grammar Points (Bilingual). Format: Rule | Explanation | Example. Include 'tipsForTeacher' (CCQs).`;
     const prompt = `Generate specific 'Grammar Points' for lesson: "${lessonPlan.meta.title}". Audience: ${lessonPlan.meta.targetAudience}. Return ContentItem.`;
@@ -754,8 +754,7 @@ export const generateGrammar = async (lessonPlan: LessonPlanResponse): Promise<C
 };
 
 export const generateDerivedPractice = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
     const systemInstruction = `Generate Derived Practice (Bilingual). Create a new scenario different from the main one. Include 'tipsForTeacher'.`;
     const prompt = `Generate 'Derived Practice' for lesson: "${lessonPlan.meta.title}". Return ContentItem.`;
     return retryWithBackoff(async () => {
@@ -771,8 +770,7 @@ export const generateDerivedPractice = async (lessonPlan: LessonPlanResponse): P
 };
 
 export const generateHomework = async (lessonPlan: LessonPlanResponse, type: 'Written' | 'Oral' | 'Both'): Promise<ContentItem> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
     // Explicitly forbid HTML
     const systemInstruction = `Generate Homework (Bilingual). Type: ${type}. IMPORTANT: USE PURE MARKDOWN ONLY. NO HTML TAGS. Include 'tipsForTeacher' (Grading criteria).`;
     const prompt = `Generate 'Homework' tasks for lesson: "${lessonPlan.meta.title}". Return ContentItem.`;
@@ -792,8 +790,7 @@ export const generateHomework = async (lessonPlan: LessonPlanResponse, type: 'Wr
 };
 
 export const generateSummary = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
     const systemInstruction = `
         Generate Lesson Summary (Bilingual). 
         Format as:
@@ -820,8 +817,7 @@ export const generateSummary = async (lessonPlan: LessonPlanResponse): Promise<C
 
 // Generates guides ONLY for a specific section (pre, in, or post) based on its current content
 export const generateSectionGuide = async (sectionName: string, title: string, studentMaterials: ContentItem[]): Promise<ContentItem[]> => {
-    if (!apiKey) throw new Error("API Key is missing.");
-    const ai = new GoogleGenAI({ apiKey });
+    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior Teacher Trainer for Marvellous Education.
