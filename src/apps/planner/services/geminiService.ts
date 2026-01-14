@@ -37,11 +37,6 @@ export const generateCustomTopics = async (
   level: string,
   count: number = 12
 ): Promise<Topic[]> => {
-  if (!apiKey) {
-    console.warn("No API Key found. Returning mock data.");
-    return generateMockTopics(count);
-  }
-
   const model = "gemini-3-pro-preview";
   const prompt = `
     You are a senior curriculum developer for Marvellous Education. 
@@ -61,7 +56,12 @@ export const generateCustomTopics = async (
   try {
     const response = await callGeminiAPI({
       model,
-      contents: prompt,
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ],
       config: { responseMimeType: "application/json" }
     });
 
@@ -130,7 +130,12 @@ export const generateTopicSyllabus = async (
   try {
     const response = await callGeminiAPI({
       model,
-      contents: prompt,
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ],
       config: { 
         responseMimeType: "application/json"
       }
@@ -159,7 +164,15 @@ export const generatePlanRationale = async (
   const prompt = `Write a 200-word course design rationale for ${profile.name} (${profile.industry}, ${profile.role}). Focus on how the plan meets their ${profile.learningDirections.join(',')} goals. Bilingual English/Chinese.`;
 
   try {
-    const response = await callGeminiAPI({ model, contents: prompt });
+    const response = await callGeminiAPI({ 
+      model, 
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ]
+    });
     return response.text || "Failed to generate rationale.";
   } catch (error) {
     return "Error generating rationale.";
@@ -173,7 +186,15 @@ export const generatePathGenerationRationale = async (
   const model = "gemini-3-pro-preview";
   const prompt = `Explain why strategy "${strategy}" was chosen for ${profile.name}. 3-4 sentences. Professional Chinese.`;
   try {
-    const response = await callGeminiAPI({ model, contents: prompt });
+    const response = await callGeminiAPI({ 
+      model, 
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ]
+    });
     return response.text || "Generated successfully.";
   } catch (e) {
     return "Generated based on selected strategy.";
