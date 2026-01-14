@@ -2,6 +2,10 @@ import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, BookOpen, FileText, UserCheck, MessageSquare, Briefcase } from 'lucide-react';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { Login } from './components/auth/Login';
+import { Register } from './components/auth/Register';
+import { Navbar } from './components/Navbar';
 
 // Placeholders for Apps (We will implement these later)
 const PlannerApp = React.lazy(() => import('./apps/planner/App'));
@@ -70,15 +74,17 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-          Marvel Education Hub
-        </h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Empowering education with AI-driven tools for students, teachers, and professionals.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            Marvel Education Hub
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Empowering education with AI-driven tools for students, teachers, and professionals.
+          </p>
+        </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
         {apps.map((app) => (
@@ -118,9 +124,34 @@ const App = () => {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         
-        {/* Lazy load apps with a fallback loading state */}
+        {/* Protected Routes - Gemini Chat Apps */}
+        <Route
+          path="/sales-genius/*"
+          element={
+            <ProtectedRoute>
+              <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Sales Genius...</div>}>
+                <SalesGeniusApp />
+              </React.Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teachers-genius/*"
+          element={
+            <ProtectedRoute>
+              <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Teachers Genius...</div>}>
+                <TeachersGeniusApp />
+              </React.Suspense>
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Public App Routes */}
         <Route path="/planner/*" element={
           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Planner...</div>}>
             <PlannerApp />
@@ -139,16 +170,6 @@ const App = () => {
         <Route path="/intl-scholar/*" element={
           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Intl Scholar...</div>}>
             <IntlScholarApp />
-          </React.Suspense>
-        } />
-        <Route path="/sales-genius/*" element={
-          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Sales Genius...</div>}>
-            <SalesGeniusApp />
-          </React.Suspense>
-        } />
-        <Route path="/teachers-genius/*" element={
-          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading Teachers Genius...</div>}>
-            <TeachersGeniusApp />
           </React.Suspense>
         } />
       </Routes>
