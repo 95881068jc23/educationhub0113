@@ -215,22 +215,18 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, retries = 3, delay = 10
 }
 
 export const polishContent = async (text: string): Promise<string> => {
-    const ai = getAI();
-    
     return retryWithBackoff(async () => {
-       const response = await ai.models.generateContent({
+       const response = await callGeminiAPI({
            model: 'gemini-3-pro-preview',
-           contents: { parts: [{ 
+           contents: [{ parts: [{ 
                text: `Act as a Professional Curriculum Editor. Polish the following text to be clear, professional, and organized. If it is a list of topics, format them nicely. Keep the original language (Chinese or English) but improve the phrasing. Text:\n${text}` 
-           }]}
+           }] }]
        });
        return response.text ? response.text.trim() : text;
     });
 };
 
 export const regenerateSectionContent = async (originalItem: ContentItem, instruction: string): Promise<ContentItem> => {
-    const ai = getAI();
-
     const systemInstruction = `
       You are a Senior ESL Curriculum Designer.
       TASK: Rewrite the provided content section based on the user's specific instructions.
@@ -253,9 +249,9 @@ export const regenerateSectionContent = async (originalItem: ContentItem, instru
     `;
 
     return retryWithBackoff(async () => {
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { 
                 responseMimeType: "application/json", 
                 responseSchema: singleItemSchema, 
@@ -270,8 +266,6 @@ export const regenerateSectionContent = async (originalItem: ContentItem, instru
 };
 
 export const regenerateModulePractice = async (moduleTitle: string, instruction: string): Promise<PracticeOption[]> => {
-    const ai = getAI();
-
     const systemInstruction = `
       You are a Senior Adult ESL Activity Designer.
       TASK: Generate or Regenerate exactly 3 fun, adult-appropriate interactive practice options based on the module and user instructions.
@@ -291,9 +285,9 @@ export const regenerateModulePractice = async (moduleTitle: string, instruction:
     `;
 
     return retryWithBackoff(async () => {
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { 
                 responseMimeType: "application/json", 
                 responseSchema: practiceOptionsArraySchema, 
@@ -308,8 +302,6 @@ export const regenerateModulePractice = async (moduleTitle: string, instruction:
 };
 
 export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): Promise<string> => {
-  if (!apiKey) throw new Error("API Key is missing.");
-  const ai = new GoogleGenAI({ apiKey });
 
   // Extract speakers from text (assuming "Name: Message" format)
   const lines = text.split('\n');
@@ -359,7 +351,7 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
   }
 
   return retryWithBackoff(async () => {
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text }] }],
       config: config,
@@ -372,8 +364,6 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
 };
 
 export const checkHomework = async (data: GeneratorFormData): Promise<HomeworkCheckResponse> => {
-  if (!apiKey) throw new Error("API Key is missing.");
-  const ai = new GoogleGenAI({ apiKey });
 
   // Using 3-pro for complex multimodal analysis
   const model = 'gemini-3-pro-preview';
@@ -414,9 +404,9 @@ export const checkHomework = async (data: GeneratorFormData): Promise<HomeworkCh
   parts.push({ text: `Teacher's Correction Direction: ${data.generationDirection}\nAnalyze and return JSON.` });
 
   return retryWithBackoff(async () => {
-      const response = await ai.models.generateContent({
+      const response = await callGeminiAPI({
           model: model,
-          contents: { parts },
+          contents: [{ parts }],
           config: {
               responseMimeType: "application/json",
               responseSchema: homeworkCheckSchema,
@@ -469,8 +459,6 @@ export const generateLessonPlan = async (data: GeneratorFormData): Promise<Lesso
      };
   }
 
-  if (!apiKey) throw new Error("API Key is missing.");
-  const ai = new GoogleGenAI({ apiKey });
   const contentScale = getContentScale(Number(data.duration));
   
   // Construct context for Multiple Students
@@ -593,9 +581,9 @@ export const generateLessonPlan = async (data: GeneratorFormData): Promise<Lesso
     // Switched to 3-pro for complex text task
     const model = 'gemini-3-pro-preview';
     
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: model,
-      contents: { parts },
+      contents: [{ parts }],
       config: {
         responseMimeType: "application/json",
         responseSchema: lessonPlanSchema,
@@ -633,7 +621,6 @@ export const generateLessonPlan = async (data: GeneratorFormData): Promise<Lesso
 };
 
 export const generatePreClass = async (lessonPlan: LessonPlanResponse): Promise<SectionContent> => {
-    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior ESL Teacher. Generate High-Quality PRE-CLASS Materials (Bilingual).
@@ -657,9 +644,9 @@ export const generatePreClass = async (lessonPlan: LessonPlanResponse): Promise<
 
     return retryWithBackoff(async () => {
       // Switched to 3-pro
-      const response = await ai.models.generateContent({
+      const response = await callGeminiAPI({
         model: 'gemini-3-pro-preview',
-        contents: { parts: [{ text: prompt }] },
+        contents: [{ parts: [{ text: prompt }] }],
         config: {
           responseMimeType: "application/json",
           responseSchema: singleSectionSchema,
@@ -676,7 +663,6 @@ export const generatePreClass = async (lessonPlan: LessonPlanResponse): Promise<
 };
 
 export const generatePostClass = async (lessonPlan: LessonPlanResponse): Promise<SectionContent> => {
-    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior ESL Teacher. Generate High-Quality POST-CLASS Materials (Bilingual).
@@ -707,9 +693,9 @@ export const generatePostClass = async (lessonPlan: LessonPlanResponse): Promise
 
     return retryWithBackoff(async () => {
       // Switched to 3-pro
-      const response = await ai.models.generateContent({
+      const response = await callGeminiAPI({
         model: 'gemini-3-pro-preview',
-        contents: { parts: [{ text: prompt }] },
+        contents: [{ parts: [{ text: prompt }] }],
         config: {
           responseMimeType: "application/json",
           responseSchema: singleSectionSchema,
@@ -726,16 +712,15 @@ export const generatePostClass = async (lessonPlan: LessonPlanResponse): Promise
 };
 
 export const generateGrammar = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    const ai = getAI();
 
     const systemInstruction = `Generate Grammar Points (Bilingual). Format: Rule | Explanation | Example. Include 'tipsForTeacher' (CCQs).`;
     const prompt = `Generate specific 'Grammar Points' for lesson: "${lessonPlan.meta.title}". Audience: ${lessonPlan.meta.targetAudience}. Return ContentItem.`;
 
     return retryWithBackoff(async () => {
         // Switched to 3-pro
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { responseMimeType: "application/json", responseSchema: singleItemSchema, systemInstruction }
         });
         if (response.text) {
@@ -747,14 +732,13 @@ export const generateGrammar = async (lessonPlan: LessonPlanResponse): Promise<C
 };
 
 export const generateDerivedPractice = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    const ai = getAI();
     const systemInstruction = `Generate Derived Practice (Bilingual). Create a new scenario different from the main one. Include 'tipsForTeacher'.`;
     const prompt = `Generate 'Derived Practice' for lesson: "${lessonPlan.meta.title}". Return ContentItem.`;
     return retryWithBackoff(async () => {
         // Switched to 3-pro
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { responseMimeType: "application/json", responseSchema: singleItemSchema, systemInstruction }
         });
         if (response.text) return JSON.parse(response.text).itemData;
@@ -763,15 +747,14 @@ export const generateDerivedPractice = async (lessonPlan: LessonPlanResponse): P
 };
 
 export const generateHomework = async (lessonPlan: LessonPlanResponse, type: 'Written' | 'Oral' | 'Both'): Promise<ContentItem> => {
-    const ai = getAI();
     // Explicitly forbid HTML
     const systemInstruction = `Generate Homework (Bilingual). Type: ${type}. IMPORTANT: USE PURE MARKDOWN ONLY. NO HTML TAGS. Include 'tipsForTeacher' (Grading criteria).`;
     const prompt = `Generate 'Homework' tasks for lesson: "${lessonPlan.meta.title}". Return ContentItem.`;
     return retryWithBackoff(async () => {
         // Switched to 3-pro
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { responseMimeType: "application/json", responseSchema: singleItemSchema, systemInstruction }
         });
         if (response.text) {
@@ -783,7 +766,6 @@ export const generateHomework = async (lessonPlan: LessonPlanResponse, type: 'Wr
 };
 
 export const generateSummary = async (lessonPlan: LessonPlanResponse): Promise<ContentItem> => {
-    const ai = getAI();
     const systemInstruction = `
         Generate Lesson Summary (Bilingual). 
         Format as:
@@ -795,9 +777,9 @@ export const generateSummary = async (lessonPlan: LessonPlanResponse): Promise<C
     const prompt = `Generate 'Summary' for lesson: "${lessonPlan.meta.title}". Return ContentItem.`;
     return retryWithBackoff(async () => {
         // Switched to 3-pro
-        const response = await ai.models.generateContent({
+        const response = await callGeminiAPI({
             model: 'gemini-3-pro-preview',
-            contents: { parts: [{ text: prompt }] },
+            contents: [{ parts: [{ text: prompt }] }],
             config: { responseMimeType: "application/json", responseSchema: singleItemSchema, systemInstruction }
         });
         if (response.text) {
@@ -810,7 +792,6 @@ export const generateSummary = async (lessonPlan: LessonPlanResponse): Promise<C
 
 // Generates guides ONLY for a specific section (pre, in, or post) based on its current content
 export const generateSectionGuide = async (sectionName: string, title: string, studentMaterials: ContentItem[]): Promise<ContentItem[]> => {
-    const ai = getAI();
 
     const systemInstruction = `
       You are a Senior Teacher Trainer for Marvellous Education.
@@ -832,9 +813,9 @@ export const generateSectionGuide = async (sectionName: string, title: string, s
 
     return retryWithBackoff(async () => {
       // Switched to 3-pro
-      const response = await ai.models.generateContent({
+      const response = await callGeminiAPI({
         model: 'gemini-3-pro-preview',
-        contents: { parts: [{ text: prompt }] },
+        contents: [{ parts: [{ text: prompt }] }],
         config: {
           responseMimeType: "application/json",
           responseSchema: sectionGuideSchema,
@@ -851,8 +832,6 @@ export const generateSectionGuide = async (sectionName: string, title: string, s
 };
 
 export const generateTeacherGuides = async (lessonPlan: LessonPlanResponse): Promise<TeacherGuideResponse> => {
-  if (!apiKey) throw new Error("API Key is missing.");
-  const ai = new GoogleGenAI({ apiKey });
   const systemInstruction = `
     You are a Senior Teacher Trainer. Generate DETAILED, BILINGUAL teaching guides.
     Rules: Bilingual (EN/CN), Markdown.
@@ -861,9 +840,9 @@ export const generateTeacherGuides = async (lessonPlan: LessonPlanResponse): Pro
 
   return retryWithBackoff(async () => {
     // Switched to 3-pro
-    const response = await ai.models.generateContent({
+    const response = await callGeminiAPI({
       model: 'gemini-3-pro-preview',
-      contents: { parts: [{ text: prompt }] },
+      contents: [{ parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
         responseSchema: teacherGuideSchema,
