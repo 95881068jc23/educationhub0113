@@ -39,6 +39,58 @@ export default async function handler(
       return response.status(400).json({ error: '缺少 contents 参数' });
     }
 
+    // 构建 Gemini API 请求体
+    const requestBody: any = {
+      contents,
+    };
+
+    // 处理 systemInstruction - 如果是字符串，转换为 Content 格式
+    if (config.systemInstruction) {
+      if (typeof config.systemInstruction === 'string') {
+        requestBody.systemInstruction = {
+          parts: [{ text: config.systemInstruction }]
+        };
+      } else {
+        requestBody.systemInstruction = config.systemInstruction;
+      }
+    }
+
+    // 处理 generationConfig - temperature 等参数应该在这里
+    const generationConfig: any = {};
+    if (config.temperature !== undefined) {
+      generationConfig.temperature = config.temperature;
+    }
+    if (config.topP !== undefined) {
+      generationConfig.topP = config.topP;
+    }
+    if (config.topK !== undefined) {
+      generationConfig.topK = config.topK;
+    }
+    if (config.maxOutputTokens !== undefined) {
+      generationConfig.maxOutputTokens = config.maxOutputTokens;
+    }
+    if (Object.keys(generationConfig).length > 0) {
+      requestBody.generationConfig = generationConfig;
+    }
+
+    // 处理 tools
+    if (config.tools) {
+      requestBody.tools = config.tools;
+    }
+
+    // 处理 responseMimeType 和 responseSchema
+    if (config.responseMimeType) {
+      requestBody.responseMimeType = config.responseMimeType;
+    }
+    if (config.responseSchema) {
+      requestBody.responseSchema = config.responseSchema;
+    }
+
+    // 处理 thinkingConfig
+    if (config.thinkingConfig) {
+      requestBody.thinkingConfig = config.thinkingConfig;
+    }
+
     // 调用 Gemini API
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     
@@ -47,10 +99,7 @@ export default async function handler(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        contents,
-        ...config,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!geminiResponse.ok) {
