@@ -65,11 +65,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // 初始化：从 localStorage 恢复登录状态
   useEffect(() => {
+    // 自动创建超级管理员账号
+    const users = getStoredUsers();
+    const adminExists = users.some((u) => u.role === 'admin');
+    if (!adminExists) {
+      const adminUser: StoredUser = {
+        id: 'admin_10086',
+        username: '超级管理员',
+        email: 'admin@admin.com',
+        password: 'admin123',
+        auditStatus: 1,
+        role: 'admin',
+        createTime: new Date().toLocaleString(),
+        name: '超级管理员',
+        createdAt: new Date().toISOString(),
+      };
+      users.push(adminUser);
+      saveStoredUsers(users);
+    }
+
+    // 原有逻辑：从 localStorage 恢复登录状态
     const currentUser = getCurrentUser();
     // 如果用户数据缺少新字段，进行兼容性处理
     if (currentUser) {
-      const users = getStoredUsers();
-      const fullUser = users.find((u) => u.id === currentUser.id);
+      const updatedUsers = getStoredUsers();
+      const fullUser = updatedUsers.find((u) => u.id === currentUser.id);
       if (fullUser) {
         const { password, ...userWithoutPassword } = fullUser;
         const updatedUser: User = {
