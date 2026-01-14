@@ -86,34 +86,35 @@ const LandingPage = () => {
           </p>
         </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
-        {apps.map((app) => (
-          <Link 
-            key={app.id} 
-            to={app.path}
-            className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
-          >
-            <div className={`absolute top-0 left-0 w-2 h-full ${app.color}`}></div>
-            <div className="p-8">
-              <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform`}>
-                {app.icon}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
+          {apps.map((app) => (
+            <Link 
+              key={app.id} 
+              to={app.path}
+              className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
+            >
+              <div className={`absolute top-0 left-0 w-2 h-full ${app.color}`}></div>
+              <div className="p-8">
+                <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform`}>
+                  {app.icon}
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-1">{app.name}</h3>
+                <div className="text-sm font-medium text-gray-500 mb-3">{app.nameCn}</div>
+                <p className="text-gray-600 leading-relaxed">
+                  {app.description}
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">{app.name}</h3>
-              <div className="text-sm font-medium text-gray-500 mb-3">{app.nameCn}</div>
-              <p className="text-gray-600 leading-relaxed">
-                {app.description}
-              </p>
-            </div>
-            <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-               <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-            </div>
-          </Link>
-        ))}
-      </div>
+              <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-      <footer className="mt-16 text-center text-gray-400 text-sm">
-        <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
-      </footer>
+        <footer className="mt-16 text-center text-gray-400 text-sm">
+          <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
+        </footer>
+      </div>
     </div>
   );
 };
