@@ -27,9 +27,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  // 未登录，重定向到登录页，并保存当前路径以便登录后返回
+  // 未登录，重定向到登录页（根路径），并保存当前路径以便登录后返回
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return children;

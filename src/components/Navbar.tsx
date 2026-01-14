@@ -16,7 +16,7 @@ export const Navbar: React.FC = () => {
   };
 
   // 在登录和注册页面不显示导航栏
-  if (location.pathname === '/login' || location.pathname === '/register') {
+  if (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/register') {
     return null;
   }
 
@@ -25,7 +25,7 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Link to="/home" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <div className="bg-brand-600 p-2 rounded-lg">
               <GraduationCap className="w-6 h-6 text-white" />
             </div>
@@ -60,7 +60,7 @@ export const Navbar: React.FC = () => {
               </>
             ) : (
               <Link
-                to="/login"
+                to="/"
                 className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-brand-200"
               >
                 <LogIn className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
               </div>
             ) : (
               <Link
-                to="/login"
+                to="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-brand-200"
               >

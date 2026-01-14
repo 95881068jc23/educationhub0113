@@ -27,7 +27,7 @@ export const Register: React.FC = () => {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
       });
-      navigate('/');
+      navigate('/home');
     } catch (err) {
       setError(err instanceof Error ? err.message : '注册失败，请稍后重试');
     } finally {
@@ -180,7 +180,7 @@ export const Register: React.FC = () => {
             <p className="text-sm text-slate-600">
               已有账户？{' '}
               <Link
-                to="/login"
+                to="/"
                 className="font-semibold text-brand-600 hover:text-brand-700 transition-colors"
               >
                 立即登录
