@@ -147,6 +147,13 @@ export const processResume = async (config: OptimizationConfig): Promise<Optimiz
     contentParts.push({ text: `TARGET JOB DESCRIPTION:\n${config.jobDescription}` });
   }
 
+  // Add refinement instruction if present
+  if (config.refinementInstruction) {
+    contentParts.push({ text: `Refine based on: ${config.refinementInstruction}` });
+  } else {
+    contentParts.push({ text: "Analyze and optimize this resume." });
+  }
+
   const systemInstruction = `
     You are GlobalCV Pro, an expert resume optimizer and ATS specialist.
     
@@ -185,17 +192,15 @@ export const processResume = async (config: OptimizationConfig): Promise<Optimiz
     const response = await callGeminiAPI({
       model: modelId,
       contents: [
-        ...contentParts,
-        { text: config.refinementInstruction 
-            ? `Refine based on: ${config.refinementInstruction}` 
-            : "Analyze and optimize this resume." 
+        {
+          role: "user",
+          parts: contentParts
         }
       ],
       config: {
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
-        responseSchema: masterSchema,
-        thinkingConfig: { thinkingBudget: 8192 }
+        responseSchema: masterSchema
       },
     });
 
@@ -273,9 +278,14 @@ export const regenerateInterviewQuestions = async (
     const response = await callGeminiAPI({
         model: modelId,
         contents: [
-            { text: `Resume Content: ${currentResult.optimizedContentTarget.substring(0, 5000)}` },
-            { text: `Job Description: ${config.jobDescription || "Standard role in industry"}` },
-            { text: `Generate the 5-part interview script.` }
+            {
+              role: "user",
+              parts: [
+                { text: `Resume Content: ${currentResult.optimizedContentTarget.substring(0, 5000)}` },
+                { text: `Job Description: ${config.jobDescription || "Standard role in industry"}` },
+                { text: `Generate the 5-part interview script.` }
+              ]
+            }
         ],
         config: {
             systemInstruction: systemInstruction,
@@ -314,7 +324,12 @@ export const generateWritingGuide = async (config: OptimizationConfig): Promise<
 
     const response = await callGeminiAPI({
         model: modelId,
-        contents: [{ text: "Generate detailed STAR method exercises based on typical resume weaknesses." }],
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: "Generate detailed STAR method exercises based on typical resume weaknesses." }]
+          }
+        ],
         config: {
             responseMimeType: "application/json",
             responseSchema: schema
@@ -347,7 +362,12 @@ export const evaluateWritingExercise = async (task: string, answer: string): Pro
   try {
     const response = await callGeminiAPI({
       model: modelId,
-      contents: [{ text: "Evaluate." }],
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: "Evaluate." }]
+        }
+      ],
       config: {
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
@@ -371,7 +391,12 @@ export const processVoiceInterview = async (audioBase64: string, question: strin
   try {
     const response = await callGeminiAPI({
       model: modelId,
-      contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "audio/wav", data: audioBase64 } }] }],
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }, { inlineData: { mimeType: "audio/wav", data: audioBase64 } }]
+        }
+      ],
     });
     return { textResponse: response.text || "Could you repeat that?" };
   } catch (error) {
