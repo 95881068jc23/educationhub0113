@@ -394,10 +394,12 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                     ))}
                   </div>
                 )}
-                {audio && (
+                {(audio || audioUrl) && (
                   <div className="flex items-center gap-2 bg-purple-100 px-3 py-1 rounded-lg border border-purple-200">
                     <FileAudio size={16} className="text-purple-600"/>
-                    <span className="text-xs font-bold text-purple-700">Audio Ready</span>
+                    <span className="text-xs font-bold text-purple-700">
+                      {audioUrl ? 'Audio Ready (Large File)' : 'Audio Ready'}
+                    </span>
                   </div>
                 )}
              </div>
@@ -405,7 +407,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           </div>
         )}
 
-        <button onClick={handleAnalysis} disabled={isAnalyzing || (images.length === 0 && !audio)}
+        <button onClick={handleAnalysis} disabled={isAnalyzing || isUploading || (images.length === 0 && !audio && !audioUrl)}
           className="w-full py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-teal-200 hover:shadow-teal-300 transform active:scale-[0.99] transition-all">
           {isAnalyzing ? (
               <>

@@ -7,7 +7,8 @@ interface GeminiMessageOptions {
   message: string;
   images?: string[]; // Array of Base64 strings (Legacy/Small)
   files?: File[]; // Array of File objects (New/Large)
-  audio?: string; // Base64 string
+  audio?: string; // Base64 string (for small files < 4MB)
+  audioUrl?: string; // Supabase Storage URL (for large files >= 4MB)
   temperature?: number; // Control randomness (0.0 to 2.0)
   history?: Content[]; // Add history support
 }

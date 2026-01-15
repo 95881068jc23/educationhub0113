@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// 在 Node.js 环境中，Buffer 是全局可用的
+declare const Buffer: {
+  from(data: ArrayBuffer): { toString(encoding: 'base64'): string };
+};
+
 export default async function handler(
   request: VercelRequest,
   response: VercelResponse,
@@ -35,7 +40,7 @@ export default async function handler(
       config = {}
     } = request.body;
 
-    if (!contents) {å
+    if (!contents) {
       return response.status(400).json({ error: '缺少 contents 参数' });
     }
 
@@ -137,10 +142,35 @@ export default async function handler(
         }
       }));
     } else if (contents.parts) {
-      // 对象格式：{ parts: [...] }
+      // 对象格式：{ parts: [...] }，需要处理 fileData
+      const processedParts = await Promise.all(contents.parts.map(async (part: any) => {
+        if (part.fileData && part.fileData.fileUri) {
+          try {
+            const fileResponse = await fetch(part.fileData.fileUri);
+            if (!fileResponse.ok) {
+              throw new Error(`下载文件失败: ${fileResponse.status}`);
+            }
+            const fileBlob = await fileResponse.blob();
+            const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
+            const base64Data = fileBuffer.toString('base64');
+            const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
+            
+            return {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64Data
+              }
+            };
+          } catch (error) {
+            console.error('处理文件 URL 失败:', error);
+            throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+          }
+        }
+        return part;
+      }));
       normalizedContents = [{
         role: 'user',
-        parts: contents.parts
+        parts: processedParts
       }];
     } else {
       // 其他格式，尝试直接使用
