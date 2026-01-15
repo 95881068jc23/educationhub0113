@@ -626,7 +626,7 @@ const LessonView: React.FC<Props> = ({ data, onBack, onRegenerate, onUpdateLesso
      if (!audioUrl) return;
      const a = document.createElement('a');
      a.href = audioUrl;
-     a.download = `Audio_${Date.now()}.wav`;
+     a.download = `Audio_${Date.now()}.mp3`; // MiniMax 返回 MP3 格式
      a.click();
   };
 
