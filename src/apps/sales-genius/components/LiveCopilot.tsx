@@ -7,7 +7,11 @@ import { ToneSelector } from './ToneSelector';
 import { ClientProfile } from '../types';
 import ReactMarkdown from 'react-markdown';
 
-const apiKey = process.env.API_KEY || '';
+// 获取 API Key（在客户端需要使用 VITE_ 前缀）
+const apiKey = import.meta.env.VITE_API_KEY || '';
+if (!apiKey) {
+  console.error('VITE_API_KEY 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。');
+}
 const ai = new GoogleGenAI({ apiKey });
 
 // --- WAV Encoding Helpers ---
