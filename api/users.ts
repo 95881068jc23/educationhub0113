@@ -1,3 +1,4 @@
+import { kv } from '@vercel/kv';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 interface UserData {
@@ -13,13 +14,7 @@ interface UserData {
   createdAt: string;
 }
 
-// 使用全局变量存储（在 Vercel 环境中，这个变量会在同一实例中保持）
-// 注意：Vercel 无服务器函数是 stateless 的，不同请求可能在不同实例上
-// 为了真正的持久化，应该使用 Vercel KV、数据库或其他持久化存储
-// 这里提供一个基础实现，实际生产环境应使用持久化存储
-
-// 使用 Map 存储用户数据，key 是用户 ID
-const usersMap = new Map<string, UserData>();
+const STORAGE_KEY = 'marvel_education_users';
 
 export default async function handler(
   request: VercelRequest,
@@ -35,51 +30,81 @@ export default async function handler(
   }
 
   try {
+    // 获取所有用户
+    const getAllUsersFromStorage = async (): Promise<UserData[]> => {
+      try {
+        const users = await kv.get<UserData[]>(STORAGE_KEY);
+        return users || [];
+      } catch (error) {
+        console.error('从 KV 读取失败:', error);
+        // 如果 KV 未配置，返回空数组
+        return [];
+      }
+    };
+
+    // 保存所有用户
+    const saveAllUsersToStorage = async (users: UserData[]): Promise<void> => {
+      try {
+        await kv.set(STORAGE_KEY, users);
+      } catch (error) {
+        console.error('保存到 KV 失败:', error);
+        throw new Error('保存用户数据失败，请检查 Vercel KV 配置');
+      }
+    };
+
     if (request.method === 'GET') {
-      // 获取所有用户
-      const allUsers = Array.from(usersMap.values());
+      const allUsers = await getAllUsersFromStorage();
       return response.status(200).json({ users: allUsers });
     }
 
     if (request.method === 'POST') {
-      // 创建或更新用户
       const userData = request.body as UserData;
       
       if (!userData.id || !userData.email) {
         return response.status(400).json({ error: '用户ID和邮箱是必需的' });
       }
 
-      // 存储或更新用户
-      usersMap.set(userData.id, userData);
+      const allUsers = await getAllUsersFromStorage();
+      const existingIndex = allUsers.findIndex((u) => u.id === userData.id);
+      
+      if (existingIndex >= 0) {
+        allUsers[existingIndex] = userData;
+      } else {
+        allUsers.push(userData);
+      }
+
+      await saveAllUsersToStorage(allUsers);
 
       return response.status(200).json({ success: true, user: userData });
     }
 
     if (request.method === 'PUT') {
-      // 更新用户（部分更新）
       const { userId, updates } = request.body as { userId: string; updates: Partial<UserData> };
       
-      const existingUser = usersMap.get(userId);
+      const allUsers = await getAllUsersFromStorage();
+      const userIndex = allUsers.findIndex((u) => u.id === userId);
       
-      if (!existingUser) {
+      if (userIndex === -1) {
         return response.status(404).json({ error: '用户不存在' });
       }
 
-      const updatedUser = { ...existingUser, ...updates };
-      usersMap.set(userId, updatedUser);
+      allUsers[userIndex] = { ...allUsers[userIndex], ...updates };
+      await saveAllUsersToStorage(allUsers);
       
-      return response.status(200).json({ success: true, user: updatedUser });
+      return response.status(200).json({ success: true, user: allUsers[userIndex] });
     }
 
     if (request.method === 'DELETE') {
-      // 删除用户
       const { userId } = request.body as { userId: string };
       
-      if (!usersMap.has(userId)) {
+      const allUsers = await getAllUsersFromStorage();
+      const filteredUsers = allUsers.filter((u) => u.id !== userId);
+      
+      if (filteredUsers.length === allUsers.length) {
         return response.status(404).json({ error: '用户不存在' });
       }
       
-      usersMap.delete(userId);
+      await saveAllUsersToStorage(filteredUsers);
       
       return response.status(200).json({ success: true });
     }
