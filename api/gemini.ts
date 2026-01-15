@@ -35,7 +35,7 @@ export default async function handler(
       config = {}
     } = request.body;
 
-    if (!contents) {
+    if (!contents) {å
       return response.status(400).json({ error: '缺少 contents 参数' });
     }
 
@@ -54,11 +54,43 @@ export default async function handler(
         parts: [{ text: contents }]
       }];
     } else if (Array.isArray(contents)) {
-      // 数组格式：检查每个元素
-      normalizedContents = contents.map((item: any) => {
+      // 数组格式：检查每个元素，并处理 fileData.fileUri
+      normalizedContents = await Promise.all(contents.map(async (item: any) => {
         if (item.role && item.parts) {
-          // 已经是正确格式
-          return item;
+          // 已经是正确格式，但需要处理 parts 中的 fileData
+          const processedParts = await Promise.all(item.parts.map(async (part: any) => {
+            // 检查是否是 fileData 格式（包含 fileUri）
+            if (part.fileData && part.fileData.fileUri) {
+              try {
+                // 从 Supabase Storage URL 下载文件
+                const fileResponse = await fetch(part.fileData.fileUri);
+                if (!fileResponse.ok) {
+                  throw new Error(`下载文件失败: ${fileResponse.status}`);
+                }
+                const fileBlob = await fileResponse.blob();
+                const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
+                const base64Data = fileBuffer.toString('base64');
+                
+                // 检测 MIME 类型
+                const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
+                
+                return {
+                  inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
+                  }
+                };
+              } catch (error) {
+                console.error('处理文件 URL 失败:', error);
+                throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+              }
+            }
+            return part;
+          }));
+          return {
+            role: item.role,
+            parts: processedParts
+          };
         } else if (item.text) {
           // { text: "..." } 格式
           return {
@@ -66,10 +98,35 @@ export default async function handler(
             parts: [{ text: item.text }]
           };
         } else if (item.parts) {
-          // { parts: [...] } 格式
+          // { parts: [...] } 格式，需要处理 fileData
+          const processedParts = await Promise.all(item.parts.map(async (part: any) => {
+            if (part.fileData && part.fileData.fileUri) {
+              try {
+                const fileResponse = await fetch(part.fileData.fileUri);
+                if (!fileResponse.ok) {
+                  throw new Error(`下载文件失败: ${fileResponse.status}`);
+                }
+                const fileBlob = await fileResponse.blob();
+                const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
+                const base64Data = fileBuffer.toString('base64');
+                const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
+                
+                return {
+                  inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
+                  }
+                };
+              } catch (error) {
+                console.error('处理文件 URL 失败:', error);
+                throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+              }
+            }
+            return part;
+          }));
           return {
             role: 'user',
-            parts: item.parts
+            parts: processedParts
           };
         } else {
           // 未知格式，尝试作为 parts
@@ -78,7 +135,7 @@ export default async function handler(
             parts: Array.isArray(item) ? item : [item]
           };
         }
-      });
+      }));
     } else if (contents.parts) {
       // 对象格式：{ parts: [...] }
       normalizedContents = [{

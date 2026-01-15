@@ -29,7 +29,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 export const sendMessageToGemini = async (
   options: GeminiMessageOptions
 ): Promise<GenerateContentResponse> => {
-  const { message, images = [], files = [], audio, temperature, history = [] } = options;
+  const { message, images = [], files = [], audio, audioUrl, temperature, history = [] } = options;
 
   try {
     const modelId = "gemini-3-flash-preview";
@@ -73,7 +73,17 @@ export const sendMessageToGemini = async (
     }
 
     // Process Audio
-    if (audio) {
+    // 优先使用 audioUrl（大文件），如果没有则使用 audio（Base64 小文件）
+    if (audioUrl) {
+      // 大文件：传递 URL，让 Edge Function 处理
+      currentTurnParts.push({
+        fileData: {
+          fileUri: audioUrl,
+          mimeType: 'audio/*' // Edge Function 会从 URL 下载并检测 MIME 类型
+        }
+      });
+    } else if (audio) {
+      // 小文件：直接使用 Base64
       const mimeMatch = audio.match(/data:([^;]+);/);
       const mimeType = mimeMatch ? mimeMatch[1] : 'audio/wav';
       const cleanAudioBase64 = audio.split(',')[1] || audio;
@@ -90,7 +100,7 @@ export const sendMessageToGemini = async (
     currentTurnParts.push({ text: message });
 
     // Explicitly set tools to undefined if ANY media is present
-    const hasMedia = (images.length > 0) || (files.length > 0) || !!audio;
+    const hasMedia = (images.length > 0) || (files.length > 0) || !!audio || !!audioUrl;
     const tools = hasMedia ? undefined : [{ googleSearch: {} }];
 
     // Construct full contents with history
