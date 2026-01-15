@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { StoredUser, AuditStatus, UserIdentity } from '../../types/auth';
-import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap } from 'lucide-react';
+import { getUserLogs } from '../../services/storageService';
+import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap, FileText, X, Filter } from 'lucide-react';
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,10 @@ export const AdminPanel: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<AuditStatus | 'all'>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [userLogs, setUserLogs] = useState<any[]>([]);
+  const [isLoadingLogs, setIsLoadingLogs] = useState(false);
+  const [logFilter, setLogFilter] = useState<string>('all');
 
   // 检查是否为管理员
   useEffect(() => {
@@ -203,6 +208,60 @@ export const AdminPanel: React.FC = () => {
       return dateString;
     }
   };
+
+  // 查看用户操作日志
+  const handleViewLogs = async (userId: string) => {
+    setSelectedUserId(userId);
+    setIsLoadingLogs(true);
+    try {
+      const logs = await getUserLogs(userId, undefined, 200);
+      setUserLogs(logs);
+    } catch (error) {
+      console.error('获取操作日志失败:', error);
+      alert('获取操作日志失败，请稍后重试');
+    } finally {
+      setIsLoadingLogs(false);
+    }
+  };
+
+  // 关闭日志模态框
+  const handleCloseLogs = () => {
+    setSelectedUserId(null);
+    setUserLogs([]);
+    setLogFilter('all');
+  };
+
+  // 获取操作类型的中文名称
+  const getActionTypeLabel = (actionType: string): string => {
+    const labels: Record<string, string> = {
+      login: '登录',
+      register: '注册',
+      upload_audio: '上传录音',
+      chat_message: '发送消息',
+      logout: '退出登录',
+    };
+    return labels[actionType] || actionType;
+  };
+
+  // 获取操作类型的颜色
+  const getActionTypeColor = (actionType: string): string => {
+    const colors: Record<string, string> = {
+      login: 'bg-blue-100 text-blue-700',
+      register: 'bg-green-100 text-green-700',
+      upload_audio: 'bg-purple-100 text-purple-700',
+      chat_message: 'bg-indigo-100 text-indigo-700',
+      logout: 'bg-gray-100 text-gray-700',
+    };
+    return colors[actionType] || 'bg-slate-100 text-slate-700';
+  };
+
+  // 过滤日志
+  const filteredLogs = logFilter === 'all' 
+    ? userLogs 
+    : userLogs.filter(log => log.action_type === logFilter);
+
+  // 获取所有操作类型（用于筛选）
+  const actionTypes = Array.from(new Set(userLogs.map(log => log.action_type)));
 
   if (isLoading) {
     return (
@@ -452,6 +511,14 @@ export const AdminPanel: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         {userItem.role !== 'admin' && (
                           <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleViewLogs(userItem.id)}
+                              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                              title="查看操作记录"
+                            >
+                              <FileText className="w-3 h-3" />
+                              日志
+                            </button>
                             {userItem.auditStatus !== 1 && (
                               <button
                                 onClick={() => handleAudit(userItem.id, 1)}
@@ -506,6 +573,131 @@ export const AdminPanel: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 操作日志模态框 */}
+      {selectedUserId && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            {/* 模态框头部 */}
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                  用户操作记录
+                </h2>
+                <p className="text-sm text-slate-600 mt-1">
+                  {allUsers.find(u => u.id === selectedUserId)?.name || selectedUserId}
+                </p>
+              </div>
+              <button
+                onClick={handleCloseLogs}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+
+            {/* 筛选器 */}
+            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-slate-600" />
+                  <span className="text-sm font-medium text-slate-700">筛选：</span>
+                </div>
+                <button
+                  onClick={() => setLogFilter('all')}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                    logFilter === 'all'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  全部
+                </button>
+                {actionTypes.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setLogFilter(type)}
+                    className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                      logFilter === type
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                    }`}
+                  >
+                    {getActionTypeLabel(type)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 日志列表 */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {isLoadingLogs ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-brand-600" />
+                  <span className="ml-2 text-slate-600">加载中...</span>
+                </div>
+              ) : filteredLogs.length === 0 ? (
+                <div className="text-center py-12 text-slate-500">
+                  {userLogs.length === 0 ? '暂无操作记录' : '没有符合条件的操作记录'}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredLogs.map((log, index) => (
+                    <div
+                      key={log.id || index}
+                      className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${getActionTypeColor(log.action_type)}`}>
+                            {getActionTypeLabel(log.action_type)}
+                          </span>
+                          <span className="text-xs text-slate-500">
+                            {formatDate(log.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                      {log.action_details && Object.keys(log.action_details).length > 0 && (
+                        <div className="mt-2 text-sm text-slate-700">
+                          <details className="cursor-pointer">
+                            <summary className="text-slate-600 hover:text-slate-900 font-medium">
+                              查看详情
+                            </summary>
+                            <pre className="mt-2 p-3 bg-white rounded border border-slate-200 text-xs overflow-x-auto">
+                              {JSON.stringify(log.action_details, null, 2)}
+                            </pre>
+                          </details>
+                        </div>
+                      )}
+                      {log.ip_address && (
+                        <div className="mt-2 text-xs text-slate-500">
+                          IP: {log.ip_address}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 模态框底部 */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600">
+                  共 {filteredLogs.length} 条记录
+                </span>
+                <button
+                  onClick={handleCloseLogs}
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors font-medium"
+                >
+                  关闭
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
