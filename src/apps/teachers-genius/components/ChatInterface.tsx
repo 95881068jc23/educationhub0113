@@ -205,12 +205,42 @@ export const ChatInterface: React.FC = () => {
     
     if ((!promptText.trim() && selectedImages.length === 0 && !recordedAudio) || isLoading) return;
 
+    // 如果有录音，先上传到 Supabase Storage
+    let audioUrl = recordedAudio || undefined;
+    if (recordedAudio && user) {
+      try {
+        // 将 Base64 转换为 Blob
+        const audioBlob = await fetch(recordedAudio).then(r => r.blob());
+        const fileName = `recording-${Date.now()}.webm`;
+        
+        const uploadResult = await uploadFile({
+          userId: user.id,
+          fileType: 'audio',
+          fileName: fileName,
+          fileData: audioBlob,
+        });
+
+        if (uploadResult.success && uploadResult.fileUrl) {
+          audioUrl = uploadResult.fileUrl;
+          // 记录上传日志
+          await logUserAction(user.id, 'upload_audio', {
+            fileName: fileName,
+            fileSize: uploadResult.fileSize,
+            fileUrl: uploadResult.fileUrl,
+          });
+        }
+      } catch (error) {
+        console.error('上传录音失败:', error);
+        // 上传失败不影响发送，继续使用本地 Base64
+      }
+    }
+
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       role: MessageRole.USER,
       text: promptText,
       images: selectedImages.length > 0 ? [...selectedImages] : undefined,
-      audio: recordedAudio || undefined,
+      audio: audioUrl,
       productContext: selectedProduct
     };
 
@@ -220,6 +250,20 @@ export const ChatInterface: React.FC = () => {
     setRecordedAudio(null);
     setRecordingDuration(0);
     setIsLoading(true);
+
+    // 记录聊天消息日志
+    if (user) {
+      try {
+        await logUserAction(user.id, 'chat_message', {
+          product: selectedProduct,
+          hasAudio: !!audioUrl,
+          hasImages: selectedImages.length > 0,
+          messageLength: promptText.length,
+        });
+      } catch (error) {
+        console.error('记录聊天日志失败:', error);
+      }
+    }
 
     try {
       const finalPrompt = `[产品上下文: ${selectedProduct}] ${promptText}`;

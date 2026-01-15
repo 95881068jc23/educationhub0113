@@ -150,7 +150,7 @@ export const ChatInterface: React.FC = () => {
         }
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' }); // webm is standard for browser recording
         const reader = new FileReader();
         reader.onloadend = () => {
