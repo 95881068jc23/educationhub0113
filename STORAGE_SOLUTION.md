@@ -21,19 +21,30 @@ Vercel 无服务器函数是 **stateless**（无状态）的：
 
 ## 推荐的持久化解决方案
 
-### 方案 1：使用 Vercel KV（推荐）
+### 方案 1：使用 Vercel KV（推荐）⭐
 
 Vercel KV 是 Vercel 提供的 Redis 兼容存储服务，适合存储用户数据。
 
 **配置步骤：**
-1. 在 Vercel 项目中创建 KV 数据库
+1. 在 Vercel Dashboard 中为项目创建 KV 数据库
 2. 安装依赖：`npm install @vercel/kv`
-3. 在 `api/users.ts` 中使用 KV 存储
+3. 将 `api/users.ts` 替换为使用 KV 的版本（已提供 `api/users-kv.ts` 作为参考）
+4. Vercel 会自动注入环境变量：`KV_REST_API_URL` 和 `KV_REST_API_TOKEN`
 
 **优点：**
 - 官方支持，集成简单
-- 数据持久化
+- 数据持久化，跨设备同步
 - 高性能
+- 免费额度充足
+
+**快速开始：**
+```bash
+# 1. 安装依赖
+npm install @vercel/kv
+
+# 2. 在 Vercel Dashboard 创建 KV 数据库
+# 3. 将 api/users.ts 改为使用 KV（参考 api/users-kv.ts）
+```
 
 ### 方案 2：使用外部数据库服务
 
