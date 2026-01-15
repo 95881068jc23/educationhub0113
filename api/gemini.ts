@@ -250,6 +250,15 @@ export default async function handler(
           error: 'API 调用次数已达上限。请稍后再试或检查 API 配额。' 
         });
       }
+      if (geminiResponse.status === 400) {
+        // 400 错误可能是文件URL格式问题或Gemini无法访问URL
+        const errorJson = JSON.parse(errorData).catch(() => null);
+        if (errorJson?.error?.message?.includes('file') || errorJson?.error?.message?.includes('URL')) {
+          return response.status(400).json({ 
+            error: `文件URL访问失败。请确保Supabase Storage文件是公开的，或URL可访问。错误详情: ${errorData}` 
+          });
+        }
+      }
       
       return response.status(geminiResponse.status).json({ 
         error: `Gemini API 错误: ${errorData}` 
