@@ -55,8 +55,30 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: '未知错误' }));
-      throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      // 对于 413 错误，提供更详细的错误信息
+      if (response.status === 413) {
+        throw new Error('413 Payload Too Large: 文件太大，即使使用 Supabase Storage 也无法处理。请尝试压缩文件或使用更小的文件。');
+      }
+      
+      // 尝试解析错误响应
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch (e) {
+        // 如果无法解析 JSON，尝试读取文本
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        } catch (textError) {
+          // 如果都失败了，使用默认错误信息
+          console.error('无法解析错误响应:', textError);
+        }
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
@@ -87,6 +109,9 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
       if (error.message.includes('429') || error.message.includes('quota')) {
         throw new Error('API 调用次数已达上限。请稍后再试或检查 API 配额。');
       }
+      if (error.message.includes('413') || error.message.includes('Payload Too Large') || error.message.includes('too large')) {
+        throw new Error('文件太大，无法处理。请尝试压缩文件或使用更小的文件（建议小于 50MB）。');
+      }
     }
     
     throw error;
@@ -114,3 +139,4 @@ export interface GenerateContentResponse {
     };
   }>;
 }
+

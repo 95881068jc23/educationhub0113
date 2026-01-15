@@ -73,6 +73,16 @@ export default async function handler(
                   throw new Error(`下载文件失败: ${fileResponse.status}`);
                 }
                 const fileBlob = await fileResponse.blob();
+                
+                // 检查文件大小（Base64 编码后约为原文件的 1.33 倍）
+                // Vercel Edge Function 限制约为 4.5MB，所以原始文件应该小于约 3.4MB
+                const fileSizeMB = fileBlob.size / (1024 * 1024);
+                const estimatedBase64SizeMB = fileSizeMB * 1.33;
+                
+                if (estimatedBase64SizeMB > 4.5) {
+                  throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
+                }
+                
                 const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
                 const base64Data = fileBuffer.toString('base64');
                 
@@ -112,6 +122,15 @@ export default async function handler(
                   throw new Error(`下载文件失败: ${fileResponse.status}`);
                 }
                 const fileBlob = await fileResponse.blob();
+                
+                // 检查文件大小
+                const fileSizeMB = fileBlob.size / (1024 * 1024);
+                const estimatedBase64SizeMB = fileSizeMB * 1.33;
+                
+                if (estimatedBase64SizeMB > 4.5) {
+                  throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
+                }
+                
                 const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
                 const base64Data = fileBuffer.toString('base64');
                 const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
@@ -151,6 +170,15 @@ export default async function handler(
               throw new Error(`下载文件失败: ${fileResponse.status}`);
             }
             const fileBlob = await fileResponse.blob();
+            
+            // 检查文件大小
+            const fileSizeMB = fileBlob.size / (1024 * 1024);
+            const estimatedBase64SizeMB = fileSizeMB * 1.33;
+            
+            if (estimatedBase64SizeMB > 4.5) {
+              throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
+            }
+            
             const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
             const base64Data = fileBuffer.toString('base64');
             const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';

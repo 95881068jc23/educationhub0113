@@ -121,8 +121,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     setIsUploading(true);
 
     try {
-      // 如果文件小于 4MB，可以直接使用 Base64（兼容小文件）
-      const smallFileThreshold = 4 * 1024 * 1024; // 4MB
+      // 如果文件小于 3.4MB（Base64 编码后约 4.5MB），可以直接使用 Base64
+      // Vercel Edge Function 限制为 4.5MB，所以原始文件应该小于约 3.4MB
+      const smallFileThreshold = 3.4 * 1024 * 1024; // 3.4MB
       
       if (file.size < smallFileThreshold) {
         // 小文件：直接读取为 Base64
