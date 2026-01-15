@@ -554,19 +554,19 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         {/* Left: Transcript (Hidden on mobile if tab is strategy) */}
         <div className={`flex-1 bg-white rounded-2xl border border-slate-200 flex-col overflow-hidden shadow-sm ${mobileTab === 'transcript' ? 'flex' : 'hidden md:flex'}`}>
            <div className="bg-slate-50 border-b border-slate-100 p-3 flex justify-between items-center flex-shrink-0">
-             <span className="text-sm font-bold text-slate-700 flex items-center gap-2"><User size={16}/> 实时录入</span>
+             <span className="text-sm font-bold text-white bg-slate-800 px-3 py-1 rounded-lg flex items-center gap-2"><User size={16}/> 实时录入</span>
              {isReconnecting && <span className="text-[10px] text-yellow-600 font-medium flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded"><Wifi size={10}/> 保持通话，AI正在无感切换...</span>}
            </div>
            <div className="flex-1 p-4 overflow-y-auto bg-slate-50/50 space-y-4" ref={conversationScrollRef}>
               {transcriptSegments.length === 0 && !currentSegment && <div className="text-center mt-20 text-slate-400 italic text-sm">等待对话开始...</div>}
               {transcriptSegments.map((seg) => (
                  <div key={seg.id} className="bg-white border border-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%]">
-                    <p className="text-slate-800 text-sm">{seg.text}</p>
+                    <p className="text-white bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium">{seg.text}</p>
                  </div>
               ))}
               {currentSegment && (
                  <div className="bg-slate-100 border border-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%] opacity-70">
-                    <p className="text-slate-700 text-sm">{currentSegment} <span className="animate-pulse">|</span></p>
+                    <p className="text-white bg-slate-700 px-3 py-2 rounded-lg text-sm font-medium">{currentSegment} <span className="animate-pulse">|</span></p>
                  </div>
               )}
            </div>

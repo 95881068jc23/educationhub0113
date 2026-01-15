@@ -103,9 +103,34 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 检查文件大小（限制为 10MB，因为 Vercel Edge Function 有 4.5MB 限制）
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        alert(`文件太大（${(file.size / 1024 / 1024).toFixed(2)}MB）。请使用小于 10MB 的音频文件。\n\n建议：\n- 压缩音频文件\n- 使用较短的录音\n- 转换为较小的格式（如 MP3）`);
+        if (audioInputRef.current) audioInputRef.current.value = '';
+        return;
+      }
+      
       setAudioName(file.name);
       const reader = new FileReader();
-      reader.onloadend = () => setAudio(reader.result as string);
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        // 检查 Base64 编码后的大小（Base64 会增加约 33% 的大小）
+        const base64Size = result.length * 0.75; // Base64 编码后的大小估算
+        if (base64Size > 4.5 * 1024 * 1024) {
+          alert(`文件编码后太大（约 ${(base64Size / 1024 / 1024).toFixed(2)}MB）。请使用更小的文件。`);
+          setAudio(null);
+          setAudioName('');
+          if (audioInputRef.current) audioInputRef.current.value = '';
+          return;
+        }
+        setAudio(result);
+      };
+      reader.onerror = () => {
+        alert('文件读取失败，请重试。');
+        setAudio(null);
+        setAudioName('');
+      };
       reader.readAsDataURL(file);
     }
   };
@@ -113,6 +138,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   const handleAnalysis = async () => {
     if ((images.length === 0 && !audio) || isAnalyzing) return;
     setIsAnalyzing(true);
+    setResult(null); // 清除之前的结果
     try {
       const response = await sendMessageToGemini({
         message: ANALYSIS_PROMPT_TEMPLATE(selectedProduct, customDirection, classType, classSize),
@@ -121,8 +147,22 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         temperature: 0.4, // Increased temperature to 0.4 for richer, less robotic output
       });
       setResult(cleanText(response.text || 'Analysis failed. Please try again.'));
-    } catch (error) {
-      setResult('Error connecting to AI service. Please check your connection.');
+    } catch (error: any) {
+      console.error('深度诊断错误:', error);
+      // 提供更详细的错误信息
+      let errorMessage = '连接 AI 服务失败，请检查网络连接。';
+      if (error?.message) {
+        if (error.message.includes('413') || error.message.includes('Payload Too Large') || error.message.includes('too large')) {
+          errorMessage = '文件太大，无法处理。请使用小于 10MB 的音频文件，或压缩文件后重试。';
+        } else if (error.message.includes('400') || error.message.includes('Invalid')) {
+          errorMessage = '文件格式不支持或数据无效。请检查文件格式是否正确。';
+        } else if (error.message.includes('429') || error.message.includes('rate limit')) {
+          errorMessage = '请求过于频繁，请稍后再试。';
+        } else {
+          errorMessage = `错误：${error.message}`;
+        }
+      }
+      setResult(`**错误**\n\n${errorMessage}\n\n请尝试：\n- 使用较小的音频文件（< 10MB）\n- 检查网络连接\n- 稍后重试`);
     } finally {
       setIsAnalyzing(false);
     }
