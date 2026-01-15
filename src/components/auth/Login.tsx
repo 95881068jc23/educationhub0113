@@ -10,11 +10,16 @@ export const Login: React.FC = () => {
   
   // 如果已登录，重定向到首页或之前访问的页面
   React.useEffect(() => {
-    if (isAuthenticated) {
-      const from = (location.state as { from?: Location })?.from?.pathname || '/home';
-      navigate(from, { replace: true });
+    if (isAuthenticated && user) {
+      // 如果是管理员，直接跳转到后台
+      if (user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        const from = (location.state as { from?: Location })?.from?.pathname || '/home';
+        navigate(from, { replace: true });
+      }
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, user, navigate, location]);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -32,9 +37,18 @@ export const Login: React.FC = () => {
         email: formData.email,
         password: formData.password,
       });
-      // 登录成功后重定向到首页或之前访问的页面
-      const from = (location.state as { from?: Location })?.from?.pathname || '/home';
-      navigate(from, { replace: true });
+      // 登录成功后重定向逻辑
+      const from = (location.state as { from?: Location })?.from?.pathname;
+      // 获取登录后的用户信息
+      const loggedInUser = user;
+      // 如果是管理员，直接跳转到后台
+      if (loggedInUser && loggedInUser.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else if (from) {
+        navigate(from, { replace: true });
+      } else {
+        navigate('/home', { replace: true });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败，请稍后重试');
     } finally {

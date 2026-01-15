@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { User, AuthState, LoginCredentials, RegisterCredentials, AuthContextType, StoredUser, AuditStatus } from '../types/auth';
+import { User, AuthState, LoginCredentials, RegisterCredentials, AuthContextType, StoredUser, AuditStatus, UserIdentity } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password: 'admin123',
         auditStatus: 1,
         role: 'admin',
+        identity: null, // 管理员不需要身份
         createTime: new Date().toLocaleString(),
         name: '超级管理员',
         createdAt: new Date().toISOString(),
@@ -98,6 +99,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           username: (userWithoutPassword as any).username || currentUser.email.split('@')[0],
           auditStatus: (userWithoutPassword as any).auditStatus ?? 0,
           role: (userWithoutPassword as any).role || 'user',
+          identity: (userWithoutPassword as any).identity ?? null,
           createTime: (userWithoutPassword as any).createTime || userWithoutPassword.createdAt || new Date().toISOString(),
         };
         saveCurrentUser(updatedUser);
@@ -188,6 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password: credentials.password, // 实际应用中应使用哈希
       auditStatus: 0, // 默认待审核
       role: 'user', // 默认普通用户
+      identity: null, // 默认无身份，需要管理员分配
       createTime: createTime,
       createdAt: createTime, // 保留向后兼容
     };
@@ -263,6 +266,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return currentUser ? currentUser.auditStatus === 1 : false;
   }, [authState.user]);
 
+  /**
+   * 更新用户身份（管理员功能）
+   */
+  const updateUserIdentity = useCallback((userId: string, identity: UserIdentity): void => {
+    const users = getStoredUsers();
+    const userIndex = users.findIndex((u) => u.id === userId);
+    
+    if (userIndex === -1) {
+      throw new Error('用户不存在');
+    }
+
+    users[userIndex].identity = identity;
+    saveStoredUsers(users);
+
+    // 如果更新的是当前登录用户，更新当前用户状态
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.id === userId) {
+      const updatedUser: User = {
+        ...currentUser,
+        identity: identity,
+      };
+      saveCurrentUser(updatedUser);
+      setAuthState((prev) => ({
+        ...prev,
+        user: updatedUser,
+      }));
+    }
+  }, []);
+
   const value: AuthContextType = {
     ...authState,
     login,
@@ -270,6 +302,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     logout,
     getAllUsers,
     auditUser,
+    updateUserIdentity,
     isAudited,
   };
 

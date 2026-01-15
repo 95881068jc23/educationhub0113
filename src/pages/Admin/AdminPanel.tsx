@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { StoredUser, AuditStatus } from '../../types/auth';
-import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2 } from 'lucide-react';
+import { StoredUser, AuditStatus, UserIdentity } from '../../types/auth';
+import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap } from 'lucide-react';
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
-  const { user, getAllUsers, auditUser } = useAuth();
+  const { user, getAllUsers, auditUser, updateUserIdentity } = useAuth();
   const [users, setUsers] = useState<StoredUser[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -23,10 +23,14 @@ export const AdminPanel: React.FC = () => {
   const loadUsers = (): void => {
     try {
       const allUsers = getAllUsers();
+      // 过滤掉管理员，只显示普通用户
+      const regularUsers = allUsers.filter((u) => u.role !== 'admin');
       // 按注册时间倒序排列
-      const sortedUsers = [...allUsers].sort((a, b) => 
-        new Date(b.createTime).getTime() - new Date(a.createTime).getTime()
-      );
+      const sortedUsers = [...regularUsers].sort((a, b) => {
+        const timeA = new Date(a.createTime || a.createdAt || 0).getTime();
+        const timeB = new Date(b.createTime || b.createdAt || 0).getTime();
+        return timeB - timeA;
+      });
       setUsers(sortedUsers);
     } catch (error) {
       console.error('加载用户列表失败:', error);
@@ -46,6 +50,22 @@ export const AdminPanel: React.FC = () => {
     } catch (error) {
       console.error('审核失败:', error);
       alert(error instanceof Error ? error.message : '审核失败，请稍后重试');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleUpdateIdentity = async (userId: string, identity: UserIdentity): Promise<void> => {
+    if (processingId) return;
+    
+    setProcessingId(userId);
+    try {
+      updateUserIdentity(userId, identity);
+      // 重新加载用户列表
+      loadUsers();
+    } catch (error) {
+      console.error('更新身份失败:', error);
+      alert(error instanceof Error ? error.message : '更新身份失败，请稍后重试');
     } finally {
       setProcessingId(null);
     }
@@ -90,6 +110,31 @@ export const AdminPanel: React.FC = () => {
       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
         <UserIcon className="w-3 h-3" />
         普通用户
+      </span>
+    );
+  };
+
+  const getIdentityBadge = (identity: UserIdentity): React.ReactElement => {
+    if (identity === 'consultant') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+          <UserCog className="w-3 h-3" />
+          顾问身份
+        </span>
+      );
+    }
+    if (identity === 'teacher') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+          <GraduationCap className="w-3 h-3" />
+          教师身份
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+        <UserIcon className="w-3 h-3" />
+        未分配
       </span>
     );
   };
@@ -184,7 +229,7 @@ export const AdminPanel: React.FC = () => {
                     用户信息
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                    角色
+                    身份
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     注册时间
@@ -223,12 +268,27 @@ export const AdminPanel: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {getRoleBadge(userItem.role)}
+                        <div className="flex flex-col gap-2">
+                          {getIdentityBadge(userItem.identity ?? null)}
+                          <select
+                            value={userItem.identity ?? ''}
+                            onChange={(e) => {
+                              const newIdentity = e.target.value === '' ? null : (e.target.value as UserIdentity);
+                              handleUpdateIdentity(userItem.id, newIdentity);
+                            }}
+                            disabled={processingId === userItem.id}
+                            className="text-xs px-2 py-1 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="">未分配</option>
+                            <option value="consultant">顾问身份</option>
+                            <option value="teacher">教师身份</option>
+                          </select>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-slate-900 flex items-center gap-1">
                           <Calendar className="w-4 h-4 text-slate-400" />
-                          {formatDate(userItem.createTime)}
+                          {formatDate(userItem.createTime || userItem.createdAt || '')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

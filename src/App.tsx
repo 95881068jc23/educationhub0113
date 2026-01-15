@@ -18,7 +18,10 @@ const SalesGeniusApp = React.lazy(() => import('./apps/sales-genius/App'));
 const TeachersGeniusApp = React.lazy(() => import('./apps/teachers-genius/App'));
 
 const LandingPage = () => {
-  const apps = [
+  const { user } = useAuth();
+  
+  // 根据用户身份过滤应用
+  const allApps = [
     {
       id: 'planner',
       name: 'Marvellous Planner',
@@ -26,7 +29,8 @@ const LandingPage = () => {
       description: 'Intelligent course planning for personalized learning paths.',
       icon: <BookOpen className="w-8 h-8 text-white" />,
       color: 'bg-emerald-600',
-      path: '/planner'
+      path: '/planner',
+      identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
     {
       id: 'cv-pro',
@@ -35,7 +39,8 @@ const LandingPage = () => {
       description: 'AI-powered resume optimization and career consulting.',
       icon: <FileText className="w-8 h-8 text-white" />,
       color: 'bg-blue-600',
-      path: '/cv-pro'
+      path: '/cv-pro',
+      identities: ['consultant', 'teacher'] as ('consultant' | 'teacher')[] // 顾问和教师都可以访问
     },
     {
       id: 'lesson-generator',
@@ -44,7 +49,8 @@ const LandingPage = () => {
       description: 'Automated lesson plan and material generation.',
       icon: <GraduationCap className="w-8 h-8 text-white" />,
       color: 'bg-purple-600',
-      path: '/lesson-generator'
+      path: '/lesson-generator',
+      identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     },
     {
       id: 'intl-scholar',
@@ -53,7 +59,8 @@ const LandingPage = () => {
       description: 'Comprehensive study abroad preparation and testing.',
       icon: <UserCheck className="w-8 h-8 text-white" />,
       color: 'bg-indigo-600',
-      path: '/intl-scholar'
+      path: '/intl-scholar',
+      identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
     {
       id: 'sales-genius',
@@ -62,7 +69,8 @@ const LandingPage = () => {
       description: 'AI sales assistant and training simulator.',
       icon: <Briefcase className="w-8 h-8 text-white" />,
       color: 'bg-orange-600',
-      path: '/sales-genius'
+      path: '/sales-genius',
+      identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
     {
       id: 'teachers-genius',
@@ -71,9 +79,15 @@ const LandingPage = () => {
       description: 'Professional development and teaching resources.',
       icon: <MessageSquare className="w-8 h-8 text-white" />,
       color: 'bg-teal-600',
-      path: '/teachers-genius'
+      path: '/teachers-genius',
+      identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     }
   ];
+
+  // 根据用户身份过滤应用
+  const apps = user && user.identity
+    ? allApps.filter((app) => app.identities.includes(user.identity as 'consultant' | 'teacher'))
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -88,8 +102,14 @@ const LandingPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
-          {apps.map((app) => (
+        {apps.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-slate-600 mb-4">您还没有被分配身份，请联系管理员</p>
+            <p className="text-sm text-slate-500">审核通过后，管理员会为您分配相应的身份权限</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
+            {apps.map((app) => (
             <Link 
               key={app.id} 
               to={app.path}
@@ -110,8 +130,9 @@ const LandingPage = () => {
                  <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </div>
             </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <footer className="mt-16 text-center text-gray-400 text-sm">
           <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
@@ -143,7 +164,7 @@ const App = () => {
         
         {/* Protected Routes - Admin Panel */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ProtectedRoute>
               <AdminPanel />

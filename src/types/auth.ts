@@ -17,6 +17,13 @@ export type AuditStatus = 0 | 1 | 2;
  */
 export type UserRole = 'user' | 'admin';
 
+/**
+ * 用户身份枚举
+ * consultant = 顾问身份（课程规划系统/履历优化大师/国际智学/销售百宝箱）
+ * teacher = 教师身份（履历优化大师/备课生成器/教师百宝箱）
+ */
+export type UserIdentity = 'consultant' | 'teacher' | null;
+
 export interface User {
   id: string;
   username: string;
@@ -24,6 +31,7 @@ export interface User {
   name: string;
   auditStatus: AuditStatus;
   role: UserRole;
+  identity: UserIdentity; // 用户身份：顾问或教师
   createTime: string;
   createdAt: string; // 保留向后兼容
 }
@@ -57,5 +65,6 @@ export interface AuthContextType extends AuthState {
   logout: () => void;
   getAllUsers: () => StoredUser[];
   auditUser: (userId: string, status: AuditStatus) => void;
+  updateUserIdentity: (userId: string, identity: UserIdentity) => void;
   isAudited: () => boolean;
 }
