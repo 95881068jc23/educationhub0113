@@ -20,9 +20,9 @@ export const AdminPanel: React.FC = () => {
     loadUsers();
   }, [user, navigate]);
 
-  const loadUsers = (): void => {
+  const loadUsers = async (): Promise<void> => {
     try {
-      const allUsers = getAllUsers();
+      const allUsers = await getAllUsers();
       // 过滤掉管理员，只显示普通用户
       const regularUsers = allUsers.filter((u) => u.role !== 'admin');
       // 按注册时间倒序排列
@@ -44,9 +44,9 @@ export const AdminPanel: React.FC = () => {
     
     setProcessingId(userId);
     try {
-      auditUser(userId, status);
+      await auditUser(userId, status);
       // 重新加载用户列表
-      loadUsers();
+      await loadUsers();
     } catch (error) {
       console.error('审核失败:', error);
       alert(error instanceof Error ? error.message : '审核失败，请稍后重试');
@@ -60,9 +60,9 @@ export const AdminPanel: React.FC = () => {
     
     setProcessingId(userId);
     try {
-      updateUserIdentity(userId, identity);
+      await updateUserIdentity(userId, identity);
       // 重新加载用户列表
-      loadUsers();
+      await loadUsers();
     } catch (error) {
       console.error('更新身份失败:', error);
       alert(error instanceof Error ? error.message : '更新身份失败，请稍后重试');

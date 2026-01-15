@@ -196,7 +196,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     users.push(newUser);
-    saveStoredUsers(users);
+    await saveStoredUsers(users);
 
     // 自动登录
     const { password, ...userWithoutPassword } = newUser;
@@ -232,8 +232,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   /**
    * 审核用户（管理员功能）
    */
-  const auditUser = useCallback((userId: string, status: AuditStatus): void => {
-    const users = getStoredUsers();
+  const auditUser = useCallback(async (userId: string, status: AuditStatus): Promise<void> => {
+    const users = await getStoredUsers();
     const userIndex = users.findIndex((u) => u.id === userId);
     
     if (userIndex === -1) {
@@ -241,7 +241,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     users[userIndex].auditStatus = status;
-    saveStoredUsers(users);
+    await saveStoredUsers(users);
 
     // 如果审核的是当前登录用户，更新当前用户状态
     const currentUser = getCurrentUser();
@@ -269,8 +269,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   /**
    * 更新用户身份（管理员功能）
    */
-  const updateUserIdentity = useCallback((userId: string, identity: UserIdentity): void => {
-    const users = getStoredUsers();
+  const updateUserIdentity = useCallback(async (userId: string, identity: UserIdentity): Promise<void> => {
+    const users = await getStoredUsers();
     const userIndex = users.findIndex((u) => u.id === userId);
     
     if (userIndex === -1) {
@@ -278,7 +278,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     users[userIndex].identity = identity;
-    saveStoredUsers(users);
+    await saveStoredUsers(users);
 
     // 如果更新的是当前登录用户，更新当前用户状态
     const currentUser = getCurrentUser();
