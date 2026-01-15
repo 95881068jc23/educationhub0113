@@ -1,9 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-// 简单的内存存储（生产环境应使用数据库）
-// 注意：Vercel 无服务器函数是 stateless 的，每次调用可能在不同的实例上
-// 这里使用一个简单的存储方案，实际生产环境应使用 Vercel KV、数据库等
-
 interface UserData {
   id: string;
   username: string;
@@ -17,8 +13,13 @@ interface UserData {
   createdAt: string;
 }
 
-// 临时存储（仅用于演示，实际应使用持久化存储）
-let usersStorage: UserData[] = [];
+// 使用全局变量存储（在 Vercel 环境中，这个变量会在同一实例中保持）
+// 注意：Vercel 无服务器函数是 stateless 的，不同请求可能在不同实例上
+// 为了真正的持久化，应该使用 Vercel KV、数据库或其他持久化存储
+// 这里提供一个基础实现，实际生产环境应使用持久化存储
+
+// 使用 Map 存储用户数据，key 是用户 ID
+const usersMap = new Map<string, UserData>();
 
 export default async function handler(
   request: VercelRequest,
@@ -36,7 +37,8 @@ export default async function handler(
   try {
     if (request.method === 'GET') {
       // 获取所有用户
-      return response.status(200).json({ users: usersStorage });
+      const allUsers = Array.from(usersMap.values());
+      return response.status(200).json({ users: allUsers });
     }
 
     if (request.method === 'POST') {
@@ -47,15 +49,8 @@ export default async function handler(
         return response.status(400).json({ error: '用户ID和邮箱是必需的' });
       }
 
-      const existingIndex = usersStorage.findIndex((u) => u.id === userData.id);
-      
-      if (existingIndex >= 0) {
-        // 更新现有用户
-        usersStorage[existingIndex] = userData;
-      } else {
-        // 创建新用户
-        usersStorage.push(userData);
-      }
+      // 存储或更新用户
+      usersMap.set(userData.id, userData);
 
       return response.status(200).json({ success: true, user: userData });
     }
@@ -64,22 +59,27 @@ export default async function handler(
       // 更新用户（部分更新）
       const { userId, updates } = request.body as { userId: string; updates: Partial<UserData> };
       
-      const userIndex = usersStorage.findIndex((u) => u.id === userId);
+      const existingUser = usersMap.get(userId);
       
-      if (userIndex === -1) {
+      if (!existingUser) {
         return response.status(404).json({ error: '用户不存在' });
       }
 
-      usersStorage[userIndex] = { ...usersStorage[userIndex], ...updates };
+      const updatedUser = { ...existingUser, ...updates };
+      usersMap.set(userId, updatedUser);
       
-      return response.status(200).json({ success: true, user: usersStorage[userIndex] });
+      return response.status(200).json({ success: true, user: updatedUser });
     }
 
     if (request.method === 'DELETE') {
       // 删除用户
       const { userId } = request.body as { userId: string };
       
-      usersStorage = usersStorage.filter((u) => u.id !== userId);
+      if (!usersMap.has(userId)) {
+        return response.status(404).json({ error: '用户不存在' });
+      }
+      
+      usersMap.delete(userId);
       
       return response.status(200).json({ success: true });
     }

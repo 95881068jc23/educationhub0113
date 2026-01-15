@@ -7,9 +7,25 @@ const STORAGE_KEY = 'marvel_education_users';
 const CURRENT_USER_KEY = 'marvel_education_current_user';
 
 /**
- * 从 localStorage 获取所有用户
+ * 从服务器和 localStorage 获取所有用户（混合方案）
  */
-const getStoredUsers = (): StoredUser[] => {
+const getStoredUsers = async (): Promise<StoredUser[]> => {
+  try {
+    // 优先从服务器获取
+    const response = await fetch('/api/users');
+    if (response.ok) {
+      const data = await response.json();
+      if (data.users && Array.isArray(data.users) && data.users.length > 0) {
+        // 同步到本地存储作为备份
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data.users));
+        return data.users as StoredUser[];
+      }
+    }
+  } catch (error) {
+    console.warn('从服务器获取用户失败，使用本地存储:', error);
+  }
+  
+  // 如果服务器获取失败，使用本地存储
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -19,11 +35,30 @@ const getStoredUsers = (): StoredUser[] => {
 };
 
 /**
- * 保存用户到 localStorage
+ * 保存用户到服务器和 localStorage（混合方案）
  */
-const saveStoredUsers = (users: StoredUser[]): void => {
+const saveStoredUsers = async (users: StoredUser[]): Promise<void> => {
   try {
+    // 先保存到本地存储（立即更新）
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    
+    // 然后同步到服务器（异步，不阻塞）
+    try {
+      // 批量同步所有用户到服务器
+      await Promise.all(
+        users.map((user) =>
+          fetch('/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+          }).catch((err) => {
+            console.warn('同步用户到服务器失败:', err);
+          })
+        )
+      );
+    } catch (error) {
+      console.warn('同步到服务器失败，但已保存到本地:', error);
+    }
   } catch (error) {
     console.error('Failed to save users:', error);
   }
@@ -65,64 +100,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // 初始化：从 localStorage 恢复登录状态
   useEffect(() => {
-    // 自动创建超级管理员账号
-    const users = getStoredUsers();
-    const adminExists = users.some((u) => u.role === 'admin');
-    if (!adminExists) {
-      const adminUser: StoredUser = {
-        id: 'admin_10086',
-        username: '超级管理员',
-        email: 'admin@admin.com',
-        password: 'admin123',
-        auditStatus: 1,
-        role: 'admin',
-        identity: null, // 管理员不需要身份
-        createTime: new Date().toLocaleString(),
-        name: '超级管理员',
-        createdAt: new Date().toISOString(),
-      };
-      users.push(adminUser);
-      saveStoredUsers(users);
-    }
-
-    // 原有逻辑：从 localStorage 恢复登录状态
-    const currentUser = getCurrentUser();
-    // 如果用户数据缺少新字段，进行兼容性处理
-    if (currentUser) {
-      const updatedUsers = getStoredUsers();
-      const fullUser = updatedUsers.find((u) => u.id === currentUser.id);
-      if (fullUser) {
-        const { password, ...userWithoutPassword } = fullUser;
-        const updatedUser: User = {
-          ...userWithoutPassword,
-          // 兼容旧数据：如果没有新字段，使用默认值
-          username: (userWithoutPassword as any).username || currentUser.email.split('@')[0],
-          auditStatus: (userWithoutPassword as any).auditStatus ?? 0,
-          role: (userWithoutPassword as any).role || 'user',
-          identity: (userWithoutPassword as any).identity ?? null,
-          createTime: (userWithoutPassword as any).createTime || userWithoutPassword.createdAt || new Date().toISOString(),
+    const initAuth = async (): Promise<void> => {
+      // 自动创建超级管理员账号
+      const users = await getStoredUsers();
+      const adminExists = users.some((u) => u.role === 'admin');
+      if (!adminExists) {
+        const adminUser: StoredUser = {
+          id: 'admin_10086',
+          username: '超级管理员',
+          email: 'admin@admin.com',
+          password: 'admin123',
+          auditStatus: 1,
+          role: 'admin',
+          identity: null, // 管理员不需要身份
+          createTime: new Date().toLocaleString(),
+          name: '超级管理员',
+          createdAt: new Date().toISOString(),
         };
-        saveCurrentUser(updatedUser);
-        setAuthState({
-          user: updatedUser,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-        return;
+        users.push(adminUser);
+        await saveStoredUsers(users);
       }
-    }
-    setAuthState({
-      user: currentUser,
-      isAuthenticated: !!currentUser,
-      isLoading: false,
-    });
+
+      // 原有逻辑：从 localStorage 恢复登录状态
+      const currentUser = getCurrentUser();
+      // 如果用户数据缺少新字段，进行兼容性处理
+      if (currentUser) {
+        const updatedUsers = await getStoredUsers();
+        const fullUser = updatedUsers.find((u) => u.id === currentUser.id);
+        if (fullUser) {
+          const { password, ...userWithoutPassword } = fullUser;
+          const updatedUser: User = {
+            ...userWithoutPassword,
+            // 兼容旧数据：如果没有新字段，使用默认值
+            username: (userWithoutPassword as any).username || currentUser.email.split('@')[0],
+            auditStatus: (userWithoutPassword as any).auditStatus ?? 0,
+            role: (userWithoutPassword as any).role || 'user',
+            identity: (userWithoutPassword as any).identity ?? null,
+            createTime: (userWithoutPassword as any).createTime || (userWithoutPassword as any).createdAt || new Date().toISOString(),
+          };
+          saveCurrentUser(updatedUser);
+          setAuthState({
+            user: updatedUser,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return;
+        }
+      }
+      setAuthState({
+        user: currentUser,
+        isAuthenticated: !!currentUser,
+        isLoading: false,
+      });
+    };
+    
+    initAuth();
   }, []);
 
   /**
    * 登录
    */
   const login = useCallback(async (credentials: LoginCredentials): Promise<void> => {
-    const users = getStoredUsers();
+    const users = await getStoredUsers();
     const user = users.find(
       (u) => u.email === credentials.email && u.password === credentials.password
     );
@@ -163,7 +202,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error('邮箱格式不正确');
     }
 
-    const users = getStoredUsers();
+    const users = await getStoredUsers();
 
     // 检查用户名是否已存在
     if (users.some((u) => u.username === credentials.username)) {
@@ -225,8 +264,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   /**
    * 获取所有用户（管理员功能）
    */
-  const getAllUsers = useCallback((): StoredUser[] => {
-    return getStoredUsers();
+  const getAllUsers = useCallback(async (): Promise<StoredUser[]> => {
+    return await getStoredUsers();
   }, []);
 
   /**
