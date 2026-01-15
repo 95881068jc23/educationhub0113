@@ -66,39 +66,24 @@ export default async function handler(
           const processedParts = await Promise.all(item.parts.map(async (part: any) => {
             // 检查是否是 fileData 格式（包含 fileUri）
             if (part.fileData && part.fileData.fileUri) {
-              try {
-                // 从 Supabase Storage URL 下载文件
-                const fileResponse = await fetch(part.fileData.fileUri);
-                if (!fileResponse.ok) {
-                  throw new Error(`下载文件失败: ${fileResponse.status}`);
-                }
-                const fileBlob = await fileResponse.blob();
-                
-                // 检查文件大小（Base64 编码后约为原文件的 1.33 倍）
-                // Vercel Edge Function 限制约为 4.5MB，所以原始文件应该小于约 3.4MB
-                const fileSizeMB = fileBlob.size / (1024 * 1024);
-                const estimatedBase64SizeMB = fileSizeMB * 1.33;
-                
-                if (estimatedBase64SizeMB > 4.5) {
-                  throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
-                }
-                
-                const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
-                const base64Data = fileBuffer.toString('base64');
-                
-                // 检测 MIME 类型
-                const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
-                
-                return {
-                  inlineData: {
-                    mimeType: mimeType,
-                    data: base64Data
-                  }
-                };
-              } catch (error) {
-                console.error('处理文件 URL 失败:', error);
-                throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+              // 方案 A：直接传递 URL 给 Gemini API，不下载文件
+              // Gemini API 支持从外部 URL 读取文件（最大 100MB）
+              // 这样可以绕过 Vercel Edge Function 的 4.5MB 限制
+              const fileUrl = part.fileData.fileUri;
+              
+              // 检查 URL 格式（Supabase Storage URL 或公开 URL）
+              if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+                throw new Error(`无效的文件 URL 格式: ${fileUrl}`);
               }
+              
+              // 直接传递 URL，让 Gemini API 自己从 URL 下载文件
+              // 注意：Gemini API 需要能够访问这个 URL（公开或签名 URL）
+              return {
+                fileData: {
+                  fileUri: fileUrl,
+                  mimeType: part.fileData.mimeType || 'audio/wav',
+                }
+              };
             }
             return part;
           }));
@@ -116,35 +101,19 @@ export default async function handler(
           // { parts: [...] } 格式，需要处理 fileData
           const processedParts = await Promise.all(item.parts.map(async (part: any) => {
             if (part.fileData && part.fileData.fileUri) {
-              try {
-                const fileResponse = await fetch(part.fileData.fileUri);
-                if (!fileResponse.ok) {
-                  throw new Error(`下载文件失败: ${fileResponse.status}`);
-                }
-                const fileBlob = await fileResponse.blob();
-                
-                // 检查文件大小
-                const fileSizeMB = fileBlob.size / (1024 * 1024);
-                const estimatedBase64SizeMB = fileSizeMB * 1.33;
-                
-                if (estimatedBase64SizeMB > 4.5) {
-                  throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
-                }
-                
-                const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
-                const base64Data = fileBuffer.toString('base64');
-                const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
-                
-                return {
-                  inlineData: {
-                    mimeType: mimeType,
-                    data: base64Data
-                  }
-                };
-              } catch (error) {
-                console.error('处理文件 URL 失败:', error);
-                throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+              // 方案 A：直接传递 URL 给 Gemini API
+              const fileUrl = part.fileData.fileUri;
+              
+              if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+                throw new Error(`无效的文件 URL 格式: ${fileUrl}`);
               }
+              
+              return {
+                fileData: {
+                  fileUri: fileUrl,
+                  mimeType: part.fileData.mimeType || 'audio/wav',
+                }
+              };
             }
             return part;
           }));
@@ -164,35 +133,19 @@ export default async function handler(
       // 对象格式：{ parts: [...] }，需要处理 fileData
       const processedParts = await Promise.all(contents.parts.map(async (part: any) => {
         if (part.fileData && part.fileData.fileUri) {
-          try {
-            const fileResponse = await fetch(part.fileData.fileUri);
-            if (!fileResponse.ok) {
-              throw new Error(`下载文件失败: ${fileResponse.status}`);
-            }
-            const fileBlob = await fileResponse.blob();
-            
-            // 检查文件大小
-            const fileSizeMB = fileBlob.size / (1024 * 1024);
-            const estimatedBase64SizeMB = fileSizeMB * 1.33;
-            
-            if (estimatedBase64SizeMB > 4.5) {
-              throw new Error(`文件太大（${fileSizeMB.toFixed(2)}MB）。Base64 编码后约为 ${estimatedBase64SizeMB.toFixed(2)}MB，超过了 Vercel Edge Function 的 4.5MB 限制。请使用小于 3.4MB 的文件。`);
-            }
-            
-            const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
-            const base64Data = fileBuffer.toString('base64');
-            const mimeType = part.fileData.mimeType || fileBlob.type || 'audio/wav';
-            
-            return {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data
-              }
-            };
-          } catch (error) {
-            console.error('处理文件 URL 失败:', error);
-            throw new Error(`无法从 URL 下载文件: ${error instanceof Error ? error.message : '未知错误'}`);
+          // 方案 A：直接传递 URL 给 Gemini API
+          const fileUrl = part.fileData.fileUri;
+          
+          if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+            throw new Error(`无效的文件 URL 格式: ${fileUrl}`);
           }
+          
+          return {
+            fileData: {
+              fileUri: fileUrl,
+              mimeType: part.fileData.mimeType || 'audio/wav',
+            }
+          };
         }
         return part;
       }));
@@ -261,6 +214,13 @@ export default async function handler(
 
     // 调用 Gemini API
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    
+    // 记录请求体大小（用于调试）
+    const requestBodySize = JSON.stringify(requestBody).length;
+    const requestBodySizeMB = requestBodySize / (1024 * 1024);
+    if (requestBodySizeMB > 4) {
+      console.warn(`警告：请求体大小为 ${requestBodySizeMB.toFixed(2)}MB，接近 Vercel 限制`);
+    }
     
     const geminiResponse = await fetch(geminiUrl, {
       method: 'POST',
