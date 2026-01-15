@@ -137,7 +137,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             username: (userWithoutPassword as any).username || currentUser.email.split('@')[0],
             auditStatus: (userWithoutPassword as any).auditStatus ?? 0,
             role: (userWithoutPassword as any).role || 'user',
-            identity: (userWithoutPassword as any).identity ?? null,
+            identity: (() => {
+            const identity = (userWithoutPassword as any).identity;
+            // 兼容旧数据：如果是字符串，转换为数组
+            if (typeof identity === 'string' && identity !== null && identity !== '') {
+              return [identity as 'consultant' | 'teacher'];
+            }
+            // 如果是数组或null，直接返回
+            if (Array.isArray(identity)) {
+              return identity as ('consultant' | 'teacher')[];
+            }
+            return null;
+          })(),
             createTime: (userWithoutPassword as any).createTime || (userWithoutPassword as any).createdAt || new Date().toISOString(),
           };
           saveCurrentUser(updatedUser);
@@ -174,7 +185,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // 移除密码字段
     const { password, ...userWithoutPassword } = user;
-    const currentUser: User = userWithoutPassword;
+    // 兼容旧数据：如果是字符串身份，转换为数组
+    let identity: UserIdentity = userWithoutPassword.identity ?? null;
+    if (identity && typeof identity === 'string') {
+      identity = [identity as 'consultant' | 'teacher'];
+    }
+    const currentUser: User = {
+      ...userWithoutPassword,
+      identity,
+    };
 
     saveCurrentUser(currentUser);
     setAuthState({
@@ -308,6 +327,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [authState.user]);
 
   /**
+   * 判断当前用户是否拥有指定身份
+   */
+  const hasIdentity = useCallback((identity: 'consultant' | 'teacher'): boolean => {
+    const currentUser = authState.user;
+    if (!currentUser || !currentUser.identity) {
+      return false;
+    }
+    // 兼容旧数据：如果是字符串，转换为数组
+    if (typeof currentUser.identity === 'string') {
+      return currentUser.identity === identity;
+    }
+    // 新数据：数组形式
+    return Array.isArray(currentUser.identity) && currentUser.identity.includes(identity);
+  }, [authState.user]);
+
+  /**
    * 更新用户身份（管理员功能）
    */
   const updateUserIdentity = useCallback(async (userId: string, identity: UserIdentity): Promise<void> => {
@@ -345,6 +380,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     auditUser,
     updateUserIdentity,
     isAudited,
+    hasIdentity,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -7,7 +7,9 @@ import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
   const { user, getAllUsers, auditUser, updateUserIdentity } = useAuth();
-  const [users, setUsers] = useState<StoredUser[]>([]);
+  const [allUsers, setAllUsers] = useState<StoredUser[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<StoredUser[]>([]);
+  const [filterStatus, setFilterStatus] = useState<AuditStatus | 'all'>('all');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -22,22 +24,37 @@ export const AdminPanel: React.FC = () => {
 
   const loadUsers = async (): Promise<void> => {
     try {
-      const allUsers = await getAllUsers();
+      const fetchedUsers = await getAllUsers();
       // 过滤掉管理员，只显示普通用户
-      const regularUsers = allUsers.filter((u) => u.role !== 'admin');
+      const regularUsers = fetchedUsers.filter((u) => u.role !== 'admin');
       // 按注册时间倒序排列
       const sortedUsers = [...regularUsers].sort((a, b) => {
         const timeA = new Date(a.createTime || a.createdAt || 0).getTime();
         const timeB = new Date(b.createTime || b.createdAt || 0).getTime();
         return timeB - timeA;
       });
-      setUsers(sortedUsers);
+      setAllUsers(sortedUsers);
+      applyFilter(sortedUsers, filterStatus);
     } catch (error) {
       console.error('加载用户列表失败:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const applyFilter = (users: StoredUser[], status: AuditStatus | 'all'): void => {
+    if (status === 'all') {
+      setFilteredUsers(users);
+    } else {
+      setFilteredUsers(users.filter((u) => u.auditStatus === status));
+    }
+  };
+
+  // 当过滤状态改变时，重新应用过滤
+  useEffect(() => {
+    applyFilter(allUsers, filterStatus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterStatus, allUsers]);
 
   const handleAudit = async (userId: string, status: AuditStatus): Promise<void> => {
     if (processingId) return; // 防止重复点击
@@ -114,30 +131,6 @@ export const AdminPanel: React.FC = () => {
     );
   };
 
-  const getIdentityBadge = (identity: UserIdentity): React.ReactElement => {
-    if (identity === 'consultant') {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-          <UserCog className="w-3 h-3" />
-          顾问身份
-        </span>
-      );
-    }
-    if (identity === 'teacher') {
-      return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-          <GraduationCap className="w-3 h-3" />
-          教师身份
-        </span>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-        <UserIcon className="w-3 h-3" />
-        未分配
-      </span>
-    );
-  };
 
   const formatDate = (dateString: string): string => {
     try {
@@ -192,34 +185,69 @@ export const AdminPanel: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+          <button
+            onClick={() => setFilterStatus('all')}
+            className={`bg-white rounded-lg shadow-sm border p-4 text-left transition-all hover:shadow-md cursor-pointer ${
+              filterStatus === 'all' ? 'border-brand-500 ring-2 ring-brand-200' : 'border-slate-200'
+            }`}
+          >
             <div className="text-sm text-slate-600 mb-1">总用户数</div>
-            <div className="text-2xl font-bold text-slate-900">{users.length}</div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+            <div className="text-2xl font-bold text-slate-900">{allUsers.length}</div>
+          </button>
+          <button
+            onClick={() => setFilterStatus(0)}
+            className={`bg-white rounded-lg shadow-sm border p-4 text-left transition-all hover:shadow-md cursor-pointer ${
+              filterStatus === 0 ? 'border-yellow-500 ring-2 ring-yellow-200' : 'border-slate-200'
+            }`}
+          >
             <div className="text-sm text-slate-600 mb-1">待审核</div>
             <div className="text-2xl font-bold text-yellow-600">
-              {users.filter((u) => u.auditStatus === 0).length}
+              {allUsers.filter((u) => u.auditStatus === 0).length}
             </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+          </button>
+          <button
+            onClick={() => setFilterStatus(1)}
+            className={`bg-white rounded-lg shadow-sm border p-4 text-left transition-all hover:shadow-md cursor-pointer ${
+              filterStatus === 1 ? 'border-green-500 ring-2 ring-green-200' : 'border-slate-200'
+            }`}
+          >
             <div className="text-sm text-slate-600 mb-1">已通过</div>
             <div className="text-2xl font-bold text-green-600">
-              {users.filter((u) => u.auditStatus === 1).length}
+              {allUsers.filter((u) => u.auditStatus === 1).length}
             </div>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+          </button>
+          <button
+            onClick={() => setFilterStatus(2)}
+            className={`bg-white rounded-lg shadow-sm border p-4 text-left transition-all hover:shadow-md cursor-pointer ${
+              filterStatus === 2 ? 'border-red-500 ring-2 ring-red-200' : 'border-slate-200'
+            }`}
+          >
             <div className="text-sm text-slate-600 mb-1">已拒绝</div>
             <div className="text-2xl font-bold text-red-600">
-              {users.filter((u) => u.auditStatus === 2).length}
+              {allUsers.filter((u) => u.auditStatus === 2).length}
             </div>
-          </div>
+          </button>
         </div>
 
         {/* User List */}
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">用户列表</h2>
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">
+              用户列表
+              {filterStatus !== 'all' && (
+                <span className="ml-2 text-sm font-normal text-slate-500">
+                  ({filteredUsers.length} 个用户)
+                </span>
+              )}
+            </h2>
+            {filterStatus !== 'all' && (
+              <button
+                onClick={() => setFilterStatus('all')}
+                className="text-sm text-slate-600 hover:text-slate-900 font-medium"
+              >
+                清除筛选
+              </button>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -243,14 +271,14 @@ export const AdminPanel: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
-                {users.length === 0 ? (
+                {filteredUsers.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
-                      暂无用户数据
+                      {allUsers.length === 0 ? '暂无用户数据' : `没有${filterStatus === 0 ? '待审核' : filterStatus === 1 ? '已通过' : '已拒绝'}的用户`}
                     </td>
                   </tr>
                 ) : (
-                  users.map((userItem) => (
+                  filteredUsers.map((userItem) => (
                     <tr key={userItem.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
@@ -269,20 +297,90 @@ export const AdminPanel: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex flex-col gap-2">
-                          {getIdentityBadge(userItem.identity ?? null)}
-                          <select
-                            value={userItem.identity ?? ''}
-                            onChange={(e) => {
-                              const newIdentity = e.target.value === '' ? null : (e.target.value as UserIdentity);
-                              handleUpdateIdentity(userItem.id, newIdentity);
-                            }}
-                            disabled={processingId === userItem.id}
-                            className="text-xs px-2 py-1 border border-slate-300 rounded focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <option value="">未分配</option>
-                            <option value="consultant">顾问身份</option>
-                            <option value="teacher">教师身份</option>
-                          </select>
+                          <div className="flex flex-wrap gap-1">
+                            {getIdentityBadges(userItem.identity ?? null)}
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-xs text-slate-600 font-medium">分配身份：</label>
+                            <div className="flex flex-col gap-1">
+                              <label className="flex items-center gap-2 text-xs">
+                                <input
+                                  type="checkbox"
+                                  checked={(() => {
+                                    const id = userItem.identity;
+                                    if (!id) return false;
+                                    if (typeof id === 'string') return id === 'consultant';
+                                    return Array.isArray(id) && id.includes('consultant');
+                                  })()}
+                                  onChange={(e) => {
+                                    const currentIdentity = userItem.identity;
+                                    let identities: ('consultant' | 'teacher')[] = [];
+                                    
+                                    // 兼容旧数据
+                                    if (currentIdentity) {
+                                      if (typeof currentIdentity === 'string') {
+                                        identities = [currentIdentity];
+                                      } else if (Array.isArray(currentIdentity)) {
+                                        identities = [...currentIdentity];
+                                      }
+                                    }
+                                    
+                                    if (e.target.checked) {
+                                      if (!identities.includes('consultant')) {
+                                        identities.push('consultant');
+                                      }
+                                    } else {
+                                      identities = identities.filter((id) => id !== 'consultant');
+                                    }
+                                    
+                                    const newIdentity: UserIdentity = identities.length > 0 ? identities : null;
+                                    handleUpdateIdentity(userItem.id, newIdentity);
+                                  }}
+                                  disabled={processingId === userItem.id}
+                                  className="w-3 h-3 text-brand-600 rounded focus:ring-brand-500 disabled:opacity-50"
+                                />
+                                <span className="text-slate-700">顾问身份</span>
+                              </label>
+                              <label className="flex items-center gap-2 text-xs">
+                                <input
+                                  type="checkbox"
+                                  checked={(() => {
+                                    const id = userItem.identity;
+                                    if (!id) return false;
+                                    if (typeof id === 'string') return id === 'teacher';
+                                    return Array.isArray(id) && id.includes('teacher');
+                                  })()}
+                                  onChange={(e) => {
+                                    const currentIdentity = userItem.identity;
+                                    let identities: ('consultant' | 'teacher')[] = [];
+                                    
+                                    // 兼容旧数据
+                                    if (currentIdentity) {
+                                      if (typeof currentIdentity === 'string') {
+                                        identities = [currentIdentity];
+                                      } else if (Array.isArray(currentIdentity)) {
+                                        identities = [...currentIdentity];
+                                      }
+                                    }
+                                    
+                                    if (e.target.checked) {
+                                      if (!identities.includes('teacher')) {
+                                        identities.push('teacher');
+                                      }
+                                    } else {
+                                      identities = identities.filter((id) => id !== 'teacher');
+                                    }
+                                    
+                                    const newIdentity: UserIdentity = identities.length > 0 ? identities : null;
+                                    handleUpdateIdentity(userItem.id, newIdentity);
+                                  }}
+                                  disabled={processingId === userItem.id}
+                                  className="w-3 h-3 text-brand-600 rounded focus:ring-brand-500 disabled:opacity-50"
+                                />
+                                <span className="text-slate-700">教师身份</span>
+                              </label>
+                            </div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

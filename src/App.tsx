@@ -85,9 +85,20 @@ const LandingPage = () => {
     }
   ];
 
-  // 根据用户身份过滤应用
+  // 根据用户身份过滤应用（支持多选身份）
   const apps = user && user.identity
-    ? allApps.filter((app) => app.identities.includes(user.identity as 'consultant' | 'teacher'))
+    ? allApps.filter((app) => {
+        // 兼容旧数据：如果是字符串，转换为数组
+        let userIdentities: ('consultant' | 'teacher')[] = [];
+        if (typeof user.identity === 'string') {
+          userIdentities = [user.identity];
+        } else if (Array.isArray(user.identity)) {
+          userIdentities = user.identity;
+        }
+        
+        // 如果用户拥有该应用所需的任一身份，就显示该应用
+        return app.identities.some((requiredId) => userIdentities.includes(requiredId));
+      })
     : [];
 
   return (
