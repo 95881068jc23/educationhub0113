@@ -201,6 +201,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated: true,
       isLoading: false,
     });
+
+    // 记录登录日志
+    try {
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          actionType: 'login',
+          actionDetails: { email: credentials.email },
+        }),
+      });
+    } catch (error) {
+      console.error('记录登录日志失败:', error);
+    }
   }, []);
 
   /**
@@ -268,6 +283,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isAuthenticated: true,
       isLoading: false,
     });
+
+    // 记录注册日志
+    try {
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          actionType: 'register',
+          actionDetails: { 
+            username: credentials.username,
+            email: credentials.email,
+          },
+        }),
+      });
+    } catch (error) {
+      console.error('记录注册日志失败:', error);
+    }
   }, []);
 
   /**
