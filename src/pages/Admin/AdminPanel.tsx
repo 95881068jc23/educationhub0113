@@ -131,6 +131,46 @@ export const AdminPanel: React.FC = () => {
     );
   };
 
+  const getIdentityBadges = (identity: UserIdentity): React.ReactElement[] => {
+    // 兼容旧数据：如果是字符串，转换为数组
+    let identities: ('consultant' | 'teacher')[] = [];
+    if (identity) {
+      if (typeof identity === 'string') {
+        identities = [identity];
+      } else if (Array.isArray(identity)) {
+        identities = identity;
+      }
+    }
+
+    if (identities.length === 0) {
+      return [
+        <span key="none" className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+          <UserIcon className="w-3 h-3" />
+          未分配
+        </span>
+      ];
+    }
+
+    return identities.map((id) => {
+      if (id === 'consultant') {
+        return (
+          <span key="consultant" className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+            <UserCog className="w-3 h-3" />
+            顾问身份
+          </span>
+        );
+      }
+      if (id === 'teacher') {
+        return (
+          <span key="teacher" className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+            <GraduationCap className="w-3 h-3" />
+            教师身份
+          </span>
+        );
+      }
+      return null;
+    }).filter(Boolean) as React.ReactElement[];
+  };
 
   const formatDate = (dateString: string): string => {
     try {
