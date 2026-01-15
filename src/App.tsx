@@ -8,6 +8,7 @@ import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { Navbar } from './components/Navbar';
 import { AdminPanel } from './pages/Admin/AdminPanel';
+import { useAuth } from './contexts/AuthContext';
 
 // Placeholders for Apps (We will implement these later)
 const PlannerApp = React.lazy(() => import('./apps/planner/App'));
