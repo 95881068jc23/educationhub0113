@@ -104,19 +104,31 @@ export default async function handler(
       });
     }
 
-    // MiniMax 返回的音频数据（Base64 编码）
+    // MiniMax 返回的音频数据
     const audioData = await minimaxResponse.json();
     
-    // 检查响应格式
-    if (!audioData.audio || !audioData.audio.data) {
+    // 检查响应格式（根据 MiniMax API 文档，响应可能包含 audio 字段或直接是 Base64）
+    let audioBase64: string;
+    
+    if (audioData.audio && audioData.audio.data) {
+      // 格式：{ audio: { data: "base64..." } }
+      audioBase64 = audioData.audio.data;
+    } else if (audioData.data) {
+      // 格式：{ data: "base64..." }
+      audioBase64 = audioData.data;
+    } else if (typeof audioData === 'string') {
+      // 直接返回 Base64 字符串
+      audioBase64 = audioData;
+    } else {
+      console.error('MiniMax API 响应格式:', JSON.stringify(audioData));
       return response.status(500).json({ 
-        error: 'MiniMax API 返回格式不正确' 
+        error: 'MiniMax API 返回格式不正确，请检查 API 响应' 
       });
     }
 
     // 返回 Base64 编码的音频数据
     return response.status(200).json({
-      audioBase64: audioData.audio.data,
+      audioBase64: audioBase64,
       format: format,
       sampleRate: sampleRate,
     });
