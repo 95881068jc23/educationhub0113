@@ -56,8 +56,25 @@ export const AdminPanel: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus, allUsers]);
 
+  // 检查用户是否已分配身份
+  const hasIdentityAssigned = (userIdentity: UserIdentity): boolean => {
+    if (!userIdentity) return false;
+    if (typeof userIdentity === 'string') return true;
+    if (Array.isArray(userIdentity)) return userIdentity.length > 0;
+    return false;
+  };
+
   const handleAudit = async (userId: string, status: AuditStatus): Promise<void> => {
     if (processingId) return; // 防止重复点击
+    
+    // 如果是要通过审核（status === 1），必须先检查是否已分配身份
+    if (status === 1) {
+      const targetUser = allUsers.find((u) => u.id === userId);
+      if (targetUser && !hasIdentityAssigned(targetUser.identity ?? null)) {
+        alert('请先为用户分配身份（顾问身份或教师身份），然后才能通过审核。');
+        return;
+      }
+    }
     
     setProcessingId(userId);
     try {
