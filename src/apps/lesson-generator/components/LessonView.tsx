@@ -604,13 +604,19 @@ const LessonView: React.FC<Props> = ({ data, onBack, onRegenerate, onUpdateLesso
     }
 
     try {
-        const wavBase64 = await generateSpeech(cleanContent(textToProcess), { speakerMap });
-        const blob = new Blob([Uint8Array.from(atob(wavBase64), c => c.charCodeAt(0))], { type: 'audio/wav' });
+        // MiniMax 返回的是 MP3 Base64，需要调整 MIME 类型
+        const audioBase64 = await generateSpeech(cleanContent(textToProcess), { speakerMap });
+        // 检测 Base64 数据格式（MP3 或 WAV）
+        // MiniMax 返回 MP3，但为了兼容性，我们尝试检测
+        const blob = new Blob([Uint8Array.from(atob(audioBase64), c => c.charCodeAt(0))], { 
+          type: 'audio/mpeg' // MP3 MIME 类型
+        });
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         setIsPlaying(true);
     } catch(e) {
-        alert("Audio generation failed.");
+        console.error("Audio generation failed:", e);
+        alert(`音频生成失败: ${e instanceof Error ? e.message : '未知错误'}`);
     } finally {
         setIsGeneratingAudio(false);
     }

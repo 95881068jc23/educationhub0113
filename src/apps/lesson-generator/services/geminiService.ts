@@ -2,6 +2,7 @@
 import { Type, Schema, Modality } from "@google/genai";
 import { GeneratorFormData, ClassType, LessonPlanResponse, ModuleType, TeacherGuideResponse, VoiceConfig, ContentItem, SectionContent, HomeworkCheckResponse, PracticeOption } from "../types";
 import { callGeminiAPI } from "../../../services/geminiProxy";
+import { generateMiniMaxTTS, getMiniMaxVoiceId } from "../../../services/minimaxTTS";
 
 // Schemas
 const contentItemSchema: Schema = {
@@ -302,7 +303,8 @@ export const regenerateModulePractice = async (moduleTitle: string, instruction:
 };
 
 export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): Promise<string> => {
-
+  // 使用 MiniMax TTS 替代 Gemini TTS
+  
   // Extract speakers from text (assuming "Name: Message" format)
   const lines = text.split('\n');
   const detectedSpeakers = new Set<string>();
@@ -316,50 +318,44 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
   const speakerList = Array.from(detectedSpeakers);
   const isMultiSpeaker = speakerList.length >= 2;
 
-  let config: any = {
-    responseModalities: [Modality.AUDIO],
-  };
-
+  // 确定使用的语音 ID
+  let voiceId: string;
   if (isMultiSpeaker) {
-     const defaultVoices = ['Puck', 'Kore', 'Fenrir', 'Charon', 'Zephyr'];
-     const speakerVoiceConfigs = speakerList.map((speaker, index) => {
-       // Use user mapped voice or fallback to round-robin default
-       const voiceName = voiceConfig?.speakerMap?.[speaker] || defaultVoices[index % defaultVoices.length];
-       return {
-         speaker: speaker,
-         voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName } }
-       };
-     });
-
-     config.speechConfig = {
-        multiSpeakerVoiceConfig: {
-           speakerVoiceConfigs: speakerVoiceConfigs
-        }
-     };
+    // 多说话人：使用第一个说话人的语音映射，或默认
+    const firstSpeaker = speakerList[0];
+    const voiceName = voiceConfig?.speakerMap?.[firstSpeaker] || 'Kore';
+    voiceId = getMiniMaxVoiceId(voiceName);
   } else {
-     // Single speaker default (or mapped if 1 speaker exists)
-     const singleSpeakerName = speakerList[0];
-     const voiceName = (singleSpeakerName && voiceConfig?.speakerMap?.[singleSpeakerName]) 
-        ? voiceConfig.speakerMap[singleSpeakerName] 
-        : (voiceConfig?.speakerMap?.['default'] || 'Kore');
-
-     config.speechConfig = {
-        voiceConfig: {
-           prebuiltVoiceConfig: { voiceName: voiceName },
-        },
-     };
+    // 单说话人：使用映射的语音或默认
+    const singleSpeakerName = speakerList[0];
+    const voiceName = (singleSpeakerName && voiceConfig?.speakerMap?.[singleSpeakerName]) 
+      ? voiceConfig.speakerMap[singleSpeakerName] 
+      : (voiceConfig?.speakerMap?.['default'] || 'Kore');
+    voiceId = getMiniMaxVoiceId(voiceName);
   }
 
+  // 调用 MiniMax TTS
   return retryWithBackoff(async () => {
-    const response = await callGeminiAPI({
-      model: "gemini-2.5-flash-preview-tts",
-      contents: [{ parts: [{ text }] }],
-      config: config,
+    const result = await generateMiniMaxTTS({
+      text: text,
+      model: 'speech-2.6-hd', // 使用高质量模型
+      voiceId: voiceId,
+      speed: 1.0,
+      vol: 1.0,
+      pitch: 0,
+      format: 'mp3', // MiniMax 返回 MP3 格式
+      sampleRate: 32000,
     });
-  
-    const base64PCM = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-    if (!base64PCM) throw new Error("Failed to generate audio");
-    return pcmToWav(base64PCM);
+
+    if (!result.success || !result.audioBase64) {
+      throw new Error(result.error || "Failed to generate audio");
+    }
+
+    // 将 MP3 Base64 转换为 WAV Base64（兼容现有代码）
+    // 注意：这里返回的是 MP3 Base64，前端需要相应调整
+    // 或者我们可以在这里进行转换，但需要额外的库支持
+    // 暂时返回 MP3 Base64，前端可以处理 MP3 格式
+    return result.audioBase64;
   });
 };
 
