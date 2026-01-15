@@ -45,22 +45,24 @@ const saveStoredUsers = async (users: StoredUser[]): Promise<void> => {
     // 然后同步到服务器（异步，不阻塞）
     try {
       // 批量同步所有用户到服务器
-      await Promise.all(
-        users.map((user) =>
-          fetch('/api/users', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-          }).catch((err) => {
-            console.warn('同步用户到服务器失败:', err);
-          })
-        )
+      const syncPromises = users.map((user) =>
+        fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user),
+        }).catch((err) => {
+          console.warn(`同步用户 ${user.id} 到服务器失败:`, err);
+          return null;
+        })
       );
+      
+      await Promise.all(syncPromises);
     } catch (error) {
       console.warn('同步到服务器失败，但已保存到本地:', error);
     }
   } catch (error) {
     console.error('Failed to save users:', error);
+    throw error;
   }
 };
 

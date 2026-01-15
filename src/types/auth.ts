@@ -63,8 +63,8 @@ export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => void;
-  getAllUsers: () => StoredUser[];
-  auditUser: (userId: string, status: AuditStatus) => void;
-  updateUserIdentity: (userId: string, identity: UserIdentity) => void;
+  getAllUsers: () => Promise<StoredUser[]>;
+  auditUser: (userId: string, status: AuditStatus) => Promise<void>;
+  updateUserIdentity: (userId: string, identity: UserIdentity) => Promise<void>;
   isAudited: () => boolean;
 }
