@@ -455,8 +455,13 @@ export const AdminPanel: React.FC = () => {
                             {userItem.auditStatus !== 1 && (
                               <button
                                 onClick={() => handleAudit(userItem.id, 1)}
-                                disabled={processingId === userItem.id}
-                                className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                                disabled={processingId === userItem.id || !hasIdentityAssigned(userItem.identity ?? null)}
+                                className={`px-3 py-1.5 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1 ${
+                                  !hasIdentityAssigned(userItem.identity ?? null)
+                                    ? 'bg-slate-400 hover:bg-slate-400 cursor-not-allowed'
+                                    : 'bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed'
+                                }`}
+                                title={!hasIdentityAssigned(userItem.identity ?? null) ? '请先分配身份才能通过审核' : ''}
                               >
                                 {processingId === userItem.id ? (
                                   <>
