@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { StoredUser, AuditStatus, UserIdentity } from '../../types/auth';
-import { getUserLogs } from '../../services/storageService';
-import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap, FileText, X, Filter } from 'lucide-react';
+import { getUserLogs, getUserFiles, deleteUserFile, formatFileSize, type UserFile } from '../../services/storageService';
+import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap, FileText, X, Filter, Folder, Download, Trash2, Music, Image, File } from 'lucide-react';
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +17,10 @@ export const AdminPanel: React.FC = () => {
   const [userLogs, setUserLogs] = useState<any[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState(false);
   const [logFilter, setLogFilter] = useState<string>('all');
+  const [selectedUserFiles, setSelectedUserFiles] = useState<string | null>(null);
+  const [userFiles, setUserFiles] = useState<UserFile[]>([]);
+  const [isLoadingFiles, setIsLoadingFiles] = useState(false);
+  const [fileTypeFilter, setFileTypeFilter] = useState<'all' | 'audio' | 'image' | 'document'>('all');
 
   // 检查是否为管理员
   useEffect(() => {
@@ -230,6 +234,106 @@ export const AdminPanel: React.FC = () => {
     setUserLogs([]);
     setLogFilter('all');
   };
+
+  // 查看用户文件列表
+  const handleViewFiles = async (userId: string) => {
+    setSelectedUserFiles(userId);
+    setIsLoadingFiles(true);
+    try {
+      const files = await getUserFiles(userId, fileTypeFilter === 'all' ? undefined : fileTypeFilter);
+      setUserFiles(files);
+    } catch (error) {
+      console.error('获取文件列表失败:', error);
+      alert('获取文件列表失败，请稍后重试');
+    } finally {
+      setIsLoadingFiles(false);
+    }
+  };
+
+  // 关闭文件模态框
+  const handleCloseFiles = () => {
+    setSelectedUserFiles(null);
+    setUserFiles([]);
+    setFileTypeFilter('all');
+  };
+
+  // 下载文件
+  const handleDownloadFile = (fileUrl: string, fileName: string) => {
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // 删除文件
+  const handleDeleteFile = async (fileId: string, fileName: string) => {
+    if (!confirm(`确定要删除文件 "${fileName}" 吗？此操作无法撤销。`)) {
+      return;
+    }
+
+    try {
+      await deleteUserFile(fileId);
+      // 重新加载文件列表
+      if (selectedUserFiles) {
+        await handleViewFiles(selectedUserFiles);
+      }
+      alert('文件删除成功');
+    } catch (error) {
+      console.error('删除文件失败:', error);
+      alert(error instanceof Error ? error.message : '删除文件失败，请稍后重试');
+    }
+  };
+
+  // 获取文件类型图标
+  const getFileTypeIcon = (fileType: string) => {
+    switch (fileType) {
+      case 'audio':
+        return <Music className="w-4 h-4 text-purple-600" />;
+      case 'image':
+        return <Image className="w-4 h-4 text-blue-600" />;
+      case 'document':
+        return <File className="w-4 h-4 text-green-600" />;
+      default:
+        return <File className="w-4 h-4 text-slate-600" />;
+    }
+  };
+
+  // 获取文件类型标签
+  const getFileTypeLabel = (fileType: string): string => {
+    const labels: Record<string, string> = {
+      audio: '音频',
+      image: '图片',
+      document: '文档',
+    };
+    return labels[fileType] || fileType;
+  };
+
+  // 当文件类型筛选改变时，重新加载文件列表
+  useEffect(() => {
+    if (selectedUserFiles) {
+      setIsLoadingFiles(true);
+      getUserFiles(selectedUserFiles, fileTypeFilter === 'all' ? undefined : fileTypeFilter)
+        .then(files => {
+          setUserFiles(files);
+        })
+        .catch(error => {
+          console.error('获取文件列表失败:', error);
+          alert('获取文件列表失败，请稍后重试');
+        })
+        .finally(() => {
+          setIsLoadingFiles(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileTypeFilter, selectedUserFiles]);
+
+  // 过滤文件列表
+  const filteredFiles = fileTypeFilter === 'all' 
+    ? userFiles 
+    : userFiles.filter(file => file.file_type === fileTypeFilter);
 
   // 获取操作类型的中文名称
   const getActionTypeLabel = (actionType: string): string => {
@@ -519,6 +623,14 @@ export const AdminPanel: React.FC = () => {
                               <FileText className="w-3 h-3" />
                               日志
                             </button>
+                            <button
+                              onClick={() => handleViewFiles(userItem.id)}
+                              className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
+                              title="查看文件列表"
+                            >
+                              <Folder className="w-3 h-3" />
+                              文件
+                            </button>
                             {userItem.auditStatus !== 1 && (
                               <button
                                 onClick={() => handleAudit(userItem.id, 1)}
@@ -689,6 +801,185 @@ export const AdminPanel: React.FC = () => {
                 </span>
                 <button
                   onClick={handleCloseLogs}
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors font-medium"
+                >
+                  关闭
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 文件列表模态框 */}
+      {selectedUserFiles && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] flex flex-col">
+            {/* 模态框头部 */}
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Folder className="w-5 h-5 text-purple-600" />
+                  用户文件列表
+                </h2>
+                <p className="text-sm text-slate-600 mt-1">
+                  {allUsers.find(u => u.id === selectedUserFiles)?.name || selectedUserFiles}
+                </p>
+              </div>
+              <button
+                onClick={handleCloseFiles}
+                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+
+            {/* 筛选器 */}
+            <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-slate-600" />
+                  <span className="text-sm font-medium text-slate-700">筛选：</span>
+                </div>
+                <button
+                  onClick={() => setFileTypeFilter('all')}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                    fileTypeFilter === 'all'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  全部
+                </button>
+                <button
+                  onClick={() => setFileTypeFilter('audio')}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                    fileTypeFilter === 'audio'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  <Music className="w-3 h-3" />
+                  音频
+                </button>
+                <button
+                  onClick={() => setFileTypeFilter('image')}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                    fileTypeFilter === 'image'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  <Image className="w-3 h-3" />
+                  图片
+                </button>
+                <button
+                  onClick={() => setFileTypeFilter('document')}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                    fileTypeFilter === 'document'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  <File className="w-3 h-3" />
+                  文档
+                </button>
+              </div>
+            </div>
+
+            {/* 文件列表 */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {isLoadingFiles ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="w-6 h-6 animate-spin text-brand-600" />
+                  <span className="ml-2 text-slate-600">加载中...</span>
+                </div>
+              ) : filteredFiles.length === 0 ? (
+                <div className="text-center py-12 text-slate-500">
+                  {userFiles.length === 0 ? '暂无文件' : '没有符合条件的文件'}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredFiles.map((file) => (
+                    <div
+                      key={file.id}
+                      className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-3 flex-1">
+                          {getFileTypeIcon(file.file_type)}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-semibold text-slate-900 truncate">
+                                {file.file_name}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                                file.file_type === 'audio' ? 'bg-purple-100 text-purple-700' :
+                                file.file_type === 'image' ? 'bg-blue-100 text-blue-700' :
+                                'bg-green-100 text-green-700'
+                              }`}>
+                                {getFileTypeLabel(file.file_type)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-4 mt-1 text-xs text-slate-500">
+                              <span>{formatFileSize(file.file_size)}</span>
+                              <span>{formatDate(file.created_at)}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          {file.file_type === 'audio' && (
+                            <audio
+                              controls
+                              src={file.file_url}
+                              className="h-8 w-64"
+                              preload="none"
+                            >
+                              您的浏览器不支持音频播放
+                            </audio>
+                          )}
+                          {file.file_type === 'image' && (
+                            <img
+                              src={file.file_url}
+                              alt={file.file_name}
+                              className="h-16 w-16 object-cover rounded border border-slate-200"
+                              loading="lazy"
+                            />
+                          )}
+                          <button
+                            onClick={() => handleDownloadFile(file.file_url, file.file_name)}
+                            className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                            title="下载文件"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFile(file.id, file.file_name)}
+                            className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                            title="删除文件"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-slate-400 truncate">
+                        {file.file_url}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 模态框底部 */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-600">
+                  共 {filteredFiles.length} 个文件
+                  {fileTypeFilter !== 'all' && ` (${userFiles.length} 个总计)`}
+                </span>
+                <button
+                  onClick={handleCloseFiles}
                   className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors font-medium"
                 >
                   关闭

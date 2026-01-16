@@ -147,3 +147,77 @@ export async function getUserLogs(
     return [];
   }
 }
+
+/**
+ * 用户文件接口定义
+ */
+export interface UserFile {
+  id: string;
+  user_id: string;
+  file_name: string;
+  file_type: 'audio' | 'image' | 'document';
+  file_path: string;
+  file_url: string;
+  file_size: number;
+  mime_type: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * 获取用户文件列表
+ */
+export async function getUserFiles(
+  userId?: string,
+  fileType?: 'audio' | 'image' | 'document'
+): Promise<UserFile[]> {
+  try {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId);
+    if (fileType) params.append('fileType', fileType);
+
+    const response = await fetch(`/api/files?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`获取文件列表失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.files || [];
+  } catch (error) {
+    console.error('获取文件列表失败:', error);
+    return [];
+  }
+}
+
+/**
+ * 删除用户文件
+ */
+export async function deleteUserFile(fileId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/files?id=${fileId}`, {
+      method: 'DELETE',
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: '删除失败' }));
+      throw new Error(errorData.error || `删除文件失败: ${response.status}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('删除文件失败:', error);
+    throw error;
+  }
+}
+
+/**
+ * 格式化文件大小
+ */
+export function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+}

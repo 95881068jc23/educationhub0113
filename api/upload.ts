@@ -80,10 +80,31 @@ export default async function handler(
       .from(bucketName)
       .getPublicUrl(filePath);
 
+    const publicUrl = urlData.publicUrl;
+    const mimeType = getContentType(fileName);
+
+    // 保存文件元数据到数据库
+    const { error: dbError } = await supabase
+      .from('user_files')
+      .insert({
+        user_id: userId,
+        file_name: sanitizedFileName,
+        file_type: fileType,
+        file_path: uploadData.path,
+        file_url: publicUrl,
+        file_size: fileBuffer.length,
+        mime_type: mimeType,
+      });
+
+    if (dbError) {
+      console.error('保存文件元数据失败:', dbError);
+      // 不阻止上传，只记录错误（文件已成功上传到 Storage）
+    }
+
     return response.status(200).json({
       success: true,
       filePath: uploadData.path,
-      fileUrl: urlData.publicUrl,
+      fileUrl: publicUrl,
       fileName: sanitizedFileName,
       fileSize: fileBuffer.length,
     });
