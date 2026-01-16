@@ -106,25 +106,46 @@ export default async function handler(
 
     // MiniMax 返回的音频数据
     const audioData = await minimaxResponse.json();
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/minimax-tts.ts:108',message:'MiniMax API response',data:{hasAudio:!!audioData.audio,hasAudioData:!!audioData.audio?.data,hasData:!!audioData.data,hasDataAudio:!!audioData.data?.audio,isString:typeof audioData==='string',keys:Object.keys(audioData),audioDataPreview:JSON.stringify(audioData).substring(0,200)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     
-    // 检查响应格式（根据 MiniMax API 文档，响应可能包含 audio 字段或直接是 Base64）
+    // 检查响应格式（根据 MiniMax API 文档，响应格式通常是 { data: { audio: "base64..." } }）
     let audioBase64: string;
     
-    if (audioData.audio && audioData.audio.data) {
-      // 格式：{ audio: { data: "base64..." } }
+    // 格式 1: { data: { audio: "base64..." } }
+    if (audioData.data && audioData.data.audio) {
+      audioBase64 = audioData.data.audio;
+    }
+    // 格式 2: { audio: { data: "base64..." } }
+    else if (audioData.audio && audioData.audio.data) {
       audioBase64 = audioData.audio.data;
-    } else if (audioData.data) {
-      // 格式：{ data: "base64..." }
+    }
+    // 格式 3: { data: "base64..." }
+    else if (audioData.data && typeof audioData.data === 'string') {
       audioBase64 = audioData.data;
-    } else if (typeof audioData === 'string') {
-      // 直接返回 Base64 字符串
+    }
+    // 格式 4: 直接返回 Base64 字符串
+    else if (typeof audioData === 'string') {
       audioBase64 = audioData;
-    } else {
+    }
+    else {
       console.error('MiniMax API 响应格式:', JSON.stringify(audioData));
       return response.status(500).json({ 
         error: 'MiniMax API 返回格式不正确，请检查 API 响应' 
       });
     }
+    
+    // 清理 Base64 字符串：移除 data URL 前缀和空白字符
+    if (audioBase64.startsWith('data:')) {
+      audioBase64 = audioBase64.split(',')[1];
+    }
+    // 移除所有空白字符（换行符、空格等）
+    audioBase64 = audioBase64.replace(/\s/g, '');
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/minimax-tts.ts:137',message:'MiniMax API: extracted and cleaned audioBase64',data:{audioBase64Type:typeof audioBase64,audioBase64Length:audioBase64?.length,preview:audioBase64?.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B,C'})}).catch(()=>{});
+    // #endregion
 
     // 返回 Base64 编码的音频数据
     return response.status(200).json({

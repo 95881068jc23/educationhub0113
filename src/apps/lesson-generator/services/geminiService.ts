@@ -336,6 +336,9 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
 
   // 调用 MiniMax TTS
   return retryWithBackoff(async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'geminiService.ts:338',message:'generateSpeech: calling generateMiniMaxTTS',data:{textLength:text.length,voiceId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     const result = await generateMiniMaxTTS({
       text: text,
       model: 'speech-2.6-hd', // 使用高质量模型
@@ -346,6 +349,9 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
       format: 'mp3', // MiniMax 返回 MP3 格式
       sampleRate: 32000,
     });
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'geminiService.ts:349',message:'generateSpeech: generateMiniMaxTTS result',data:{success:result.success,hasAudioBase64:!!result.audioBase64,audioBase64Type:typeof result.audioBase64,audioBase64Length:result.audioBase64?.length,audioBase64Preview:result.audioBase64?.substring(0,50),error:result.error},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'})}).catch(()=>{});
+    // #endregion
 
     if (!result.success || !result.audioBase64) {
       throw new Error(result.error || "Failed to generate audio");

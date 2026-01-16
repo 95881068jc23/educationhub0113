@@ -129,17 +129,30 @@ async function uploadFileToGemini(
  */
 async function getFileSize(fileUrl: string): Promise<number> {
   try {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:130',message:'getFileSize: starting HEAD request',data:{fileUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     const headResponse = await fetch(fileUrl, {
       method: 'HEAD',
     });
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:136',message:'getFileSize: HEAD response',data:{status:headResponse.status,statusText:headResponse.statusText,contentLength:headResponse.headers.get('content-length')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     
     if (!headResponse.ok) {
       throw new Error(`HEAD 请求失败: ${headResponse.status}`);
     }
     
     const contentLength = headResponse.headers.get('content-length');
-    return contentLength ? parseInt(contentLength, 10) : 0;
+    const fileSize = contentLength ? parseInt(contentLength, 10) : 0;
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:143',message:'getFileSize: returning fileSize',data:{fileSize,fileSizeMB:(fileSize/(1024*1024)).toFixed(2)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
+    // #endregion
+    return fileSize;
   } catch (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:147',message:'getFileSize: error',data:{error:error instanceof Error?error.message:'unknown'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     console.warn('获取文件大小失败:', error);
     return 0;
   }
@@ -226,13 +239,22 @@ export default async function handler(
               }
               
               // 方案 B：大文件使用 Gemini File API 上传
-              // 检测文件大小，如果大于 4MB，使用 Gemini File API
+              // Gemini API 限制：总请求大小（文件+提示+系统指令）超过 20MB 必须使用 Files API
+              // 我们保守起见，文件大小超过 4MB 就使用 Gemini File API
+              // #region agent log
+              fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:230',message:'Processing file: before getFileSize',data:{fileUrl,mimeType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
+              // #endregion
               const fileSize = await getFileSize(fileUrl);
               const fileSizeMB = fileSize / (1024 * 1024);
+              // #region agent log
+              fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:233',message:'Processing file: after getFileSize',data:{fileSize,fileSizeMB:fileSizeMB.toFixed(2),threshold:4,willUseGeminiFileAPI:fileSize>4*1024*1024},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
+              // #endregion
               
-              if (fileSize > 4 * 1024 * 1024) {
-                // 大于 4MB，使用 Gemini File API 上传
-                console.log(`文件较大（${fileSizeMB.toFixed(2)}MB），使用 Gemini File API 上传`);
+              // 如果文件大小获取失败（返回0），或者文件大于4MB，使用 Gemini File API
+              // 即使文件大小未知，也尝试使用 Gemini File API 上传，避免 413 错误
+              if (fileSize === 0 || fileSize > 4 * 1024 * 1024) {
+                // 文件大小未知或大于 4MB，使用 Gemini File API 上传
+                console.log(`文件${fileSize === 0 ? '大小未知' : `较大（${fileSizeMB.toFixed(2)}MB）`}，使用 Gemini File API 上传`);
                 try {
                   const geminiFileUri = await uploadFileToGemini(fileUrl, apiKey, mimeType);
                   return {
@@ -242,14 +264,19 @@ export default async function handler(
                     }
                   };
                 } catch (error) {
-                  console.error('Gemini File API 上传失败，尝试直接使用 URL:', error);
-                  // 如果上传失败，回退到直接使用 URL（可能 Gemini 可以访问）
-                  return {
-                    fileData: {
-                      fileUri: fileUrl,
-                      mimeType,
-                    }
-                  };
+                  console.error('Gemini File API 上传失败:', error);
+                  // 如果上传失败，且文件大小已知且很小，尝试直接使用 URL
+                  if (fileSize > 0 && fileSize <= 4 * 1024 * 1024) {
+                    console.log('回退到直接使用 URL（小文件）');
+                    return {
+                      fileData: {
+                        fileUri: fileUrl,
+                        mimeType,
+                      }
+                    };
+                  }
+                  // 否则抛出错误，不继续处理
+                  throw error;
                 }
               } else {
                 // 小文件（≤4MB）：直接传递 URL 给 Gemini API
@@ -296,11 +323,12 @@ export default async function handler(
               }
               
               // 检测文件大小，大文件使用 Gemini File API
+              // 如果文件大小获取失败（返回0），或文件大于4MB，使用 Gemini File API
               const fileSize = await getFileSize(fileUrl);
               const fileSizeMB = fileSize / (1024 * 1024);
               
-              if (fileSize > 4 * 1024 * 1024) {
-                console.log(`文件较大（${fileSizeMB.toFixed(2)}MB），使用 Gemini File API 上传`);
+              if (fileSize === 0 || fileSize > 4 * 1024 * 1024) {
+                console.log(`文件${fileSize === 0 ? '大小未知' : `较大（${fileSizeMB.toFixed(2)}MB）`}，使用 Gemini File API 上传`);
                 try {
                   const geminiFileUri = await uploadFileToGemini(fileUrl, apiKey, mimeType);
                   return {
@@ -310,13 +338,18 @@ export default async function handler(
                     }
                   };
                 } catch (error) {
-                  console.error('Gemini File API 上传失败，尝试直接使用 URL:', error);
-                  return {
-                    fileData: {
-                      fileUri: fileUrl,
-                      mimeType,
-                    }
-                  };
+                  console.error('Gemini File API 上传失败:', error);
+                  // 如果上传失败，且文件大小已知且很小，尝试直接使用 URL
+                  if (fileSize > 0 && fileSize <= 4 * 1024 * 1024) {
+                    console.log('回退到直接使用 URL（小文件）');
+                    return {
+                      fileData: {
+                        fileUri: fileUrl,
+                        mimeType,
+                      }
+                    };
+                  }
+                  throw error;
                 }
               } else {
                 return {
