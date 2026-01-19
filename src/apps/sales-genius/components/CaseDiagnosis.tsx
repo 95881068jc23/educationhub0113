@@ -212,15 +212,13 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
       
       // Killer Solution: Chunking -> Transcription -> Analysis
       if (audioFile) {
-        const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
+        // Updated Strategy: Use smaller chunks (2MB) to avoid Vercel 4.5MB Payload Limit
+        // 2MB * 1.33 (Base64 overhead) = ~2.66MB < 4.5MB Safe
+        const CHUNK_SIZE = 2 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
-        // Only use chunking if file is somewhat large (> 2MB) to avoid overhead for tiny files, 
-        // OR just always use it for consistency. Let's use it for anything > 1MB or if it's a File.
-        // Given the prompt is about 120min audio, chunking is key.
-        
         for (let i = 0; i < totalChunks; i++) {
-          setProgressStatus(`正在转录音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
+          setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
