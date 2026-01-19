@@ -131,10 +131,12 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   const [clientGender, setClientGender] = useState<string>('不确定');
   const [images, setImages] = useState<string[]>([]);
   const [audio, setAudio] = useState<string | null>(null);
+  const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioName, setAudioName] = useState<string>('');
   
   // Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progressStatus, setProgressStatus] = useState<string>('');
   const [report, setReport] = useState<string | null>(null); // The main initial report
   const [customDirection, setCustomDirection] = useState('');
 
@@ -364,9 +366,11 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   const reset = () => {
     setImages([]);
     setAudio(null);
+    setAudioFile(null);
     setAudioName('');
     setReport(null);
     setFollowUpMessages([]);
+    setProgressStatus('');
     if (onClearImport) onClearImport();
   };
 

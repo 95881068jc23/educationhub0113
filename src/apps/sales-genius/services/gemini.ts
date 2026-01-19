@@ -69,7 +69,7 @@ export const sendMessageToGemini = async (
         parts: parts
       }],
       config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+        systemInstruction: systemInstruction !== undefined ? systemInstruction : SYSTEM_INSTRUCTION,
         tools: tools,
         temperature: temperature ?? 0.7,
       }
