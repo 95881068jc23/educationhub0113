@@ -68,7 +68,7 @@ const ContentBlock: React.FC<ContentBlockProps> = ({ items, onGenerateAudio, onR
        const isPlaceholder = !item.content || item.content.length < 50 || item.content.includes("LEAVE CONTENT EMPTY");
        // Check if we have an action for this section
        const actionKey = sectionActions ? Object.keys(sectionActions).find(k => lowerTitle.includes(k)) : null;
-       const isLoading = actionKey && loadingStates?.[actionKey];
+       const isLoading = actionKey ? loadingStates?.[actionKey] : false;
        const isSummary = lowerTitle.includes('summary') || lowerTitle.includes('总结');
        const isHomework = lowerTitle.includes('homework') || lowerTitle.includes('作业');
 
@@ -607,6 +607,10 @@ const LessonView: React.FC<Props> = ({ data, onBack, onRegenerate, onUpdateLesso
         // MiniMax 返回的是 MP3 Base64，需要调整 MIME 类型
         const audioBase64 = await generateSpeech(cleanContent(textToProcess), { speakerMap });
         
+        if (!audioBase64 || audioBase64.length < 100) {
+            throw new Error('从 TTS 服务接收到的音频数据无效或为空');
+        }
+
         // 清理 Base64 字符串（移除前缀和空白字符）
         let cleanBase64 = audioBase64;
         
@@ -619,10 +623,21 @@ const LessonView: React.FC<Props> = ({ data, onBack, onRegenerate, onUpdateLesso
         cleanBase64 = cleanBase64.replace(/\s/g, '');
         
         // 检测 Base64 数据格式（MP3 或 WAV）
-        // MiniMax 返回 MP3，但为了兼容性，我们尝试检测
-        const blob = new Blob([Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0))], { 
+        // 使用更稳健的方式转换 Base64
+        const binaryString = atob(cleanBase64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        const blob = new Blob([bytes], { 
           type: 'audio/mpeg' // MP3 MIME 类型
         });
+        
+        if (blob.size === 0) {
+             throw new Error('生成的音频文件大小为 0');
+        }
+
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         setIsPlaying(true);
