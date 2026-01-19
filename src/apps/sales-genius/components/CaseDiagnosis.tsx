@@ -180,6 +180,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setAudioFile(file);
       setAudioName(file.name);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -189,25 +190,85 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     }
   };
 
+  const blobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
   const handleAnalysis = async () => {
     if ((images.length === 0 && !audio) || isAnalyzing) return;
     
     setIsAnalyzing(true);
     setReport(null);
     setFollowUpMessages([]); // Clear previous chat
+    setProgressStatus('正在初始化分析...');
 
     try {
-      const response = await sendMessageToGemini({
-        message: ANALYSIS_PROMPT_TEMPLATE(selectedProduct, customDirection, clientGender),
-        images: images,
-        audio: audio || undefined,
-        temperature: 0.1, 
-      });
+      let fullTranscript = "";
+      
+      // Killer Solution: Chunking -> Transcription -> Analysis
+      if (audioFile) {
+        const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
+        const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
+        
+        // Only use chunking if file is somewhat large (> 2MB) to avoid overhead for tiny files, 
+        // OR just always use it for consistency. Let's use it for anything > 1MB or if it's a File.
+        // Given the prompt is about 120min audio, chunking is key.
+        
+        for (let i = 0; i < totalChunks; i++) {
+          setProgressStatus(`正在转录音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
+          const start = i * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, audioFile.size);
+          const chunk = audioFile.slice(start, end);
+          const chunkBase64 = await blobToBase64(chunk);
+          
+          try {
+            const transRes = await sendMessageToGemini({
+              message: "请逐字逐句转录这段音频，不要遗漏，不要添加任何解释。直接输出原文。",
+              audio: chunkBase64,
+              temperature: 0.1,
+              systemInstruction: "你是一个专业的速记员。你的任务是精准转录音频内容，不要进行任何总结或分析。"
+            });
+            if (transRes.text) {
+                fullTranscript += transRes.text + "\n";
+            }
+          } catch (chunkError) {
+             console.error(`Error transcribing chunk ${i}`, chunkError);
+             // Continue to next chunk or fail? Best to continue and get partial.
+          }
+        }
+        setProgressStatus('音频转写完成，正在进行深度诊断...');
+      }
+
+      let response;
+      if (fullTranscript) {
+         // Analyze Text
+         response = await sendMessageToGemini({
+            message: ANALYSIS_PROMPT_TEMPLATE(selectedProduct, customDirection, clientGender) + `\n\n=== 录音转录内容 ===\n${fullTranscript}`,
+            images: images,
+            // No audio passed here
+            temperature: 0.1, 
+         });
+      } else {
+        // Fallback for no file object (e.g. legacy or import) or failed transcription
+        response = await sendMessageToGemini({
+            message: ANALYSIS_PROMPT_TEMPLATE(selectedProduct, customDirection, clientGender),
+            images: images,
+            audio: audio || undefined,
+            temperature: 0.1, 
+        });
+      }
+      
       setReport(response.text || '分析失败，请重试');
     } catch (error) {
       setReport('系统繁忙，无法完成分析，请检查文件大小或稍后重试。');
     } finally {
       setIsAnalyzing(false);
+      setProgressStatus('');
     }
   };
 
