@@ -3,6 +3,10 @@
  * 通过 Vercel 边缘函数调用 Gemini API，解决中国大陆访问问题
  */
 
+import { logUserAction } from './storageService';
+
+const CURRENT_USER_KEY = 'marvel_education_current_user';
+
 interface GeminiGenerateContentRequest {
   model?: string;
   contents: any;
@@ -87,6 +91,28 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     const firstCandidate = data.candidates?.[0];
     const text = firstCandidate?.content?.parts?.[0]?.text || '';
     
+    // 记录 AI 调用日志
+    try {
+      const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user && user.id) {
+          // 简化的内容摘要，避免日志过大
+          const contentSummary = JSON.stringify(request.contents).substring(0, 200);
+          
+          logUserAction(user.id, 'ai_service_usage', {
+            service: 'gemini',
+            model: request.model || 'gemini-3-flash-preview',
+            input_summary: contentSummary,
+            output_length: text.length,
+            status: 'success'
+          });
+        }
+      }
+    } catch (logError) {
+      console.error('Failed to log AI usage:', logError);
+    }
+
     return {
       ...data,
       text,
@@ -94,6 +120,24 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     };
   } catch (error) {
     console.error('Gemini Proxy Error:', error);
+    
+    // 记录失败日志
+    try {
+      const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user && user.id) {
+          logUserAction(user.id, 'ai_service_usage', {
+            service: 'gemini',
+            model: request.model || 'gemini-3-flash-preview',
+            status: 'failed',
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
+    } catch (logError) {
+      console.error('Failed to log AI usage failure:', logError);
+    }
     
     // 提供更友好的错误信息
     if (error instanceof Error) {

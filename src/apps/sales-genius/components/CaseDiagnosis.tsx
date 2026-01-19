@@ -2,6 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ProductType, MessageRole, ChatMessage } from '../types';
 import { sendMessageToGemini } from '../services/gemini';
+import { supabase } from '../../../services/supabaseClient';
+import { useAuth } from '../../../contexts/AuthContext';
+import { logUserAction } from '../../../services/storageService';
 import { ANALYSIS_PROMPT_TEMPLATE } from '../constants';
 import { Upload, FileAudio, Image as ImageIcon, X, Wand2, Loader2, FileText, ArrowLeft, Download, Compass, CheckCircle2, AlertTriangle, Lightbulb, MessageSquare, Microscope, Sword, Send, User, Bot, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -212,6 +215,62 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
       
       // Killer Solution: Chunking -> Transcription -> Analysis
       if (audioFile) {
+        // 1. Upload original file to Supabase Storage (Background Operation)
+        const uploadOriginalFile = async () => {
+            try {
+                const userId = user?.id || 'anonymous';
+                const timestamp = Date.now();
+                // Sanitize filename
+                const sanitizedFileName = audioFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+                const filePath = `${userId}/audio/${timestamp}-${sanitizedFileName}`;
+                
+                // Upload to Storage
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('user-files')
+                    .upload(filePath, audioFile, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    console.error("Upload to Supabase Storage failed:", uploadError);
+                    return;
+                }
+
+                // Get Public URL
+                const { data: urlData } = supabase.storage
+                    .from('user-files')
+                    .getPublicUrl(filePath);
+
+                // Insert into DB
+                const { error: dbError } = await supabase
+                    .from('user_files')
+                    .insert({
+                        user_id: userId,
+                        file_name: sanitizedFileName,
+                        file_type: 'audio',
+                        file_path: filePath,
+                        file_url: urlData.publicUrl,
+                        file_size: audioFile.size,
+                        mime_type: audioFile.type || 'audio/mpeg',
+                        created_at: new Date().toISOString()
+                    });
+                
+                if (dbError) {
+                    console.error("Failed to save file metadata:", dbError);
+                } else {
+                    console.log("File saved successfully:", filePath);
+                }
+            } catch (err) {
+                console.error("File save process error:", err);
+            }
+        };
+        // Fire and forget upload to avoid blocking analysis, or await if critical.
+        // User requested "save to database... failed", implying importance. 
+        // We let it run but don't block the UI progress for analysis unless it fails? 
+        // Let's run it.
+        uploadOriginalFile();
+
         // Updated Strategy: Use smaller chunks (2MB) to avoid Vercel 4.5MB Payload Limit
         // 2MB * 1.33 (Base64 overhead) = ~2.66MB < 4.5MB Safe
         const CHUNK_SIZE = 2 * 1024 * 1024; 

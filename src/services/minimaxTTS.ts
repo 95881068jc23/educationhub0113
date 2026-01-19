@@ -3,6 +3,10 @@
  * 使用 MiniMax 的文本转语音 API
  */
 
+import { logUserAction } from './storageService';
+
+const CURRENT_USER_KEY = 'marvel_education_current_user';
+
 interface MiniMaxTTSOptions {
   text: string;
   model?: 'speech-2.6-hd' | 'speech-2.6-turbo' | 'speech-02-hd' | 'speech-02-turbo';
@@ -61,6 +65,26 @@ export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<Mi
     }
 
     const data = await response.json();
+    
+    // 记录 TTS 调用日志
+    try {
+      const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user && user.id) {
+          logUserAction(user.id, 'ai_service_usage', {
+            service: 'minimax_tts',
+            model: model,
+            voice_id: voiceId,
+            text_length: text.length,
+            status: 'success'
+          });
+        }
+      }
+    } catch (logError) {
+      console.error('Failed to log TTS usage:', logError);
+    }
+
     return {
       success: true,
       audioBase64: data.audioBase64,
@@ -68,6 +92,24 @@ export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<Mi
     };
   } catch (error) {
     console.error('MiniMax TTS 生成失败:', error);
+    
+    // 记录失败日志
+    try {
+      const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        if (user && user.id) {
+          logUserAction(user.id, 'ai_service_usage', {
+            service: 'minimax_tts',
+            status: 'failed',
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
+    } catch (logError) {
+      console.error('Failed to log TTS usage failure:', logError);
+    }
+
     return {
       success: false,
       error: error instanceof Error ? error.message : '未知错误',
