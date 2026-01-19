@@ -606,26 +606,18 @@ const LessonView: React.FC<Props> = ({ data, onBack, onRegenerate, onUpdateLesso
     try {
         // MiniMax 返回的是 MP3 Base64，需要调整 MIME 类型
         const audioBase64 = await generateSpeech(cleanContent(textToProcess), { speakerMap });
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'LessonView.tsx:608',message:'handleAudio: received audioBase64',data:{audioBase64Type:typeof audioBase64,audioBase64Length:audioBase64?.length,hasPrefix:audioBase64?.startsWith('data:'),hasSpaces:audioBase64?.includes(' '),hasNewlines:audioBase64?.includes('\n'),preview:audioBase64?.substring(0,100)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,B,C'})}).catch(()=>{});
-        // #endregion
+        
         // 清理 Base64 字符串（移除前缀和空白字符）
         let cleanBase64 = audioBase64;
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'LessonView.tsx:612',message:'handleAudio: before cleaning',data:{cleanBase64Length:cleanBase64?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-        // #endregion
+        
         // 移除 data URL 前缀（如果有）
         if (cleanBase64.startsWith('data:')) {
           cleanBase64 = cleanBase64.split(',')[1];
         }
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'LessonView.tsx:616',message:'handleAudio: after removing prefix',data:{cleanBase64Length:cleanBase64?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-        // #endregion
+        
         // 移除空白字符（换行符、空格）
         cleanBase64 = cleanBase64.replace(/\s/g, '');
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'LessonView.tsx:620',message:'handleAudio: after removing whitespace',data:{cleanBase64Length:cleanBase64?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
+        
         // 检测 Base64 数据格式（MP3 或 WAV）
         // MiniMax 返回 MP3，但为了兼容性，我们尝试检测
         const blob = new Blob([Uint8Array.from(atob(cleanBase64), c => c.charCodeAt(0))], { 

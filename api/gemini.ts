@@ -129,15 +129,11 @@ async function uploadFileToGemini(
  */
 async function getFileSize(fileUrl: string): Promise<number> {
   try {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:130',message:'getFileSize: starting HEAD request',data:{fileUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
+    
     const headResponse = await fetch(fileUrl, {
       method: 'HEAD',
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:136',message:'getFileSize: HEAD response',data:{status:headResponse.status,statusText:headResponse.statusText,contentLength:headResponse.headers.get('content-length')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
+    
     
     if (!headResponse.ok) {
       throw new Error(`HEAD 请求失败: ${headResponse.status}`);
@@ -145,14 +141,10 @@ async function getFileSize(fileUrl: string): Promise<number> {
     
     const contentLength = headResponse.headers.get('content-length');
     const fileSize = contentLength ? parseInt(contentLength, 10) : 0;
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:143',message:'getFileSize: returning fileSize',data:{fileSize,fileSizeMB:(fileSize/(1024*1024)).toFixed(2)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
-    // #endregion
+    
     return fileSize;
   } catch (error) {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:147',message:'getFileSize: error',data:{error:error instanceof Error?error.message:'unknown'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
+    
     console.warn('获取文件大小失败:', error);
     return 0;
   }
@@ -241,14 +233,10 @@ export default async function handler(
               // 方案 B：大文件使用 Gemini File API 上传
               // Gemini API 限制：总请求大小（文件+提示+系统指令）超过 20MB 必须使用 Files API
               // 我们保守起见，文件大小超过 4MB 就使用 Gemini File API
-              // #region agent log
-              fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:230',message:'Processing file: before getFileSize',data:{fileUrl,mimeType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
-              // #endregion
+              
               const fileSize = await getFileSize(fileUrl);
               const fileSizeMB = fileSize / (1024 * 1024);
-              // #region agent log
-              fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api/gemini.ts:233',message:'Processing file: after getFileSize',data:{fileSize,fileSizeMB:fileSizeMB.toFixed(2),threshold:4,willUseGeminiFileAPI:fileSize>4*1024*1024},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,C'})}).catch(()=>{});
-              // #endregion
+              
               
               // 如果文件大小获取失败（返回0），或者文件大于4MB，使用 Gemini File API
               // 即使文件大小未知，也尝试使用 Gemini File API 上传，避免 413 错误
