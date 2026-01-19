@@ -10,6 +10,7 @@ interface UserData {
   auditStatus: number;
   role: string;
   identity: string[] | null;
+  managedUsers: string[] | null; // 分级管理员管理的特定用户ID列表
   createTime: string;
   createdAt: string;
 }
@@ -64,6 +65,7 @@ export default async function handler(
         auditStatus: user.audit_status,
         role: user.role,
         identity: user.identity || null,
+        managedUsers: user.managed_users || null,
         createTime: user.create_time || user.created_at,
         createdAt: user.created_at || user.create_time,
       }));
@@ -81,6 +83,7 @@ export default async function handler(
         audit_status: user.auditStatus,
         role: user.role,
         identity: user.identity,
+        managed_users: user.managedUsers,
         create_time: user.createTime || user.createdAt,
         created_at: user.createdAt || user.createTime,
       }));
@@ -118,6 +121,7 @@ export default async function handler(
         audit_status: userData.auditStatus,
         role: userData.role,
         identity: userData.identity || null,
+        managed_users: userData.managedUsers || null,
         create_time: userData.createTime || new Date().toISOString(),
         created_at: userData.createdAt || new Date().toISOString(),
       };
@@ -146,6 +150,7 @@ export default async function handler(
         auditStatus: data.audit_status,
         role: data.role,
         identity: data.identity || null,
+        managedUsers: data.managed_users || null,
         createTime: data.create_time || data.created_at,
         createdAt: data.created_at || data.create_time,
       };
@@ -161,6 +166,7 @@ export default async function handler(
       if (updates.auditStatus !== undefined) updateData.audit_status = updates.auditStatus;
       if (updates.role !== undefined) updateData.role = updates.role;
       if (updates.identity !== undefined) updateData.identity = updates.identity;
+      if (updates.managedUsers !== undefined) updateData.managed_users = updates.managedUsers;
       if (updates.username !== undefined) updateData.username = updates.username;
       if (updates.email !== undefined) updateData.email = updates.email;
       if (updates.name !== undefined) updateData.name = updates.name;
@@ -194,6 +200,7 @@ export default async function handler(
         auditStatus: data.audit_status,
         role: data.role,
         identity: data.identity || null,
+        managedUsers: data.managed_users || null,
         createTime: data.create_time || data.created_at,
         createdAt: data.created_at || data.create_time,
       };

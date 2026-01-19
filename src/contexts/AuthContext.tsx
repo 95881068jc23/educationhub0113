@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { User, AuthState, LoginCredentials, RegisterCredentials, AuthContextType, StoredUser, AuditStatus, UserIdentity } from '../types/auth';
+import { User, AuthState, LoginCredentials, RegisterCredentials, AuthContextType, StoredUser, AuditStatus, UserIdentity, UserRole } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -149,6 +149,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
             return null;
           })(),
+            managedUsers: (userWithoutPassword as any).managedUsers || null,
             createTime: (userWithoutPassword as any).createTime || (userWithoutPassword as any).createdAt || new Date().toISOString(),
           };
           saveCurrentUser(updatedUser);
@@ -404,6 +405,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  /**
+   * 更新用户角色（管理员功能）
+   */
+  const updateUserRole = useCallback(async (userId: string, role: UserRole): Promise<void> => {
+    const users = await getStoredUsers();
+    const userIndex = users.findIndex((u) => u.id === userId);
+    
+    if (userIndex === -1) {
+      throw new Error('用户不存在');
+    }
+
+    users[userIndex].role = role;
+    await saveStoredUsers(users);
+
+    // 如果更新的是当前登录用户，更新当前用户状态
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.id === userId) {
+      const updatedUser: User = {
+        ...currentUser,
+        role: role,
+      };
+      saveCurrentUser(updatedUser);
+      setAuthState((prev) => ({
+        ...prev,
+        user: updatedUser,
+      }));
+    }
+  }, []);
+
+  /**
+   * 更新分级管理员的管理范围（管理员功能）
+   */
+  const updateUserScope = useCallback(async (userId: string, managedUsers: string[]): Promise<void> => {
+    const users = await getStoredUsers();
+    const userIndex = users.findIndex((u) => u.id === userId);
+    
+    if (userIndex === -1) {
+      throw new Error('用户不存在');
+    }
+
+    users[userIndex].managedUsers = managedUsers;
+    await saveStoredUsers(users);
+
+    // 如果更新的是当前登录用户，更新当前用户状态
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.id === userId) {
+      const updatedUser: User = {
+        ...currentUser,
+        managedUsers: managedUsers,
+      };
+      saveCurrentUser(updatedUser);
+      setAuthState((prev) => ({
+        ...prev,
+        user: updatedUser,
+      }));
+    }
+  }, []);
+
   const value: AuthContextType = {
     ...authState,
     login,
@@ -412,6 +471,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getAllUsers,
     auditUser,
     updateUserIdentity,
+    updateUserRole,
+    updateUserScope,
     isAudited,
     hasIdentity,
   };

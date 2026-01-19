@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { StoredUser, AuditStatus, UserIdentity } from '../../types/auth';
+import { StoredUser, AuditStatus, UserIdentity, UserRole } from '../../types/auth';
 import { getUserLogs, getUserFiles, deleteUserFile, formatFileSize, type UserFile } from '../../services/storageService';
-import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap, FileText, X, Filter, Folder, Download, Trash2, Music, Image, File } from 'lucide-react';
+import { Shield, CheckCircle, XCircle, Clock, User as UserIcon, Mail, Calendar, Loader2, UserCog, GraduationCap, FileText, X, Filter, Folder, Download, Trash2, Music, Image, File, Users, Search } from 'lucide-react';
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
-  const { user, getAllUsers, auditUser, updateUserIdentity } = useAuth();
+  const { user, getAllUsers, auditUser, updateUserIdentity, updateUserRole, updateUserScope } = useAuth();
   const [allUsers, setAllUsers] = useState<StoredUser[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<StoredUser[]>([]);
   const [filterStatus, setFilterStatus] = useState<AuditStatus | 'all'>('all');
@@ -21,10 +21,16 @@ export const AdminPanel: React.FC = () => {
   const [userFiles, setUserFiles] = useState<UserFile[]>([]);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const [fileTypeFilter, setFileTypeFilter] = useState<'all' | 'audio' | 'image' | 'document'>('all');
+  
+  // Scope Management State
+  const [scopeModalOpen, setScopeModalOpen] = useState(false);
+  const [editingAdminId, setEditingAdminId] = useState<string | null>(null);
+  const [selectedScopeUsers, setSelectedScopeUsers] = useState<string[]>([]);
+  const [scopeSearchTerm, setScopeSearchTerm] = useState('');
 
-  // 检查是否为管理员
+  // 检查是否为管理员或分级管理员
   useEffect(() => {
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.role !== 'tiered_admin')) {
       navigate('/home', { replace: true });
       return;
     }
@@ -34,10 +40,20 @@ export const AdminPanel: React.FC = () => {
   const loadUsers = async (): Promise<void> => {
     try {
       const fetchedUsers = await getAllUsers();
-      // 过滤掉管理员，只显示普通用户
-      const regularUsers = fetchedUsers.filter((u) => u.role !== 'admin');
+      
+      let displayUsers = fetchedUsers;
+      
+      // 如果是分级管理员，只显示其管理的用户
+      if (user?.role === 'tiered_admin') {
+        const managedUserIds = user.managedUsers || [];
+        displayUsers = fetchedUsers.filter(u => managedUserIds.includes(u.id));
+      } else {
+        // 超级管理员可以看到所有用户
+        // 过滤掉超级管理员自己（可选，但通常保留以便查看列表）
+      }
+      
       // 按注册时间倒序排列
-      const sortedUsers = [...regularUsers].sort((a, b) => {
+      const sortedUsers = [...displayUsers].sort((a, b) => {
         const timeA = new Date(a.createTime || a.createdAt || 0).getTime();
         const timeB = new Date(b.createTime || b.createdAt || 0).getTime();
         return timeB - timeA;
@@ -114,6 +130,62 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleRoleChange = async (userId: string, newRole: UserRole) => {
+    if (processingId) return;
+    if (!confirm(`确定要将用户角色更改为 ${newRole === 'admin' ? '超级管理员' : newRole === 'tiered_admin' ? '分级管理员' : '普通用户'} 吗？`)) {
+      return;
+    }
+
+    setProcessingId(userId);
+    try {
+      await updateUserRole(userId, newRole);
+      await loadUsers();
+    } catch (error) {
+      console.error('更新角色失败:', error);
+      alert('更新角色失败');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleOpenScopeModal = (adminId: string) => {
+    const adminUser = allUsers.find(u => u.id === adminId);
+    if (!adminUser) return;
+    setEditingAdminId(adminId);
+    setSelectedScopeUsers(adminUser.managedUsers || []);
+    setScopeModalOpen(true);
+    setScopeSearchTerm('');
+  };
+
+  const handleCloseScopeModal = () => {
+    setScopeModalOpen(false);
+    setEditingAdminId(null);
+    setSelectedScopeUsers([]);
+  };
+
+  const handleSaveScope = async () => {
+    if (!editingAdminId) return;
+    try {
+      await updateUserScope(editingAdminId, selectedScopeUsers);
+      await loadUsers();
+      handleCloseScopeModal();
+      alert('管理范围已更新');
+    } catch (error) {
+      console.error('更新管理范围失败:', error);
+      alert('更新管理范围失败');
+    }
+  };
+
+  const handleToggleScopeUser = (targetUserId: string) => {
+    setSelectedScopeUsers(prev => {
+      if (prev.includes(targetUserId)) {
+        return prev.filter(id => id !== targetUserId);
+      } else {
+        return [...prev, targetUserId];
+      }
+    });
+  };
+
   const getAuditStatusBadge = (status: AuditStatus): React.ReactElement => {
     switch (status) {
       case 1:
@@ -146,6 +218,14 @@ export const AdminPanel: React.FC = () => {
         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
           <Shield className="w-3 h-3" />
           管理员
+        </span>
+      );
+    }
+    if (role === 'tiered_admin') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">
+          <Users className="w-3 h-3" />
+          分级管理员
         </span>
       );
     }
@@ -477,6 +557,9 @@ export const AdminPanel: React.FC = () => {
                     用户信息
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    角色
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                     身份
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
@@ -493,7 +576,7 @@ export const AdminPanel: React.FC = () => {
               <tbody className="bg-white divide-y divide-slate-200">
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
                       {allUsers.length === 0 ? '暂无用户数据' : `没有${filterStatus === 0 ? '待审核' : filterStatus === 1 ? '已通过' : '已拒绝'}的用户`}
                     </td>
                   </tr>
@@ -513,6 +596,34 @@ export const AdminPanel: React.FC = () => {
                             </div>
                             <div className="text-xs text-slate-400 mt-1">@{userItem.username}</div>
                           </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col gap-2">
+                          <div>{getRoleBadge(userItem.role)}</div>
+                          {user?.role === 'admin' && userItem.id !== user.id && (
+                            <div className="flex flex-col gap-2 mt-1">
+                              <select
+                                value={userItem.role}
+                                onChange={(e) => handleRoleChange(userItem.id, e.target.value as UserRole)}
+                                className="text-xs border border-slate-300 rounded px-2 py-1 bg-white"
+                                disabled={processingId === userItem.id}
+                              >
+                                <option value="user">普通用户</option>
+                                <option value="tiered_admin">分级管理员</option>
+                                <option value="admin">超级管理员</option>
+                              </select>
+                              {userItem.role === 'tiered_admin' && (
+                                <button
+                                  onClick={() => handleOpenScopeModal(userItem.id)}
+                                  className="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                                >
+                                  <Users className="w-3 h-3" />
+                                  管理范围
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -985,6 +1096,82 @@ export const AdminPanel: React.FC = () => {
                   关闭
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 管理范围设置模态框 */}
+      {scopeModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-indigo-600" />
+                管理范围设置
+              </h2>
+              <button onClick={handleCloseScopeModal} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                <X className="w-5 h-5 text-slate-600" />
+              </button>
+            </div>
+            
+            <div className="p-4 border-b border-slate-200">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="搜索用户..."
+                  value={scopeSearchTerm}
+                  onChange={(e) => setScopeSearchTerm(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-2">
+                {allUsers
+                  .filter(u => u.id !== editingAdminId && u.role !== 'admin') // Exclude self and super admins
+                  .filter(u => 
+                    u.name.toLowerCase().includes(scopeSearchTerm.toLowerCase()) || 
+                    u.email.toLowerCase().includes(scopeSearchTerm.toLowerCase())
+                  )
+                  .map(u => (
+                    <label key={u.id} className="flex items-center p-3 hover:bg-slate-50 rounded-lg border border-slate-200 cursor-pointer transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedScopeUsers.includes(u.id)}
+                        onChange={() => handleToggleScopeUser(u.id)}
+                        className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                      />
+                      <div className="ml-3 flex-1">
+                        <div className="text-sm font-medium text-slate-900">{u.name}</div>
+                        <div className="text-xs text-slate-500">{u.email}</div>
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        {u.role === 'tiered_admin' ? '分级管理员' : '普通用户'}
+                      </div>
+                    </label>
+                  ))}
+                  {allUsers.filter(u => u.id !== editingAdminId && u.role !== 'admin').length === 0 && (
+                    <div className="text-center py-8 text-slate-500">暂无用户可分配</div>
+                  )}
+              </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3">
+              <button
+                onClick={handleCloseScopeModal}
+                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleSaveScope}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
+              >
+                保存设置
+              </button>
             </div>
           </div>
         </div>
