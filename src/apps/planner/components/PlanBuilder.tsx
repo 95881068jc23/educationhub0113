@@ -352,7 +352,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
   const [generationRationale, setGenerationRationale] = useState<string | null>(null);
 
   // AI & Preview States
-  const [loadingAI, setLoadingAI] = useState(false);
+  const [loadingAI, setLoadingAI] = useState<string | null>(null);
   const [showAIPreview, setShowAIPreview] = useState(false);
   const [aiPreviewTopics, setAiPreviewTopics] = useState<Topic[]>([]);
   const [customPromptInput, setCustomPromptInput] = useState(''); 
@@ -695,7 +695,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
 
   // AI Generation with separated logic
   const handleAIGenerate = async (type: 'industry' | 'interest' | 'custom') => {
-    setLoadingAI(true);
+    setLoadingAI(type);
     let promptText = "";
     if (type === 'industry') {
         promptText = `Industry: ${profile.industry}, Role: ${profile.role}. Context/Description: ${profile.jobDescription || 'N/A'}. (Ignore Interests). Focus strictly on professional/life needs based on the description.`;
@@ -713,7 +713,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
       context: type === 'industry' ? profile.industry : (type === 'interest' ? 'Interests' : 'Custom Request')
     }));
     setAiPreviewTopics(processedTopics);
-    setLoadingAI(false);
+    setLoadingAI(null);
     setShowAIPreview(true);
     setShowAddModal(false);
   };
@@ -1573,7 +1573,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                         <div className="flex items-center gap-3">
                            <button 
                              onClick={handleOpenPathGenModal} 
-                             disabled={loadingAI} 
+                             disabled={!!loadingAI} 
                              className="bg-white text-emerald-800 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 shadow-sm"
                            >
                               Start Full Path Gen / 开始全路径生成
@@ -1598,15 +1598,15 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                         <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm">
                            <h4 className="font-bold text-indigo-900 mb-2">Based on Industry & Role / 基于行业与职位</h4>
                            <p className="text-xs text-gray-500 mb-3">Ignores interests. Focuses purely on professional needs for Level {targetAILevel}. / 忽略兴趣。仅关注 Level {targetAILevel} 的职业需求。</p>
-                           <button onClick={() => handleAIGenerate('industry')} disabled={loadingAI} className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 font-bold">
-                             {loadingAI ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
+                           <button onClick={() => handleAIGenerate('industry')} disabled={!!loadingAI} className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 font-bold">
+                             {loadingAI === 'industry' ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
                            </button>
                         </div>
                         <div className="bg-white p-6 rounded-xl border border-pink-100 shadow-sm">
                            <h4 className="font-bold text-pink-900 mb-2">Based on Interests / 基于兴趣爱好</h4>
                            <p className="text-xs text-gray-500 mb-3">Ignores job. Focuses purely on hobbies and personal life for Level {targetAILevel}. / 忽略工作。仅关注 Level {targetAILevel} 的兴趣与个人生活。</p>
-                           <button onClick={() => handleAIGenerate('interest')} disabled={loadingAI} className="w-full py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-pink-300 font-bold">
-                             {loadingAI ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
+                           <button onClick={() => handleAIGenerate('interest')} disabled={!!loadingAI} className="w-full py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-pink-300 font-bold">
+                             {loadingAI === 'interest' ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
                            </button>
                         </div>
                    </div>
@@ -1623,8 +1623,8 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                               value={customPromptInput}
                               onChange={(e) => setCustomPromptInput(e.target.value)}
                            />
-                           <button onClick={() => handleAIGenerate('custom')} disabled={loadingAI || !customPromptInput} className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 font-bold">
-                              Generate / 生成
+                           <button onClick={() => handleAIGenerate('custom')} disabled={!!loadingAI || !customPromptInput} className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 font-bold">
+                              {loadingAI === 'custom' ? 'Generating... / 生成中...' : 'Generate / 生成'}
                            </button>
                        </div>
 
