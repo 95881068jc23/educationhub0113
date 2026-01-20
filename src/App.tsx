@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, BookOpen, FileText, UserCheck, MessageSquare, Briefcase } from 'lucide-react';
+import { GraduationCap, BookOpen, FileText, UserCheck, MessageSquare, Briefcase, ArrowRight, Star, Sparkles } from 'lucide-react';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AuditedRoute } from './components/auth/AuditedRoute';
 import { Login } from './components/auth/Login';
@@ -30,6 +30,7 @@ const LandingPage = () => {
       description: 'Intelligent course planning for personalized learning paths.',
       icon: <BookOpen className="w-8 h-8 text-white" />,
       color: 'bg-navy-900',
+      gradient: 'from-navy-900 to-navy-800',
       path: '/planner',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -40,6 +41,7 @@ const LandingPage = () => {
       description: 'AI-powered resume optimization and career consulting.',
       icon: <FileText className="w-8 h-8 text-white" />,
       color: 'bg-navy-800',
+      gradient: 'from-navy-800 to-navy-700',
       path: '/cv-pro',
       identities: ['consultant', 'teacher'] as ('consultant' | 'teacher')[] // 顾问和教师都可以访问
     },
@@ -50,6 +52,7 @@ const LandingPage = () => {
       description: 'Automated lesson plan and material generation.',
       icon: <GraduationCap className="w-8 h-8 text-white" />,
       color: 'bg-gold-600',
+      gradient: 'from-gold-600 to-gold-500',
       path: '/lesson-generator',
       identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     },
@@ -60,6 +63,7 @@ const LandingPage = () => {
       description: 'Comprehensive study abroad preparation and testing.',
       icon: <UserCheck className="w-8 h-8 text-white" />,
       color: 'bg-navy-700',
+      gradient: 'from-navy-700 to-navy-600',
       path: '/intl-scholar',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -70,6 +74,7 @@ const LandingPage = () => {
       description: 'AI sales assistant and training simulator.',
       icon: <Briefcase className="w-8 h-8 text-white" />,
       color: 'bg-gold-500',
+      gradient: 'from-gold-500 to-gold-400',
       path: '/sales-genius',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -80,6 +85,7 @@ const LandingPage = () => {
       description: 'Professional development and teaching resources.',
       icon: <MessageSquare className="w-8 h-8 text-white" />,
       color: 'bg-navy-600',
+      gradient: 'from-navy-600 to-navy-500',
       path: '/teachers-genius',
       identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     }
@@ -102,51 +108,111 @@ const LandingPage = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Marvel Education Hub
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Empowering education with AI-driven tools for students, teachers, and professionals.
-          </p>
+      
+      {/* Hero Section */}
+      <div className="relative bg-navy-900 text-white overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute -top-[50%] -left-[20%] w-[80%] h-[150%] bg-navy-800/30 rounded-full blur-3xl transform rotate-12"></div>
+          <div className="absolute top-[20%] -right-[10%] w-[60%] h-[120%] bg-gold-500/5 rounded-full blur-3xl"></div>
         </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <div className="max-w-3xl">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/20 border border-gold-500/30 text-gold-400 text-sm font-medium mb-6"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI-Powered Education Platform</span>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl md:text-6xl font-bold mb-6 tracking-tight leading-tight"
+            >
+              Welcome to <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500">
+                Marvel Education Hub
+              </span>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-xl text-navy-100/80 max-w-2xl leading-relaxed"
+            >
+              Empowering consultants and teachers with intelligent tools for course planning, 
+              sales optimization, and professional development.
+            </motion.p>
+          </div>
+        </div>
+      </div>
 
+      {/* Apps Grid */}
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10 pb-20">
         {apps.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-lg text-slate-600 mb-4">您还没有被分配身份，请联系管理员</p>
-            <p className="text-sm text-slate-500">审核通过后，管理员会为您分配相应的身份权限</p>
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center border border-slate-100">
+            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <UserCheck className="w-8 h-8 text-slate-400" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">No Access Assigned</h3>
+            <p className="text-slate-600 mb-6">You haven't been assigned any roles yet.</p>
+            <p className="text-sm text-slate-500">Please contact the administrator to request access.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
-            {apps.map((app) => (
-            <Link 
-              key={app.id} 
-              to={app.path}
-              className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {apps.map((app, index) => (
+            <motion.div
+              key={app.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
             >
-              <div className={`absolute top-0 left-0 w-2 h-full ${app.color}`}></div>
-              <div className="p-8">
-                <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform`}>
-                  {app.icon}
+              <Link 
+                to={app.path}
+                className="group relative block h-full bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 hover:border-gold-500/30 transform hover:-translate-y-2"
+              >
+                <div className={`h-2 bg-gradient-to-r ${app.gradient}`}></div>
+                <div className="p-8">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${app.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    {app.icon}
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-navy-900 mb-1 group-hover:text-gold-600 transition-colors">
+                    {app.name}
+                  </h3>
+                  <div className="text-sm font-medium text-slate-500 mb-4 flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-gold-500"></span>
+                    {app.nameCn}
+                  </div>
+                  
+                  <p className="text-slate-600 leading-relaxed mb-6">
+                    {app.description}
+                  </p>
+                  
+                  <div className="flex items-center text-gold-600 font-semibold text-sm group-hover:translate-x-1 transition-transform">
+                    Enter Application <ArrowRight className="w-4 h-4 ml-1" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{app.name}</h3>
-                <div className="text-sm font-medium text-gray-500 mb-3">{app.nameCn}</div>
-                <p className="text-gray-600 leading-relaxed">
-                  {app.description}
-                </p>
-              </div>
-              <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                 <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </div>
-            </Link>
+                
+                {/* Decorative background icon */}
+                <div className="absolute -bottom-4 -right-4 opacity-5 transform rotate-12 group-hover:rotate-0 group-hover:scale-110 transition-all duration-500">
+                  {React.cloneElement(app.icon as React.ReactElement<{ className?: string }>, { className: "w-32 h-32 text-navy-900" })}
+                </div>
+              </Link>
+            </motion.div>
             ))}
           </div>
         )}
 
-        <footer className="mt-16 text-center text-gray-400 text-sm">
+        <footer className="mt-16 text-center text-slate-400 text-sm">
           <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
         </footer>
       </div>

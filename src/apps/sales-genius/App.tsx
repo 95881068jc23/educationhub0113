@@ -53,13 +53,13 @@ const App: React.FC = () => {
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-slate-50 overscroll-none">
       {/* Sidebar (Desktop) */}
-      <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-white h-full shadow-xl z-20 flex-shrink-0">
-        <div className="p-6 border-b border-slate-700">
+      <aside className="hidden md:flex flex-col w-64 bg-navy-900 text-white h-full shadow-xl z-20 flex-shrink-0">
+        <div className="p-6 border-b border-navy-800">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-8 h-8 text-blue-400" />
+            <GraduationCap className="w-8 h-8 text-gold-400" />
             <div>
               <h1 className="text-xl font-bold tracking-tight">ME Magic Box</h1>
-              <p className="text-xs text-slate-400">成交百宝箱 Pro</p>
+              <p className="text-xs text-navy-200">成交百宝箱 Pro</p>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ const App: React.FC = () => {
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <button 
             onClick={() => setActiveTab('process')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'process' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'process' ? 'bg-navy-700 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
           >
             <ClipboardList size={20} />
             <div className="text-left">
@@ -78,7 +78,7 @@ const App: React.FC = () => {
 
           <button 
             onClick={() => setActiveTab('chat')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'chat' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'chat' ? 'bg-navy-700 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
           >
             <MessageSquare size={20} />
             <div className="text-left">
@@ -89,7 +89,7 @@ const App: React.FC = () => {
 
            <button 
             onClick={() => setActiveTab('value')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'value' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'value' ? 'bg-gold-600 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
           >
             <Gift size={20} />
             <div className="text-left">

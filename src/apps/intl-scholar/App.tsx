@@ -85,8 +85,8 @@ const App: React.FC = () => {
       onClick={() => handleModeChange(m)}
       className={`flex items-center gap-3 px-4 py-3 rounded-lg w-full transition-colors
         ${mode === m 
-          ? 'bg-indigo-600 text-white shadow-md' 
-          : 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'}
+          ? 'bg-navy-900 text-gold-400 shadow-md' 
+          : 'text-slate-600 hover:bg-navy-50 hover:text-navy-900'}
       `}
     >
       <Icon size={20} />
@@ -99,14 +99,14 @@ const App: React.FC = () => {
       {/* Sidebar (Only visible if exam selected) */}
       {selectedExam && (
         <div className="w-64 bg-white border-r border-slate-200 p-4 flex flex-col shadow-sm fixed h-full z-10 hidden md:flex no-print">
-          <div className="mb-8 px-2 flex items-center gap-2 text-indigo-700">
+          <div className="mb-8 px-2 flex items-center gap-2 text-navy-900">
             <GraduationCap size={28} />
             <span className="font-bold text-lg tracking-tight">Marvel Intl. Scholar</span>
           </div>
 
-          <div className="mb-6 p-3 bg-indigo-50 rounded-lg border border-indigo-100">
+          <div className="mb-6 p-3 bg-navy-50 rounded-lg border border-navy-100">
             <p className="text-xs text-slate-500 uppercase font-bold mb-1">Current Focus</p>
-            <p className="font-bold text-indigo-900 leading-tight">{selectedExam}</p>
+            <p className="font-bold text-navy-900 leading-tight">{selectedExam}</p>
           </div>
 
           <nav className="space-y-2 flex-1">
@@ -131,7 +131,7 @@ const App: React.FC = () => {
           <div className="mt-auto pt-4 border-t border-slate-100">
              <button 
               onClick={handleBackToDashboard}
-              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-700 px-4 py-3 w-full transition-colors hover:bg-indigo-50 rounded-lg cursor-pointer"
+              className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-navy-900 px-4 py-3 w-full transition-colors hover:bg-navy-50 rounded-lg cursor-pointer"
             >
               <LogOut size={18} /> {t.back}
             </button>
@@ -153,7 +153,7 @@ const App: React.FC = () => {
                   <ArrowLeft size={20} />
                 </button>
              )}
-             <h1 className="text-xl font-bold text-indigo-900">
+             <h1 className="text-xl font-bold text-navy-900">
                {selectedExam ? t[mode] || mode : t.title}
              </h1>
           </div>
@@ -162,7 +162,7 @@ const App: React.FC = () => {
              {selectedExam && (
                 <button 
                    onClick={handleBackToDashboard}
-                   className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-indigo-600 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-200 cursor-pointer"
+                   className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-navy-900 px-3 py-1.5 rounded-lg transition-colors border border-transparent hover:border-slate-200 cursor-pointer"
                 >
                    <span className="text-xs uppercase font-bold tracking-wider">Switch Exam</span>
                 </button>
@@ -189,7 +189,7 @@ const App: React.FC = () => {
               <div className="space-y-12">
                 {EXAM_GROUPS.map((group) => (
                   <div key={group.id} className="bg-white/50 rounded-2xl p-6 border border-slate-100 shadow-sm">
-                    <h3 className="text-xl font-bold text-slate-700 border-l-4 border-indigo-500 pl-3 mb-6 flex items-center gap-2">
+                    <h3 className="text-xl font-bold text-slate-700 border-l-4 border-navy-500 pl-3 mb-6 flex items-center gap-2">
                        {t[group.titleKey as keyof typeof t]}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

@@ -21,7 +21,7 @@ const ProcessingOverlay: React.FC<{ message: string }> = ({ message }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in duration-500">
-       <div className="bg-blue-600 p-4 rounded-full mb-6 shadow-xl animate-bounce">
+       <div className="bg-navy-800 p-4 rounded-full mb-6 shadow-xl animate-bounce">
          <GraduationCap className="text-white w-12 h-12" />
        </div>
        <h2 className="text-2xl font-bold text-gray-800 mb-2">AI 正在深度思考...</h2>
@@ -29,7 +29,7 @@ const ProcessingOverlay: React.FC<{ message: string }> = ({ message }) => {
        
        <div className="w-80 bg-gray-200 rounded-full h-3 mb-4 overflow-hidden shadow-inner">
          <div 
-           className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-1000 ease-linear"
+           className="bg-gradient-to-r from-gold-400 to-gold-600 h-full rounded-full transition-all duration-1000 ease-linear"
            style={{ width: `${percentage}%` }}
          ></div>
        </div>

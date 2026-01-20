@@ -21,13 +21,13 @@ interface SimMessage extends ChatMessage {
 // Markdown Styles for Report
 const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-2xl font-black text-slate-900 mb-6 border-b-2 border-yellow-200 pb-3" {...props} />
+    <h1 className="text-2xl font-black text-slate-900 mb-6 border-b-2 border-gold-200 pb-3" {...props} />
   ),
   h2: ({ node, ...props }) => (
-    <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2 border-l-4 border-teal-500 pl-3" {...props} />
+    <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2 border-l-4 border-navy-500 pl-3" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-teal-800 mt-6 mb-3 bg-teal-50 px-3 py-2 rounded-lg" {...props} />
+    <h3 className="text-lg font-bold text-navy-800 mt-6 mb-3 bg-navy-50 px-3 py-2 rounded-lg" {...props} />
   ),
   ul: ({ node, ...props }) => (
     <ul className="space-y-3 mb-6 list-disc ml-5 text-slate-700" {...props} />
@@ -39,7 +39,7 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
     <p className="mb-4 text-slate-700 leading-relaxed text-sm md:text-base" {...props} />
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-slate-900 bg-yellow-50 px-1 rounded" {...props} />
+    <span className="font-bold text-slate-900 bg-gold-50 px-1 rounded" {...props} />
   ),
   blockquote: ({ node, ...props }) => (
     <div className="bg-slate-50 border-l-4 border-slate-300 p-4 my-6 italic text-slate-600 rounded-r-lg shadow-sm text-sm" {...props} />
@@ -50,7 +50,7 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-slate-800 text-white" {...props} />
+    <thead className="bg-navy-800 text-white" {...props} />
   ),
   th: ({ node, ...props }) => (
     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" {...props} />

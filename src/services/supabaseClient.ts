@@ -8,4 +8,9 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn('Supabase URL or Key missing in frontend env. Uploads may fail.');
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+// 当 supabaseUrl 为空时，使用占位符防止应用崩溃
+// 注意：这只是为了让 UI 能加载出来，实际数据请求仍会失败，直到配置正确的环境变量
+const validUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const validKey = supabaseKey || 'placeholder-key';
+
+export const supabase = createClient(validUrl, validKey);

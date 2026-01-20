@@ -39,7 +39,7 @@ interface SimMessage extends ChatMessage {
 // --- Markdown Components ---
 const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-2xl font-black text-slate-900 border-b-2 border-indigo-100 pb-3 mb-6" {...props} />
+    <h1 className="text-2xl font-black text-slate-900 border-b-2 border-navy-100 pb-3 mb-6" {...props} />
   ),
   h3: ({ node, ...props }) => (
     <h3 className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2" {...props} />
@@ -49,12 +49,12 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
   ),
   li: ({ node, ...props }) => (
     <li className="flex items-start gap-2 text-slate-700 text-sm leading-relaxed" {...props}>
-       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-navy-500 flex-shrink-0"></span>
        <span>{props.children}</span>
     </li>
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-indigo-700 bg-indigo-50 px-1 rounded" {...props} />
+    <span className="font-bold text-navy-700 bg-navy-50 px-1 rounded" {...props} />
   ),
   table: ({ node, ...props }) => (
     <div className="overflow-x-auto my-6 rounded-lg border border-slate-200 shadow-sm bg-white">
@@ -62,7 +62,7 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-indigo-50 text-indigo-900" {...props} />
+    <thead className="bg-navy-50 text-navy-900" {...props} />
   ),
   tbody: ({ node, ...props }) => (
     <tbody className="bg-white divide-y divide-slate-50" {...props} />
@@ -77,7 +77,7 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
 
 const ChatMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   p: ({ node, ...props }) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
-  strong: ({ node, ...props }) => <span className="font-bold text-indigo-700" {...props} />,
+  strong: ({ node, ...props }) => <span className="font-bold text-navy-700" {...props} />,
 };
 
 export const SalesSimulation: React.FC = () => {

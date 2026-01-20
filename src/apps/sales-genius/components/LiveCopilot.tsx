@@ -140,9 +140,11 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
             setError(null);
             
             // Send initial wake-up message
+            /* TODO: Fix text input for Live API
             sessionPromise.then(s => s.sendRealtimeInput({
                 content: { role: 'user', parts: [{ text: "SESSION_START/RESUME: Monitoring active." }] }
             }));
+            */
           },
           onmessage: async (msg: LiveServerMessage) => {
             // A. Handle User Input Transcription

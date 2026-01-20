@@ -67,9 +67,9 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 
 const ScoreBreakdown: React.FC<{ data: ATSData }> = ({ data }) => {
   const scores = [
-    { label: '关键词匹配 (Keywords)', score: data.keywordScore || 0, max: 40, icon: <Target size={14} />, color: 'bg-blue-500' },
-    { label: '格式兼容性 (Formatting)', score: data.formattingScore || 0, max: 30, icon: <Layout size={14} />, color: 'bg-purple-500' },
-    { label: '逻辑结构 (Structure)', score: data.structureScore || 0, max: 30, icon: <Component size={14} />, color: 'bg-indigo-500' },
+    { label: '关键词匹配 (Keywords)', score: data.keywordScore || 0, max: 40, icon: <Target size={14} />, color: 'bg-navy-500' },
+    { label: '格式兼容性 (Formatting)', score: data.formattingScore || 0, max: 30, icon: <Layout size={14} />, color: 'bg-gold-500' },
+    { label: '逻辑结构 (Structure)', score: data.structureScore || 0, max: 30, icon: <Component size={14} />, color: 'bg-navy-700' },
   ];
 
   return (
@@ -95,9 +95,9 @@ const ScoreBreakdown: React.FC<{ data: ATSData }> = ({ data }) => {
 const FormattingIssueList: React.FC<{ issues: ATSIssue[], title: string, type: 'original' | 'optimized' }> = ({ issues, title, type }) => {
   if (!issues || issues.length === 0) {
     return (
-      <div className="bg-green-50/50 border border-green-100 rounded-xl p-4 flex items-center gap-3 mt-4">
-        <CheckCircle2 className="text-green-500" size={20} />
-        <p className="text-sm text-green-700 font-medium">未检测到明显的格式解析障碍 (No major formatting obstacles detected).</p>
+      <div className="bg-navy-50/50 border border-navy-100 rounded-xl p-4 flex items-center gap-3 mt-4">
+        <CheckCircle2 className="text-gold-500" size={20} />
+        <p className="text-sm text-navy-700 font-medium">未检测到明显的格式解析障碍 (No major formatting obstacles detected).</p>
       </div>
     );
   }

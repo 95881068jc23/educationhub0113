@@ -38,7 +38,7 @@ const DiagnosisMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['c
   blockquote: ({ node, ...props }) => (
     <div className="relative group my-4">
        <div className="diagnosis-blockquote bg-indigo-50/50 border-l-4 border-indigo-500 rounded-r-lg p-4 shadow-sm">
-          <div className="text-slate-800 italic leading-relaxed" {...props} />
+          <blockquote className="text-slate-800 italic leading-relaxed m-0" {...props} />
        </div>
     </div>
   ),
@@ -106,7 +106,7 @@ const DeepDiveMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['co
   // Blockquotes - Used for Scripts or Important Insights (Color Block)
   blockquote: ({node, ...props}) => (
     <div className="my-3 border-l-4 border-indigo-500 bg-indigo-50/60 p-3 rounded-r-lg shadow-sm">
-      <div className="text-slate-800 text-sm italic" {...props} />
+      <blockquote className="text-slate-800 text-sm italic m-0" {...props} />
     </div>
   ),
 
@@ -130,6 +130,7 @@ const DeepDiveMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['co
 };
 
 export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onClearImport }) => {
+  const { user } = useAuth();
   const [selectedProduct, setSelectedProduct] = useState<ProductType>(ProductType.ADULT);
   const [clientGender, setClientGender] = useState<string>('不确定');
   const [images, setImages] = useState<string[]>([]);
