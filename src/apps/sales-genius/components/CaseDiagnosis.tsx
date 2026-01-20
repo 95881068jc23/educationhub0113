@@ -277,26 +277,69 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         const CHUNK_SIZE = 1 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
+        // Helper for delay
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
         for (let i = 0; i < totalChunks; i++) {
-          setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
           const chunkBase64 = await blobToBase64(chunk);
           
-          try {
-            const transRes = await sendMessageToGemini({
-              message: "请逐字逐句转录这段音频，不要遗漏，不要添加任何解释。直接输出原文。",
-              audio: chunkBase64,
-              temperature: 0.1,
-              systemInstruction: "你是一个专业的速记员。你的任务是精准转录音频内容，不要进行任何总结或分析。"
-            });
-            if (transRes.text) {
-                fullTranscript += transRes.text + "\n";
+          let retryCount = 0;
+          const maxRetries = 3;
+          let success = false;
+
+          while (!success && retryCount <= maxRetries) {
+            try {
+              if (retryCount > 0) {
+                 setProgressStatus(`正在处理音频片段 ${i + 1}/${totalChunks}... (重试 ${retryCount}/${maxRetries})`);
+              } else {
+                 setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
+              }
+
+              const transRes = await sendMessageToGemini({
+                message: "请逐字逐句转录这段音频，不要遗漏，不要添加任何解释。直接输出原文。",
+                audio: chunkBase64,
+                temperature: 0.1,
+                systemInstruction: "你是一个专业的速记员。你的任务是精准转录音频内容，不要进行任何总结或分析。"
+              });
+              
+              if (transRes.text) {
+                  fullTranscript += transRes.text + "\n";
+              }
+              success = true;
+
+              // Throttling: Wait 1s between chunks to avoid hitting Rate Limits (RPM)
+              if (i < totalChunks - 1) {
+                  await delay(1000); 
+              }
+
+            } catch (chunkError: any) {
+               console.error(`Error transcribing chunk ${i} (Attempt ${retryCount + 1})`, chunkError);
+               
+               const errorMessage = chunkError?.message || JSON.stringify(chunkError);
+               
+               // Check for Rate Limit (429) or Quota Exceeded
+               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted')) {
+                   retryCount++;
+                   if (retryCount <= maxRetries) {
+                       // Exponential Backoff: 2s, 4s, 8s
+                       const waitTime = 2000 * Math.pow(2, retryCount - 1); 
+                       console.warn(`Rate limit hit. Waiting ${waitTime}ms before retry...`);
+                       await delay(waitTime);
+                   } else {
+                       console.error(`Max retries reached for chunk ${i}. Skipping.`);
+                       fullTranscript += `\n[系统提示：音频片段 ${i+1} 转写失败，已跳过]\n`;
+                       break; // Exit retry loop, move to next chunk
+                   }
+               } else {
+                   // Non-retriable error (e.g. 400 Bad Request), skip immediately
+                   console.error(`Non-retriable error for chunk ${i}. Skipping.`);
+                   fullTranscript += `\n[系统提示：音频片段 ${i+1} 发生错误，已跳过]\n`;
+                   break;
+               }
             }
-          } catch (chunkError) {
-             console.error(`Error transcribing chunk ${i}`, chunkError);
-             // Continue to next chunk or fail? Best to continue and get partial.
           }
         }
         setProgressStatus('音频转写完成，正在进行深度诊断...');
