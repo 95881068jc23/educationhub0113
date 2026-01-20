@@ -57,6 +57,15 @@ export const generateCustomTopics = async (
     3. Provide titles in "Chinese / English" format.
     4. DO NOT include Pinyin.
     5. Return ONLY valid JSON array. No conversational text.
+    
+    Required JSON Structure (Array of Objects):
+    [
+      {
+        "title_zh": "Chinese Title",
+        "title_en": "English Title",
+        "practicalScenario": "Bilingual scenario description..."
+      }
+    ]
   `;
 
   try {
@@ -76,7 +85,7 @@ export const generateCustomTopics = async (
     
     return rawTopics.map((t: any) => ({
       id: Math.random().toString(36).substr(2, 9),
-      title: t.title,
+      title: t.title || `${t.title_zh || 'Custom Topic'} / ${t.title_en || '定制话题'}`,
       description: t.description,
       practicalScenario: t.practicalScenario,
       minHours: 2,

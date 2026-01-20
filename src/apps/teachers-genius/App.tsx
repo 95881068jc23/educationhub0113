@@ -58,12 +58,12 @@ const App: React.FC = () => {
   const NavButton = ({ tab, icon: Icon, label, subLabel }: { tab: Tab, icon: any, label: string, subLabel: string }) => (
     <button 
       onClick={() => handleTabChange(tab)} 
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab ? 'bg-teal-700 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab ? 'bg-navy-800 text-white shadow-lg border-l-4 border-gold-500' : 'text-slate-300 hover:bg-slate-800'}`}
     >
-      <Icon size={20} className={activeTab === tab ? 'text-teal-200' : ''} />
+      <Icon size={20} className={activeTab === tab ? 'text-gold-400' : ''} />
       <div className="text-left">
         <div className="font-medium text-sm md:text-base">{label}</div>
-        <div className={`text-[10px] ${activeTab === tab ? 'text-teal-200' : 'text-slate-500'}`}>{subLabel}</div>
+        <div className={`text-[10px] ${activeTab === tab ? 'text-gold-200/80' : 'text-slate-500'}`}>{subLabel}</div>
       </div>
     </button>
   );
@@ -72,9 +72,9 @@ const App: React.FC = () => {
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
       
       {/* Mobile Top Header (Fixed) */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 text-white z-50 flex items-center justify-between px-4 shadow-md">
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-navy-950 text-white z-50 flex items-center justify-between px-4 shadow-md">
          <div className="flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-teal-400" />
+            <GraduationCap className="w-6 h-6 text-gold-400" />
             <span className="font-bold text-lg tracking-tight">ME Genius</span>
          </div>
          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-300 hover:text-white focus:outline-none">
@@ -92,17 +92,17 @@ const App: React.FC = () => {
 
       {/* Sidebar (Responsive: Drawer on Mobile, Static on Desktop) */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white h-full shadow-2xl flex-shrink-0 transform transition-transform duration-300 ease-in-out flex flex-col
+        fixed md:static inset-y-0 left-0 z-50 w-72 bg-navy-950 text-white h-full shadow-2xl flex-shrink-0 transform transition-transform duration-300 ease-in-out flex flex-col
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-slate-800 pt-20 md:pt-6">
+        <div className="p-6 border-b border-navy-800 pt-20 md:pt-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-teal-900 rounded-xl flex items-center justify-center border border-teal-700">
-               <GraduationCap className="w-6 h-6 text-teal-400" />
+            <div className="w-10 h-10 bg-navy-800 rounded-xl flex items-center justify-center border border-navy-700 shadow-inner">
+               <GraduationCap className="w-6 h-6 text-gold-500" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-white">ME Teachers</h1>
-              <p className="text-xs text-slate-400 font-medium">Teaching Genius v2.0</p>
+              <p className="text-xs text-gold-500/80 font-medium">Teaching Genius v2.0</p>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ const App: React.FC = () => {
           <NavButton tab="mock" icon={Bot} label="Mock Teaching" subLabel="Simulate Students" />
         </div>
         
-        <div className="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+        <div className="p-4 border-t border-navy-800 text-xs text-slate-500 text-center">
            &copy; 2024 Marvellous Education
         </div>
       </aside>

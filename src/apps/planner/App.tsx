@@ -105,7 +105,7 @@ const App: React.FC = () => {
             {hasGeneratedPlan && (
                <button 
                 onClick={() => setIsPreviewMode(true)}
-                className="bg-emerald-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-emerald-700 shadow-md transition-transform transform hover:scale-105"
+                className="bg-navy-700 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-navy-800 shadow-md transition-transform transform hover:scale-105"
                >
                  Print Preview / 打印预览 (Export)
                </button>
@@ -118,11 +118,11 @@ const App: React.FC = () => {
       <div className={`${isPreviewMode ? 'block' : 'hidden'} sticky top-0 z-50 bg-gray-800 text-white p-4 flex justify-between items-center print:hidden`}>
          <div className="font-bold text-xl">Print Preview / 打印预览</div>
          <div className="flex space-x-4">
-           <button onClick={handleDownloadPDF} className="bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded font-bold shadow-lg flex items-center text-sm">
+           <button onClick={handleDownloadPDF} className="bg-navy-600 hover:bg-navy-700 px-4 py-2 rounded font-bold shadow-lg flex items-center text-sm">
              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
              Save PDF / 保存PDF
            </button>
-           <button onClick={handleDownloadImage} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded font-bold shadow-lg flex items-center text-sm">
+           <button onClick={handleDownloadImage} className="bg-gold-500 hover:bg-gold-600 px-4 py-2 rounded font-bold shadow-lg flex items-center text-sm">
              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
              Save Image / 保存图片
            </button>
@@ -135,7 +135,7 @@ const App: React.FC = () => {
       <main className={`mx-auto ${isPreviewMode ? 'max-w-5xl p-8 bg-white relative' : 'max-w-7xl px-4 sm:px-6 lg:px-8 py-8'} space-y-8 print:p-0 print:space-y-6 print:max-w-none print:mt-0`}>
         
         {/* Proposal Header - Visible in Preview */}
-        <div className={`${isPreviewMode ? 'block' : 'hidden'} border-b-2 border-emerald-800 mb-8 pb-4 pt-2 relative z-10 overflow-hidden break-inside-avoid`}>
+        <div className={`${isPreviewMode ? 'block' : 'hidden'} border-b-2 border-navy-800 mb-8 pb-4 pt-2 relative z-10 overflow-hidden break-inside-avoid`}>
            {/* Add Watermark to Header Section */}
            <Watermark />
            
@@ -143,11 +143,11 @@ const App: React.FC = () => {
               <MarvellousLogo className="h-16" />
               <div className="text-right text-gray-500 text-sm">
                 <div>Intelligent Course Planning System</div>
-                <div className="font-semibold text-emerald-700">https://www.marvelenglish.com.cn/</div>
+                <div className="font-semibold text-navy-700">https://www.marvelenglish.com.cn/</div>
               </div>
            </div>
            
-           <h1 className="text-4xl font-bold text-emerald-900 mt-4 relative z-10">Course Proposal / 课程规划书</h1>
+           <h1 className="text-4xl font-bold text-navy-900 mt-4 relative z-10">Course Proposal / 课程规划书</h1>
            <div className="grid grid-cols-2 gap-4 mt-6 text-gray-700 bg-gray-50 p-6 rounded-lg border border-gray-100 relative z-10">
              <div><strong>Student:</strong> {profile.name}</div>
              <div><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
@@ -186,14 +186,14 @@ const App: React.FC = () => {
                
                {/* Generated Profile Summary Card */}
                {hasGeneratedPlan && (
-                  <div className="bg-white rounded-xl shadow-sm border border-emerald-100 overflow-hidden">
-                    <div className="px-6 py-4 bg-emerald-50 border-b border-emerald-100 flex justify-between items-center">
+                  <div className="bg-white rounded-xl shadow-sm border border-navy-100 overflow-hidden">
+                    <div className="px-6 py-4 bg-navy-50 border-b border-navy-100 flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <span className="bg-emerald-600 w-1.5 h-6 rounded-full"></span>
+                            <span className="bg-gold-500 w-1.5 h-6 rounded-full"></span>
                             <h2 className="text-lg font-bold text-gray-800">{profile.name}'s Profile</h2>
                         </div>
                         <div className="flex items-center gap-3">
-                            <button onClick={() => setShowEditModal(true)} className="flex items-center px-3 py-1.5 text-sm font-medium text-emerald-700 bg-white border border-emerald-200 rounded hover:bg-emerald-50 transition-colors">
+                            <button onClick={() => setShowEditModal(true)} className="flex items-center px-3 py-1.5 text-sm font-medium text-navy-700 bg-white border border-navy-200 rounded hover:bg-navy-50 transition-colors">
                                 <span className="mr-1">✏️</span> Modify Info / 修改信息
                             </button>
                             <button onClick={() => setHasGeneratedPlan(false)} className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-red-600 transition-colors" title="This will reset current plan">

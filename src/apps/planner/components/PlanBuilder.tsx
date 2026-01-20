@@ -97,18 +97,18 @@ const ModuleView: React.FC<{
           className={`
             ${isCompact ? 'p-2 mb-1.5' : 'p-3 mb-2'} 
             bg-white rounded border transition-all shadow-sm flex flex-col gap-1 break-inside-avoid relative group
-            ${isClickable ? 'hover:border-emerald-500 cursor-pointer hover:shadow-md' : 'border-gray-100'}`}
+            ${isClickable ? 'hover:border-gold-500 cursor-pointer hover:shadow-md' : 'border-gray-100'}`}
           onClick={() => isClickable && onHandleTopicClick(module.level, topic.id)}
         >
           {isGeneratingThis && (
-             <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-10 rounded border-2 border-emerald-500">
-               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-600 mb-1"></div>
-               <span className="text-[10px] text-emerald-600 font-bold">Generating...</span>
+             <div className="absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-10 rounded border-2 border-gold-500">
+               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gold-600 mb-1"></div>
+               <span className="text-[10px] text-gold-600 font-bold">Generating...</span>
              </div>
           )}
            {topic.syllabus && (
               <div className="absolute top-1 right-1">
-                 <svg className="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+                 <svg className="w-3 h-3 text-gold-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
               </div>
           )}
           
@@ -119,12 +119,12 @@ const ModuleView: React.FC<{
                 <span className={`text-[9px] px-1 rounded uppercase font-bold ${badgeColor}`}>{badgeText}</span>
               </div>
               {topic.practicalScenario && (
-                <div className="text-[10px] text-gray-500 mt-0.5 italic border-l-2 border-emerald-200 pl-1.5">
+                <div className="text-[10px] text-gray-500 mt-0.5 italic border-l-2 border-gold-200 pl-1.5">
                    "{topic.practicalScenario}"
                 </div>
               )}
                {isClickable && !isGeneratingThis && (
-                <div className="text-[10px] text-emerald-500 font-medium mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="text-[10px] text-gold-500 font-medium mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   {topic.syllabus ? 'View Syllabus / 查看大纲' : 'Click to Generate Syllabus / 点击生成大纲'}
                 </div>
               )}
@@ -138,7 +138,7 @@ const ModuleView: React.FC<{
                    {isPrivateColumn && !topic.fixedDuration && (
                      <div className="flex flex-col gap-1">
                         {[0.75, 1, 1.5, 2].map(h => (
-                            <button key={h} onClick={() => onUpdateTopicHours(module.level, topic.id, h)} className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors w-full ${topic.minHours === h ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-gray-50 text-gray-400'}`}>
+                            <button key={h} onClick={() => onUpdateTopicHours(module.level, topic.id, h)} className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors w-full ${topic.minHours === h ? 'bg-gold-100 text-gold-700 border-gold-300' : 'bg-gray-50 text-gray-400'}`}>
                               {h * 60}m
                             </button>
                         ))}
@@ -152,26 +152,26 @@ const ModuleView: React.FC<{
     };
 
     return (
-      <div className={`bg-white rounded-xl shadow-lg border border-emerald-100 overflow-hidden print:border-none print:shadow-none print:mb-6 module-container relative ${isCompact ? 'print:border print:border-gray-200' : ''}`}>
-         <div className={`${isCompact ? 'p-4' : 'p-6'} bg-gradient-to-r from-emerald-50 to-white border-b border-gray-200 flex justify-between items-start relative z-10 break-inside-avoid`}>
+      <div className={`bg-white rounded-xl shadow-lg border border-navy-100 overflow-hidden print:border-none print:shadow-none print:mb-6 module-container relative ${isCompact ? 'print:border print:border-gray-200' : ''}`}>
+         <div className={`${isCompact ? 'p-4' : 'p-6'} bg-gradient-to-r from-navy-50 to-white border-b border-gray-200 flex justify-between items-start relative z-10 break-inside-avoid`}>
             <div>
             <h3 className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-extrabold text-gray-800`}>Level {module.level} Curriculum</h3>
             <p className="text-gray-600 text-sm mt-1 max-w-lg">{officialConfig?.description}</p>
             <div className="flex flex-col gap-1 mt-2 text-sm text-gray-600">
-                <div className="flex items-center"><span className="w-32 font-bold text-blue-700">Vocab (词汇):</span> {officialConfig?.coreVocabCount} words</div>
+                <div className="flex items-center"><span className="w-32 font-bold text-navy-700">Vocab (词汇):</span> {officialConfig?.coreVocabCount} words</div>
             </div>
             </div>
             <div className={`text-right bg-white ${isCompact ? 'p-3' : 'p-4'} rounded-lg shadow-sm border border-gray-100 min-w-[140px]`}>
                 <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Level Total</div>
-                <div className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-bold text-emerald-600`}>{totalHours}h</div>
-                <div className="text-xs text-emerald-500 font-bold mt-1">~ {estimatedMonths} Months</div>
+                <div className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-bold text-navy-700`}>{totalHours}h</div>
+                <div className="text-xs text-gold-600 font-bold mt-1">~ {estimatedMonths} Months</div>
                 <div className="flex flex-col items-end gap-1 mt-2 text-xs text-gray-500">
                     <span title="Private Hours">P: <b>{offlinePrivateHours}h ({formattedPrivateSessions} Sessions)</b></span>
                     <span title="Group Hours">G: <b>{offlineGroupHours}h ({groupTopicCount} Topics)</b></span>
                     <span title="Online/Supp Hours">O/S: <b>{onlineHours}h</b></span>
                 </div>
                 {showTools && (
-                    <button onClick={onVerifyLevel} className="mt-3 w-full text-xs text-white bg-emerald-600 px-3 py-1.5 rounded hover:bg-emerald-700 print:hidden font-medium">Verify Level / 验证级别</button>
+                    <button onClick={onVerifyLevel} className="mt-3 w-full text-xs text-white bg-navy-800 px-3 py-1.5 rounded hover:bg-navy-900 print:hidden font-medium">Verify Level / 验证级别</button>
                 )}
             </div>
         </div>
@@ -182,7 +182,7 @@ const ModuleView: React.FC<{
                 <div className="flex gap-3">
                     <button onClick={() => onRemoveAllCustom(module.level)} className="px-3 py-1.5 text-gray-500 hover:text-red-500 text-xs border border-gray-300 rounded bg-white">Clear Custom / 清空定制</button>
                     {profile.mode !== CourseMode.Group && (
-                        <button onClick={onShowAddModal} className="flex items-center px-4 py-1.5 bg-emerald-600 text-white rounded hover:bg-emerald-700 shadow-sm transition-all text-xs font-bold uppercase tracking-wide">+ Add 1-on-1 Custom Topics / 添加1对1定制话题</button>
+                        <button onClick={onShowAddModal} className="flex items-center px-4 py-1.5 bg-navy-800 text-white rounded hover:bg-navy-900 shadow-sm transition-all text-xs font-bold uppercase tracking-wide">+ Add 1-on-1 Custom Topics / 添加1对1定制话题</button>
                     )}
                 </div>
             </div>
@@ -202,7 +202,7 @@ const ModuleView: React.FC<{
                                 <select 
                                 value={module.standardTrackMode || StandardTrackMode.Official}
                                 onChange={(e) => onUpdateStandardTrack(module.level, e.target.value)}
-                                className="flex-1 text-[10px] bg-indigo-50 border border-indigo-200 rounded px-2 h-full text-indigo-800"
+                                className="flex-1 text-[10px] bg-navy-50 border border-navy-200 rounded px-2 h-full text-navy-800"
                                 >
                                 <option value={StandardTrackMode.Official}>Official (Biz/Mix)</option>
                                 <option value={StandardTrackMode.Alternate}>Alternate (Life/Daily)</option>
@@ -219,10 +219,10 @@ const ModuleView: React.FC<{
 
             {/* Custom Private Column */}
             <div className={`${isCompact ? 'p-3' : 'p-4'} bg-white relative print:bg-transparent`}>
-                <div className="mb-3 border-b border-emerald-100 pb-2 break-inside-avoid">
+                <div className="mb-3 border-b border-navy-100 pb-2 break-inside-avoid">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-emerald-700 text-sm">Custom 1v1 (定制)</span>
-                        <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">{privateTopics.length}</span>
+                        <span className="font-bold text-navy-800 text-sm">Custom 1v1 (定制)</span>
+                        <span className="text-xs bg-navy-100 text-navy-900 px-2 py-0.5 rounded-full font-bold">{privateTopics.length}</span>
                     </div>
                     {showTools && (
                         <div className="flex items-center justify-between gap-2 print:hidden h-7">
@@ -239,7 +239,7 @@ const ModuleView: React.FC<{
                                 ✨ Gen All / 全生成
                             </button>
                             <select 
-                                className="flex-1 text-[10px] bg-emerald-50 border border-emerald-200 rounded px-1 h-full text-emerald-800 min-w-[90px]"
+                                className="flex-1 text-[10px] bg-navy-50 border border-navy-200 rounded px-1 h-full text-navy-800 min-w-[90px]"
                                 onChange={(e) => {
                                     const val = Number(e.target.value);
                                     if(val > 0) onSetAllDurations(module.level, val);
@@ -260,11 +260,11 @@ const ModuleView: React.FC<{
             </div>
 
             {/* Online Column */}
-            <div className={`${isCompact ? 'p-3' : 'p-4'} bg-blue-50/30 flex flex-col print:bg-transparent`}>
-                <div className="mb-3 border-b border-blue-200 pb-2 break-inside-avoid">
+            <div className={`${isCompact ? 'p-3' : 'p-4'} bg-gold-50/30 flex flex-col print:bg-transparent`}>
+                <div className="mb-3 border-b border-gold-200 pb-2 break-inside-avoid">
                     <div className="flex justify-between items-center">
-                        <span className="font-bold text-blue-700 text-sm">Online/Supp (补充)</span>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold">{supplementaryTopics.length}</span>
+                        <span className="font-bold text-gold-700 text-sm">Online/Supp (补充)</span>
+                        <span className="text-xs bg-gold-100 text-gold-800 px-2 py-0.5 rounded-full font-bold">{supplementaryTopics.length}</span>
                     </div>
                 </div>
                 {showTools && (
@@ -292,7 +292,7 @@ const ModuleView: React.FC<{
                                       onClick={() => !isDisabled && onAddSupplementary(course.id)} 
                                       disabled={isDisabled}
                                       className={`flex-1 text-left text-xs py-2 px-3 border rounded transition-colors flex justify-between group
-                                        ${isDisabled ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-blue-800 border-blue-200 hover:border-blue-400 hover:bg-blue-50'}
+                                        ${isDisabled ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' : 'bg-white text-gold-800 border-gold-200 hover:border-gold-400 hover:bg-gold-50'}
                                       `}
                                     >
                                         <span>{course.title}</span>
@@ -303,7 +303,7 @@ const ModuleView: React.FC<{
                                     {(course.id === 'rs-hybrid' || course.id === 'online-group') && !isDisabled && (
                                         <button 
                                           onClick={() => onAddSupplementary(course.id, true)} 
-                                          className="text-[10px] bg-blue-100 text-blue-700 px-2 rounded hover:bg-blue-200"
+                                          className="text-[10px] bg-gold-100 text-gold-700 px-2 rounded hover:bg-gold-200"
                                           title="Add to All Levels"
                                         >
                                           All
@@ -317,11 +317,11 @@ const ModuleView: React.FC<{
                     </div>
                 )}
                 {supplementaryTopics.map((t, i) => (
-                    <div key={t.id} className="p-2 mb-2 bg-white rounded border border-blue-100 shadow-sm text-center relative group break-inside-avoid">
+                    <div key={t.id} className="p-2 mb-2 bg-white rounded border border-gold-100 shadow-sm text-center relative group break-inside-avoid">
                     {showTools && <button onClick={() => onRemoveTopic(module.level, t.id)} className="absolute top-1 right-1 text-gray-300 hover:text-red-500 hidden group-hover:block print:hidden">×</button>}
-                    <div className="font-medium text-blue-800 text-xs mb-1">{t.title}</div>
-                    {t.description && <div className="text-[10px] text-blue-500 italic mb-1">{t.description}</div>}
-                    {t.minHours > 0 && <div className="text-lg font-bold text-blue-600">{t.minHours}h</div>}
+                    <div className="font-medium text-gold-800 text-xs mb-1">{t.title}</div>
+                    {t.description && <div className="text-[10px] text-gold-500 italic mb-1">{t.description}</div>}
+                    {t.minHours > 0 && <div className="text-lg font-bold text-gold-600">{t.minHours}h</div>}
                     </div>
                 ))}
             </div>
@@ -957,14 +957,14 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
       {batchGenerating && !showPathGenModal && (
         <div className="fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center">
            <div className="bg-white text-gray-900 px-10 py-8 rounded-2xl text-base font-bold flex flex-col items-center shadow-2xl border border-gray-200 max-w-sm w-full">
-             <div className="animate-spin mb-4 h-10 w-10 text-emerald-600 rounded-full border-4 border-emerald-200 border-t-emerald-600"></div>
+             <div className="animate-spin mb-4 h-10 w-10 text-gold-600 rounded-full border-4 border-gold-200 border-t-gold-600"></div>
              <div className="text-xl mb-1 text-center">Batch Generating...</div>
              <div className="text-sm text-gray-500 mb-4 text-center font-normal px-4 truncate w-full">
                 Processing: {batchProgress.currentTopicTitle}
              </div>
-             <div className="text-emerald-600 text-3xl font-mono mb-2">{batchProgress.current} / {batchProgress.total}</div>
+             <div className="text-gold-600 text-3xl font-mono mb-2">{batchProgress.current} / {batchProgress.total}</div>
              <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                <div className="bg-emerald-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}></div>
+                <div className="bg-gold-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${(batchProgress.current / batchProgress.total) * 100}%` }}></div>
              </div>
            </div>
         </div>
@@ -974,10 +974,10 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
       {showPathGenModal && (
         <div className="fixed inset-0 bg-black/80 z-[10000] flex items-center justify-center p-4 print:hidden">
            <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full flex flex-col overflow-hidden max-h-[90vh]">
-              <div className="p-5 border-b border-gray-200 bg-emerald-50 flex justify-between items-center">
+              <div className="p-5 border-b border-gray-200 bg-navy-50 flex justify-between items-center">
                  <div>
-                    <h3 className="text-lg font-bold text-emerald-900">Path Generation Manager</h3>
-                    <p className="text-xs text-emerald-600">Generating content from Level {pathGenLevels[0]} to {pathGenLevels[pathGenLevels.length-1]}</p>
+                    <h3 className="text-lg font-bold text-navy-900">Path Generation Manager</h3>
+                    <p className="text-xs text-navy-600">Generating content from Level {pathGenLevels[0]} to {pathGenLevels[pathGenLevels.length-1]}</p>
                  </div>
                  <button onClick={() => setShowPathGenModal(false)} className="text-gray-400 hover:text-gray-600 font-bold p-1">X</button>
               </div>
@@ -989,7 +989,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                             <select 
                                 value={pathGenStrategy} 
                                 onChange={(e) => setPathGenStrategy(e.target.value as PathGenStrategy)}
-                                className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 bg-white focus:ring-2 focus:ring-emerald-500 shadow-sm font-medium"
+                                className="w-full border border-gray-300 rounded-lg p-3 text-gray-900 bg-white focus:ring-2 focus:ring-gold-500 shadow-sm font-medium"
                             >
                                 {Object.values(PathGenStrategy).map(s => (
                                     <option key={s} value={s}>{s}</option>
@@ -1003,13 +1003,13 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                                     value={pathGenCustomPrompt} 
                                     onChange={(e) => setPathGenCustomPrompt(e.target.value)}
                                     placeholder="E.g., Focus on legal terminology..."
-                                    className="w-full border border-gray-300 rounded-lg p-3 h-24 text-gray-900 focus:ring-2 focus:ring-emerald-500"
+                                    className="w-full border border-gray-300 rounded-lg p-3 h-24 text-gray-900 focus:ring-2 focus:ring-gold-500"
                                 />
                             </div>
                         )}
-                        <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
-                            <h4 className="font-bold text-blue-800 text-sm mb-2">Summary of Request</h4>
-                            <div className="text-xs text-blue-700 space-y-1">
+                        <div className="bg-navy-50 border border-navy-100 p-4 rounded-lg">
+                            <h4 className="font-bold text-navy-800 text-sm mb-2">Summary of Request</h4>
+                            <div className="text-xs text-navy-700 space-y-1">
                                 <p><strong>Student:</strong> {profile.name}</p>
                                 <p><strong>Levels:</strong> {pathGenLevels.length} Levels</p>
                                 <p><strong>Topics per Level:</strong> {batchPathTopicCount}</p>
@@ -1023,7 +1023,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                                 <div key={level} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-white border flex items-center justify-center font-bold text-xs text-gray-700 shadow-sm">{level}</div>
-                                        <div className={`text-sm flex items-center gap-2 ${pathGenStatus[level] === 'success' ? 'text-green-600 font-bold' : pathGenStatus[level] === 'loading' ? 'text-blue-600 font-bold' : 'text-gray-400'}`}>
+                                        <div className={`text-sm flex items-center gap-2 ${pathGenStatus[level] === 'success' ? 'text-green-600 font-bold' : pathGenStatus[level] === 'loading' ? 'text-navy-600 font-bold' : 'text-gray-400'}`}>
                                             {pathGenStatus[level] === 'loading' ? 'Generating...' : pathGenStatus[level] === 'success' ? 'Done' : 'Pending'}
                                         </div>
                                     </div>
@@ -1031,9 +1031,9 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                             ))}
                         </div>
                         {generationRationale && (
-                            <div className="mt-4 bg-indigo-50 border border-indigo-200 rounded-lg p-4 animate-fade-in">
-                                <h4 className="text-sm font-bold text-indigo-900 mb-2">Strategy Rationale</h4>
-                                <p className="text-xs text-indigo-800 leading-relaxed whitespace-pre-wrap">{generationRationale}</p>
+                            <div className="mt-4 bg-navy-50 border border-navy-200 rounded-lg p-4 animate-fade-in">
+                                <h4 className="text-sm font-bold text-navy-900 mb-2">Strategy Rationale</h4>
+                                <p className="text-xs text-navy-800 leading-relaxed whitespace-pre-wrap">{generationRationale}</p>
                             </div>
                         )}
                     </div>
@@ -1044,7 +1044,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                     {generationRationale ? 'Finish' : 'Cancel'}
                  </button>
                  {showPathGenConfig && (
-                     <button onClick={handleGenerateAllPath} className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-bold shadow-md text-sm">
+                     <button onClick={handleGenerateAllPath} className="px-6 py-2 bg-navy-800 text-white rounded-lg hover:bg-navy-900 font-bold shadow-md text-sm">
                         Start Generation
                      </button>
                  )}
@@ -1059,7 +1059,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
         <div className="mb-6 grid grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg text-center">
            <div>
               <div className="text-xs text-gray-500 uppercase tracking-wide">Total Duration / 总周期</div>
-              <div className="font-bold text-emerald-600 text-xl">{totalStats.months} Months (月)</div>
+              <div className="font-bold text-gold-600 text-xl">{totalStats.months} Months (月)</div>
            </div>
            <div>
               <div className="text-xs text-gray-500 uppercase tracking-wide">Private (1v1) / 私教</div>
@@ -1071,7 +1071,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
            </div>
            <div>
               <div className="text-xs text-gray-500 uppercase tracking-wide">Online/Supp / 在线补充</div>
-              <div className="font-bold text-blue-600 text-xl">{totalStats.totalOnlineHours}h</div>
+              <div className="font-bold text-gold-600 text-xl">{totalStats.totalOnlineHours}h</div>
            </div>
         </div>
         {!isPreviewMode && (
@@ -1085,10 +1085,10 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                  onClick={() => setActiveLevel(m.level)}
                  className={`relative z-10 flex flex-col items-center group transition-all transform flex-shrink-0 mx-4 ${isActive ? 'scale-110' : 'hover:scale-105'}`}
                >
-                 <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold shadow-md border-4 transition-colors ${isActive ? 'bg-emerald-600 text-white border-emerald-200' : 'bg-white text-gray-600 border-gray-200'}`}>
+                 <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold shadow-md border-4 transition-colors ${isActive ? 'bg-navy-800 text-white border-gold-500' : 'bg-white text-gray-600 border-gray-200'}`}>
                    {m.level}
                  </div>
-                 <span className={`mt-2 text-xs font-bold uppercase ${isActive ? 'text-emerald-700' : 'text-gray-500'}`}>
+                 <span className={`mt-2 text-xs font-bold uppercase ${isActive ? 'text-navy-700' : 'text-gray-500'}`}>
                    Step {index + 1}
                  </span>
                </button>
@@ -1124,7 +1124,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                  return (
                    <div key={m.id} className={`p-4 rounded border ${isPassed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                      <div className="flex justify-between font-bold items-center mb-2">
-                       <span className="text-lg text-emerald-800">Level {m.level}</span>
+                       <span className="text-lg text-navy-800">Level {m.level}</span>
                        <span className={`text-sm border px-3 py-1 rounded-full font-bold ${isPassed ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
                           {total}h / {required}h Req {isPassed ? '✅' : '⚠️'}
                        </span>
@@ -1138,7 +1138,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                         <span className="text-xs text-gray-500 font-bold uppercase">Quick Add Supp Hours:</span>
                         <div className="flex items-center space-x-2">
                           <button onClick={() => adjustSupplementaryHours(m.level, -2)} className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 flex items-center justify-center font-bold text-gray-600">-</button>
-                          <button onClick={() => adjustSupplementaryHours(m.level, 2)} className="w-8 h-8 rounded bg-emerald-100 text-emerald-700 hover:bg-emerald-200 flex items-center justify-center font-bold">+</button>
+                          <button onClick={() => adjustSupplementaryHours(m.level, 2)} className="w-8 h-8 rounded bg-gold-100 text-gold-700 hover:bg-gold-200 flex items-center justify-center font-bold">+</button>
                         </div>
                      </div>
                    </div>
@@ -1156,12 +1156,12 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
       {selectedTopicForSyllabus && activeSyllabusTracking && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4 print:hidden">
            <div className="bg-white rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col relative overflow-hidden animate-fade-in">
-              <div className="p-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-t-xl flex flex-col shrink-0 relative z-10">
+              <div className="p-6 bg-gradient-to-r from-navy-900 to-navy-800 text-white rounded-t-xl flex flex-col shrink-0 relative z-10">
                  <div className="flex justify-between items-start">
                      <div>
-                        <div className="text-emerald-100 text-xs font-bold uppercase tracking-wider mb-1">Course Syllabus Overview</div>
+                        <div className="text-gold-200 text-xs font-bold uppercase tracking-wider mb-1">Course Syllabus Overview</div>
                         <h2 className="text-2xl font-bold">{selectedTopicForSyllabus.title}</h2>
-                        <p className="text-emerald-100 mt-1 opacity-90">{selectedTopicForSyllabus.practicalScenario}</p>
+                        <p className="text-gray-300 mt-1 opacity-90">{selectedTopicForSyllabus.practicalScenario}</p>
                      </div>
                      <div className="flex gap-2 items-center">
                        <button onClick={() => setShowRegenerateInput(!showRegenerateInput)} className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm font-medium flex items-center transition-colors" title="Refine and Regenerate">
@@ -1192,7 +1192,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                        />
                        <button 
                          onClick={() => generateSyllabusForTopic(activeSyllabusTracking.level, activeSyllabusTracking.topicId, syllabusRefineText || 'Regenerate')} 
-                         className="bg-emerald-800 hover:bg-emerald-900 text-white px-4 py-2 rounded text-sm font-bold min-w-[100px] flex items-center justify-center disabled:opacity-50"
+                         className="bg-navy-800 hover:bg-navy-900 text-white px-4 py-2 rounded text-sm font-bold min-w-[100px] flex items-center justify-center disabled:opacity-50"
                          disabled={isRegeneratingSyllabus}
                        >
                          {isRegeneratingSyllabus ? (
@@ -1225,30 +1225,30 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                   <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 shadow-sm">
                                      <h4 className="font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 flex items-center justify-between">
-                                       <div className="flex items-center"><span className="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded mr-2">01</span>Core Vocabulary</div>
-                                       <span className="text-[10px] text-gray-400 font-normal">{selectedTopicForSyllabus.syllabus.coreVocab.length} items</span>
-                                     </h4>
-                                     <ul className="space-y-4">
-                                       {(selectedTopicForSyllabus.syllabus.coreVocab || []).map((v, i) => (
-                                         <li key={i} className="text-sm">
-                                           <div className="flex items-center flex-wrap gap-2">
-                                             <span className="font-bold text-gray-900 text-base">{v.word}</span>
-                                             {v.pronunciation && <span className="text-gray-500 font-mono text-xs bg-white px-1.5 border rounded">{v.pronunciation}</span>}
-                                           </div>
-                                           <div className="text-gray-700 font-medium text-xs mt-1">{v.meaning}</div>
-                                           <div className="text-gray-500 italic text-xs mt-0.5 border-l-2 border-emerald-200 pl-2">"{v.context}"</div>
-                                         </li>
-                                       ))}
-                                     </ul>
+                                      <div className="flex items-center"><span className="bg-navy-800 text-white text-xs px-2 py-0.5 rounded mr-2">01</span>Core Vocabulary</div>
+                                      <span className="text-[10px] text-gray-400 font-normal">{selectedTopicForSyllabus.syllabus.coreVocab.length} items</span>
+                                    </h4>
+                                    <ul className="space-y-4">
+                                      {(selectedTopicForSyllabus.syllabus.coreVocab || []).map((v, i) => (
+                                        <li key={i} className="text-sm">
+                                          <div className="flex items-center flex-wrap gap-2">
+                                            <span className="font-bold text-gray-900 text-base">{v.word}</span>
+                                            {v.pronunciation && <span className="text-gray-500 font-mono text-xs bg-white px-1.5 border rounded">{v.pronunciation}</span>}
+                                          </div>
+                                          <div className="text-gray-700 font-medium text-xs mt-1">{v.meaning}</div>
+                                          <div className="text-gray-500 italic text-xs mt-0.5 border-l-2 border-gold-200 pl-2">"{v.context}"</div>
+                                        </li>
+                                      ))}
+                                    </ul>
                                   </div>
                                   <div className="bg-gray-50 p-6 rounded-lg border border-gray-100 shadow-sm">
                                      <h4 className="font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 flex items-center justify-between">
-                                       <div className="flex items-center"><span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded mr-2">02</span>Key Sentences</div>
+                                       <div className="flex items-center"><span className="bg-navy-600 text-white text-xs px-2 py-0.5 rounded mr-2">02</span>Key Sentences</div>
                                        <span className="text-[10px] text-gray-400 font-normal">{selectedTopicForSyllabus.syllabus.coreSentences.length} items</span>
                                      </h4>
                                      <ul className="space-y-3">
                                        {(selectedTopicForSyllabus.syllabus.coreSentences || []).map((s, i) => (
-                                         <li key={i} className="text-sm pl-3 border-l-2 border-blue-300 bg-white p-2 rounded shadow-sm">
+                                         <li key={i} className="text-sm pl-3 border-l-2 border-navy-300 bg-white p-2 rounded shadow-sm">
                                            <div className="text-gray-900 font-medium">{s.sentence}</div>
                                            <div className="text-gray-500 text-xs mt-0.5">{s.translation}</div>
                                          </li>
@@ -1302,7 +1302,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                      {(selectedTopicForSyllabus.syllabus.outline || []).map((phase, i) => (
                                        <div key={i} className="bg-white p-3 rounded border border-gray-200 relative overflow-hidden">
-                                          <div className={`absolute top-0 left-0 w-1 h-full ${phase.method === 'Input' ? 'bg-blue-500' : phase.method === 'Output' ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+                                          <div className={`absolute top-0 left-0 w-1 h-full ${phase.method === 'Input' ? 'bg-navy-500' : phase.method === 'Output' ? 'bg-gold-500' : 'bg-navy-300'}`}></div>
                                           <div className="pl-3">
                                               <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phase {i+1}: {phase.method}</div>
                                               <div className="font-bold text-gray-800 text-sm mb-1">{phase.phase}</div>
@@ -1316,9 +1316,9 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                          ) : (
                            <div className="text-center py-32 flex flex-col items-center justify-center">
                               <div className="relative">
-                                 <div className="w-16 h-16 border-4 border-emerald-100 border-t-emerald-500 rounded-full animate-spin"></div>
+                                 <div className="w-16 h-16 border-4 border-gold-100 border-t-gold-500 rounded-full animate-spin"></div>
                                  <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-emerald-600 font-bold text-xs">AI</span>
+                                    <span className="text-gold-600 font-bold text-xs">AI</span>
                                  </div>
                               </div>
                               <h4 className="mt-6 text-xl font-bold text-gray-800">Generating Syllabus...</h4>
@@ -1340,7 +1340,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                     <h3 className="text-xl font-bold text-gray-800">Review Topics / 确认话题内容</h3>
                     <p className="text-sm text-gray-500">Review descriptions and pain points before adding to plan.</p>
                   </div>
-                  <button onClick={handleRegeneratePreview} className="text-sm text-emerald-600 hover:text-emerald-800 font-bold underline">
+                  <button onClick={handleRegeneratePreview} className="text-sm text-gold-600 hover:text-gold-800 font-bold underline">
                      Regenerate / 重新生成
                   </button>
                </div>
@@ -1357,7 +1357,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                </div>
                <div className="p-6 border-t border-gray-200 flex justify-end gap-3 bg-white rounded-b-xl">
                   <button onClick={() => setShowAIPreview(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel / 取消</button>
-                  <button onClick={confirmImport} className="px-6 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 shadow font-bold">Confirm & Add / 确认添加</button>
+                  <button onClick={confirmImport} className="px-6 py-2 bg-navy-800 text-white rounded hover:bg-navy-900 shadow font-bold">Confirm & Add / 确认添加</button>
                </div>
             </div>
          </div>
@@ -1412,9 +1412,9 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
               <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600">X</button>
             </div>
             <div className="flex border-b border-gray-100">
-              <button onClick={() => setModalMode('packs')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'packs' ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-gray-500'}`}>Topic Packs / 话题包</button>
-              <button onClick={() => setModalMode('official')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'official' ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-gray-500'}`}>Official Topics / 官方话题</button>
-              <button onClick={() => setModalMode('ai')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'ai' ? 'text-emerald-600 border-b-2 border-emerald-600' : 'text-gray-500'}`}>AI Generator / AI生成</button>
+              <button onClick={() => setModalMode('packs')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'packs' ? 'text-navy-800 border-b-2 border-gold-500' : 'text-gray-500'}`}>Topic Packs / 话题包</button>
+              <button onClick={() => setModalMode('official')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'official' ? 'text-navy-800 border-b-2 border-gold-500' : 'text-gray-500'}`}>Official Topics / 官方话题</button>
+              <button onClick={() => setModalMode('ai')} className={`flex-1 py-3 font-medium text-sm ${modalMode === 'ai' ? 'text-navy-800 border-b-2 border-gold-500' : 'text-gray-500'}`}>AI Generator / AI生成</button>
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 bg-gray-50">
@@ -1426,20 +1426,20 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                         placeholder="Search packs... / 搜索话题包关键词..." 
                         value={packSearchTerm}
                         onChange={(e) => setPackSearchTerm(e.target.value)}
-                        className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg py-2 px-4 pl-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 placeholder-gray-400"
+                        className="w-full bg-gray-800 text-white border border-gray-700 rounded-lg py-2 px-4 pl-10 focus:ring-2 focus:ring-gold-500 focus:border-gold-500 placeholder-gray-400"
                       />
                       <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                    </div>
 
                    {!packSearchTerm && recommendedPacks.length > 0 && (
-                      <div key="Recommended" className="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-lg border border-emerald-100">
-                         <h4 className="text-sm font-bold text-emerald-800 uppercase tracking-wider mb-3 flex items-center">
+                      <div key="Recommended" className="bg-gradient-to-r from-navy-50 to-white p-4 rounded-lg border border-navy-100">
+                         <h4 className="text-sm font-bold text-navy-800 uppercase tracking-wider mb-3 flex items-center">
                             <span className="mr-2 text-xl">💡</span> Recommended For You / 智能推荐
                          </h4>
                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {recommendedPacks.map(({ pack, reason }) => (
-                                <button key={`rec-${pack.name}`} onClick={() => handleAddPack(pack.topics, TopicCategory.Popular, pack.name)} className="text-left p-4 border rounded-lg transition-all group relative bg-white hover:border-emerald-500 hover:shadow-md border-emerald-200">
-                                    <div className="absolute top-2 right-2 text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">{reason}</div>
+                                <button key={`rec-${pack.name}`} onClick={() => handleAddPack(pack.topics, TopicCategory.Popular, pack.name)} className="text-left p-4 border rounded-lg transition-all group relative bg-white hover:border-gold-500 hover:shadow-md border-navy-200">
+                                    <div className="absolute top-2 right-2 text-[10px] bg-navy-100 text-navy-800 px-2 py-0.5 rounded-full font-bold">{reason}</div>
                                     <div className="font-semibold text-gray-800 mb-1 pr-6">{pack.name}</div>
                                     <div className="flex justify-between items-center text-xs text-gray-500"><span>{pack.topics.length} topics</span><span className="font-bold bg-gray-100 px-1 rounded">{pack.minLevel}</span></div>
                                 </button>
@@ -1493,7 +1493,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                           <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{cat}</h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {filteredPacks.map(pack => (
-                                <button key={pack.name} onClick={() => handleAddPack(pack.topics, cat as TopicCategory, pack.name)} className="text-left p-4 border rounded-lg transition-all group relative bg-white hover:border-emerald-500">
+                                <button key={pack.name} onClick={() => handleAddPack(pack.topics, cat as TopicCategory, pack.name)} className="text-left p-4 border rounded-lg transition-all group relative bg-white hover:border-gold-500">
                                   <div className="font-semibold text-gray-800 mb-1">{pack.name}</div>
                                   <div className="flex justify-between items-center text-xs text-gray-500"><span>{pack.topics.length} topics</span><span className="font-bold bg-gray-100 px-1 rounded">{pack.minLevel}</span></div>
                                 </button>
@@ -1514,15 +1514,15 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                        return (
                            <div className="space-y-8">
                                <div>
-                                   <h4 className="text-sm font-bold text-emerald-800 mb-3 border-b border-emerald-100 pb-1">
+                                   <h4 className="text-sm font-bold text-navy-800 mb-3 border-b border-navy-100 pb-1">
                                        Main Curriculum ({isBusiness ? 'Business Track' : 'General Track'})
                                    </h4>
                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                       {config?.officialTopics.map((t, i) => {
                                          const isRecommended = isOfficialTopicRecommended(t.title, t.practicalScenario);
                                          return (
-                                             <button key={i} onClick={() => handleAddOfficialTopicAsCustom(t)} className={`text-left p-3 border rounded transition-all relative group ${isRecommended ? 'bg-emerald-50 border-emerald-300 hover:bg-emerald-100 shadow-sm' : 'bg-white border-gray-200 hover:border-emerald-500 hover:bg-emerald-50'}`}>
-                                                 {isRecommended && <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow-sm z-10">Recommended</div>}
+                                             <button key={i} onClick={() => handleAddOfficialTopicAsCustom(t)} className={`text-left p-3 border rounded transition-all relative group ${isRecommended ? 'bg-navy-50 border-navy-300 hover:bg-navy-100 shadow-sm' : 'bg-white border-gray-200 hover:border-gold-500 hover:bg-navy-50'}`}>
+                                                 {isRecommended && <div className="absolute -top-2 -right-2 bg-gold-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow-sm z-10">Recommended</div>}
                                                  <div className="font-bold text-gray-800 text-sm mb-1">{t.title}</div>
                                                  <div className="text-xs text-gray-500">{t.practicalScenario || "Standard Topic"}</div>
                                              </button>
@@ -1533,15 +1533,15 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                                
                                {config?.alternateTopics && config.alternateTopics.length > 0 && (
                                    <div>
-                                       <h4 className="text-sm font-bold text-blue-800 mb-3 border-b border-blue-100 pb-1">
+                                       <h4 className="text-sm font-bold text-gold-800 mb-3 border-b border-gold-100 pb-1">
                                            Alternate Curriculum ({isBusiness ? 'Life/General Supplement' : 'Alternate Topics'})
                                        </h4>
                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                           {config.alternateTopics.map((t, i) => {
                                              const isRecommended = isOfficialTopicRecommended(t.title, t.practicalScenario);
                                              return (
-                                                 <button key={`alt-${i}`} onClick={() => handleAddOfficialTopicAsCustom(t)} className={`text-left p-3 border rounded transition-all relative group ${isRecommended ? 'bg-blue-50 border-blue-300 hover:bg-blue-100 shadow-sm' : 'bg-white border-gray-200 hover:border-blue-500 hover:bg-blue-50'}`}>
-                                                     {isRecommended && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow-sm z-10">Recommended</div>}
+                                                 <button key={`alt-${i}`} onClick={() => handleAddOfficialTopicAsCustom(t)} className={`text-left p-3 border rounded transition-all relative group ${isRecommended ? 'bg-gold-50 border-gold-300 hover:bg-gold-100 shadow-sm' : 'bg-white border-gray-200 hover:border-gold-500 hover:bg-gold-50'}`}>
+                                                     {isRecommended && <div className="absolute -top-2 -right-2 bg-gold-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow-sm z-10">Recommended</div>}
                                                      <div className="font-bold text-gray-800 text-sm mb-1">{t.title}</div>
                                                      <div className="text-xs text-gray-500">{t.practicalScenario || "Alternate Topic"}</div>
                                                  </button>
@@ -1565,23 +1565,23 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                        </select>
                     </div>
 
-                    <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 rounded-xl shadow-md text-white">
+                    <div className="bg-gradient-to-r from-navy-900 to-navy-800 p-6 rounded-xl shadow-md text-white">
                         <h4 className="font-bold text-lg mb-2">🚀 Generate Full Learning Path / 生成完整学习路径 ({profile.currentLevel} → {profile.targetLevel})</h4>
-                        <p className="text-emerald-100 text-sm mb-4">
+                        <p className="text-gray-300 text-sm mb-4">
                             Automatically generate topics for <strong>ALL</strong> levels from current to target, tailored to your profile. / 根据您的档案，自动生成从当前级别到目标级别的所有话题。
                         </p>
                         <div className="flex items-center gap-3">
                            <button 
                              onClick={handleOpenPathGenModal} 
                              disabled={!!loadingAI} 
-                             className="bg-white text-emerald-800 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 shadow-sm"
+                             className="bg-white text-navy-900 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 shadow-sm"
                            >
                               Start Full Path Gen / 开始全路径生成
                            </button>
                            <div className="flex items-center gap-2 bg-black/20 px-3 py-1.5 rounded-lg">
                                <span className="text-xs font-bold text-white uppercase">Topics per Level / 每级话题数:</span>
                                <select 
-                                 className="bg-gray-900 text-white border border-gray-700 rounded p-1 text-sm font-bold focus:ring-emerald-500"
+                                 className="bg-gray-900 text-white border border-gray-700 rounded p-1 text-sm font-bold focus:ring-gold-500"
                                  value={batchPathTopicCount}
                                  onChange={(e) => setBatchPathTopicCount(Number(e.target.value))}
                                >
@@ -1595,17 +1595,17 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm">
-                           <h4 className="font-bold text-indigo-900 mb-2">Based on Industry & Role / 基于行业与职位</h4>
+                        <div className="bg-white p-6 rounded-xl border border-navy-100 shadow-sm">
+                           <h4 className="font-bold text-navy-900 mb-2">Based on Industry & Role / 基于行业与职位</h4>
                            <p className="text-xs text-gray-500 mb-3">Ignores interests. Focuses purely on professional needs for Level {targetAILevel}. / 忽略兴趣。仅关注 Level {targetAILevel} 的职业需求。</p>
-                           <button onClick={() => handleAIGenerate('industry')} disabled={!!loadingAI} className="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 font-bold">
+                           <button onClick={() => handleAIGenerate('industry')} disabled={!!loadingAI} className="w-full py-3 bg-navy-700 text-white rounded-lg hover:bg-navy-800 disabled:bg-gray-300 font-bold">
                              {loadingAI === 'industry' ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
                            </button>
                         </div>
-                        <div className="bg-white p-6 rounded-xl border border-pink-100 shadow-sm">
-                           <h4 className="font-bold text-pink-900 mb-2">Based on Interests / 基于兴趣爱好</h4>
+                        <div className="bg-white p-6 rounded-xl border border-gold-100 shadow-sm">
+                           <h4 className="font-bold text-gold-900 mb-2">Based on Interests / 基于兴趣爱好</h4>
                            <p className="text-xs text-gray-500 mb-3">Ignores job. Focuses purely on hobbies and personal life for Level {targetAILevel}. / 忽略工作。仅关注 Level {targetAILevel} 的兴趣与个人生活。</p>
-                           <button onClick={() => handleAIGenerate('interest')} disabled={!!loadingAI} className="w-full py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-pink-300 font-bold">
+                           <button onClick={() => handleAIGenerate('interest')} disabled={!!loadingAI} className="w-full py-3 bg-gold-600 text-white rounded-lg hover:bg-gold-700 disabled:bg-gold-300 font-bold">
                              {loadingAI === 'interest' ? 'Generating... / 生成中...' : 'Preview Topics / 预览话题'}
                            </button>
                         </div>

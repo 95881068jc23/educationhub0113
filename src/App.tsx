@@ -29,7 +29,7 @@ const LandingPage = () => {
       nameCn: '课程规划系统',
       description: 'Intelligent course planning for personalized learning paths.',
       icon: <BookOpen className="w-8 h-8 text-white" />,
-      color: 'bg-emerald-600',
+      color: 'bg-navy-900',
       path: '/planner',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -39,7 +39,7 @@ const LandingPage = () => {
       nameCn: '智能履历优化大师',
       description: 'AI-powered resume optimization and career consulting.',
       icon: <FileText className="w-8 h-8 text-white" />,
-      color: 'bg-blue-600',
+      color: 'bg-navy-800',
       path: '/cv-pro',
       identities: ['consultant', 'teacher'] as ('consultant' | 'teacher')[] // 顾问和教师都可以访问
     },
@@ -49,7 +49,7 @@ const LandingPage = () => {
       nameCn: '英语备课生成器',
       description: 'Automated lesson plan and material generation.',
       icon: <GraduationCap className="w-8 h-8 text-white" />,
-      color: 'bg-purple-600',
+      color: 'bg-gold-600',
       path: '/lesson-generator',
       identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     },
@@ -59,7 +59,7 @@ const LandingPage = () => {
       nameCn: '麦迩威国际智学',
       description: 'Comprehensive study abroad preparation and testing.',
       icon: <UserCheck className="w-8 h-8 text-white" />,
-      color: 'bg-indigo-600',
+      color: 'bg-navy-700',
       path: '/intl-scholar',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -69,7 +69,7 @@ const LandingPage = () => {
       nameCn: '销售百宝箱',
       description: 'AI sales assistant and training simulator.',
       icon: <Briefcase className="w-8 h-8 text-white" />,
-      color: 'bg-orange-600',
+      color: 'bg-gold-500',
       path: '/sales-genius',
       identities: ['consultant'] as ('consultant' | 'teacher')[] // 顾问身份
     },
@@ -79,7 +79,7 @@ const LandingPage = () => {
       nameCn: '教师百宝箱',
       description: 'Professional development and teaching resources.',
       icon: <MessageSquare className="w-8 h-8 text-white" />,
-      color: 'bg-teal-600',
+      color: 'bg-navy-600',
       path: '/teachers-genius',
       identities: ['teacher'] as ('consultant' | 'teacher')[] // 教师身份
     }

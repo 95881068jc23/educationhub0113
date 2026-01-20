@@ -16,57 +16,6 @@ const ai = new GoogleGenAI({ apiKey });
 
 // --- WAV Encoding Helpers ---
 
-const floatTo16BitPCM = (output: DataView, offset: number, input: Float32Array) => {
-  for (let i = 0; i < input.length; i++, offset += 2) {
-    const s = Math.max(-1, Math.min(1, input[i]));
-    output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-  }
-};
-
-const writeString = (view: DataView, offset: number, string: string) => {
-  for (let i = 0; i < string.length; i++) {
-    view.setUint8(offset + i, string.charCodeAt(i));
-  }
-};
-
-const encodeWAV = (samples: Float32Array, sampleRate: number) => {
-  const buffer = new ArrayBuffer(44 + samples.length * 2);
-  const view = new DataView(buffer);
-
-  /* RIFF identifier */
-  writeString(view, 0, 'RIFF');
-  /* RIFF chunk length */
-  view.setUint32(4, 36 + samples.length * 2, true);
-  /* RIFF type */
-  writeString(view, 8, 'WAVE');
-  /* format chunk identifier */
-  writeString(view, 12, 'fmt ');
-  /* format chunk length */
-  view.setUint32(16, 16, true);
-  /* sample format (raw) */
-  view.setUint16(20, 1, true);
-  /* channel count */
-  view.setUint16(22, 1, true);
-  /* sample rate */
-  view.setUint32(24, sampleRate, true);
-  /* byte rate (sample rate * block align) */
-  view.setUint32(28, sampleRate * 2, true);
-  /* block align (channel count * bytes per sample) */
-  view.setUint16(32, 2, true);
-  /* bits per sample */
-  view.setUint16(34, 16, true);
-  /* data chunk identifier */
-  writeString(view, 36, 'data');
-  /* data chunk length */
-  view.setUint32(40, samples.length * 2, true);
-
-  /* Write PCM samples */
-  floatTo16BitPCM(view, 44, samples);
-
-  return new Blob([view], { type: 'audio/wav' });
-};
-
-// Helper for Gemini Input (Base64)
 const createBase64PCM = (data: Float32Array): string => {
   const l = data.length;
   const int16 = new Int16Array(l);
@@ -120,6 +69,9 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
   const [error, setError] = useState<string | null>(null);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
+  const [hasDownloaded, setHasDownloaded] = useState(false);
+  const [showSafetyDialog, setShowSafetyDialog] = useState(false);
+  const [mimeType, setMimeType] = useState<string>('');
   
   // Timer State
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -135,7 +87,8 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   const timerRef = useRef<any>(null);
   
   // PCM Data Buffer for WAV file (Cumulative across reconnections)
-  const pcmDataRef = useRef<Float32Array[]>([]);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const silenceTimeoutRef = useRef<any>(null);
   const conversationScrollRef = useRef<HTMLDivElement>(null);
@@ -303,16 +256,41 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
      try {
         setError(null);
         setRecordedAudioUrl(null);
+        setHasDownloaded(false);
         setTranscriptSegments([]);
         setStrategyCards([]);
         setSessionDuration(0);
         isUserStoppingRef.current = false;
-        pcmDataRef.current = []; // Clear audio buffer
+        audioChunksRef.current = []; // Clear audio buffer
         
         // 1. Get Stream
         const stream = await navigator.mediaDevices.getUserMedia({ 
             audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true } 
         });
+
+        // 1.5 Setup MediaRecorder (Smart Compression)
+        let selectedMimeType = 'audio/webm;codecs=opus';
+        if (!MediaRecorder.isTypeSupported(selectedMimeType)) {
+            selectedMimeType = 'audio/mp4;codecs=mp4a.40.2'; // Safari fallback
+        }
+        if (!MediaRecorder.isTypeSupported(selectedMimeType)) {
+            selectedMimeType = ''; // Browser default
+        }
+        setMimeType(selectedMimeType);
+
+        const recorder = new MediaRecorder(stream, {
+            mimeType: selectedMimeType || undefined,
+            audioBitsPerSecond: 64000 // 64kbps for voice clarity & small size
+        });
+
+        recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+                audioChunksRef.current.push(e.data);
+            }
+        };
+        
+        recorder.start(1000); // Collect chunks every second
+        mediaRecorderRef.current = recorder;
 
         // 2. Setup Audio Context
         const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -330,11 +308,6 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         // 4. Audio Processing Loop
         processor.onaudioprocess = (e) => {
             const inputData = e.inputBuffer.getChannelData(0);
-            
-            // ALWAYS Save data for WAV file (Continuous Recording)
-            // Even if AI is reconnecting, this keeps running.
-            const dataCopy = new Float32Array(inputData);
-            pcmDataRef.current.push(dataCopy);
             
             // Send to Gemini IF session is active
             if (activeSessionRef.current) {
@@ -386,6 +359,12 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         activeSessionRef.current.then((s: any) => s.close());
         activeSessionRef.current = null;
     }
+
+    // 1.5 Stop MediaRecorder
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current = null;
+    }
     
     // 2. Stop Audio & Timer
     if (sourceRef.current) { sourceRef.current.disconnect(); sourceRef.current = null; }
@@ -396,24 +375,15 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
     setIsActive(false);
     setIsReconnecting(false);
     
-    // 3. Save Final Audio
-    saveWavFile();
+    // 3. Save Final Audio (Wait for last chunk)
+    setTimeout(() => saveAudioFile(), 200);
   };
 
-  const saveWavFile = () => {
-    if (pcmDataRef.current.length > 0) {
-        const totalLength = pcmDataRef.current.reduce((acc, curr) => acc + curr.length, 0);
-        const mergedBuffer = new Float32Array(totalLength);
-        let offset = 0;
-        for (const chunk of pcmDataRef.current) {
-            mergedBuffer.set(chunk, offset);
-            offset += chunk.length;
-        }
-
-        const wavBlob = encodeWAV(mergedBuffer, 16000);
-        const reader = new FileReader();
-        reader.onloadend = () => setRecordedAudioUrl(reader.result as string);
-        reader.readAsDataURL(wavBlob);
+  const saveAudioFile = () => {
+    if (audioChunksRef.current.length > 0) {
+        const blob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        setRecordedAudioUrl(url);
     }
   };
 
@@ -421,13 +391,24 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
     if (recordedAudioUrl) {
         const link = document.createElement('a');
         link.href = recordedAudioUrl;
-        link.download = `ME_Live_Session_${new Date().toLocaleString().replace(/[\/\s:]/g, '_')}.wav`;
+        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+        link.download = `ME_Live_Session_${new Date().toLocaleString().replace(/[\/\s:]/g, '_')}.${ext}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setHasDownloaded(true);
+        setShowSafetyDialog(false);
     }
   };
   
+  const handleAnalyzeClick = () => {
+    if (!hasDownloaded) {
+        setShowSafetyDialog(true);
+    } else {
+        onSaveAndAnalyze?.(recordedAudioUrl!);
+    }
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -591,7 +572,7 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
            {recordedAudioUrl && !isActive && (
               <div className="p-4 bg-slate-800 border-t border-slate-700 flex flex-wrap justify-center gap-3 animate-in slide-in-from-bottom-2 flex-shrink-0">
                 <button 
-                  onClick={() => onSaveAndAnalyze?.(recordedAudioUrl)} 
+                  onClick={handleAnalyzeClick} 
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-blue-700 transition-colors"
                 >
                   <Save size={16}/> 存入并复盘
@@ -600,7 +581,7 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                   onClick={downloadRecordedAudio} 
                   className="bg-slate-700 text-slate-200 border border-slate-600 px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-slate-600 transition-colors"
                 >
-                  <Download size={16}/> 下载录音 (.wav)
+                  <Download size={16}/> 下载录音 ({mimeType.includes('mp4') ? '.mp4' : '.webm'})
                 </button>
               </div>
            )}
@@ -608,6 +589,41 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       </div>
       
       {error && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 flex-shrink-0"><AlertCircle size={16}/> {error}</div>}
+
+      {/* Safety Dialog */}
+      {showSafetyDialog && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95">
+                <div className="flex items-center gap-3 text-amber-500 mb-4">
+                    <ShieldAlert size={28} />
+                    <h3 className="text-xl font-bold text-white">录音未保存警告</h3>
+                </div>
+                <p className="text-slate-300 mb-6 leading-relaxed">
+                    检测到您尚未下载原始录音文件。如果直接进入复盘页面，<span className="text-red-400 font-bold">原始录音将无法再次找回</span>（数据仅保存在当前浏览器内存中）。
+                </p>
+                <div className="flex flex-col gap-3">
+                    <button 
+                        onClick={() => { downloadRecordedAudio(); onSaveAndAnalyze?.(recordedAudioUrl!); }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
+                    >
+                        <Download size={18} /> 安全下载并继续 (推荐)
+                    </button>
+                    <button 
+                        onClick={() => onSaveAndAnalyze?.(recordedAudioUrl!)}
+                        className="bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-xl font-bold transition-colors"
+                    >
+                        已自行保存，直接继续
+                    </button>
+                    <button 
+                        onClick={() => setShowSafetyDialog(false)}
+                        className="text-slate-500 hover:text-slate-400 py-2 font-medium text-sm"
+                    >
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };
