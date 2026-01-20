@@ -272,9 +272,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Let's run it.
         uploadOriginalFile();
 
-        // Updated Strategy: Use smaller chunks (2MB) to avoid Vercel 4.5MB Payload Limit
-        // 2MB * 1.33 (Base64 overhead) = ~2.66MB < 4.5MB Safe
-        const CHUNK_SIZE = 2 * 1024 * 1024; 
+        // Updated Strategy: Use smaller chunks (1MB) to avoid Vercel 4.5MB Payload Limit
+        // 1MB * 1.33 (Base64 overhead) = ~1.33MB << 4.5MB Safe
+        const CHUNK_SIZE = 1 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
         for (let i = 0; i < totalChunks; i++) {
