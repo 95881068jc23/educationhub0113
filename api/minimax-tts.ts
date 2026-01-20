@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 // 在 Node.js 环境中，Buffer 是全局可用的
 declare const Buffer: {
-  from(data: string, encoding: 'base64'): { toString(encoding: 'utf-8'): string };
+  from(data: string, encoding: 'base64' | 'hex'): { toString(encoding: 'utf-8' | 'base64'): string };
 };
 
 export default async function handler(
@@ -140,6 +140,19 @@ export default async function handler(
     // 移除所有空白字符（换行符、空格等）
     audioBase64 = audioBase64.replace(/\s/g, '');
     
+    // [Fix] 检测是否为 Hex 字符串（MiniMax v2 通常返回 Hex），如果是则转换为 Base64
+    // Hex 特征：只包含 0-9, a-f, A-F，且长度为偶数
+    // Base64 特征：包含 +, /, = 等，且通常不像纯 Hex
+    const isHexString = /^[0-9a-fA-F]+$/.test(audioBase64) && audioBase64.length % 2 === 0;
+    
+    if (isHexString) {
+      try {
+        // 将 Hex 转换为 Buffer，再转换为 Base64
+        audioBase64 = Buffer.from(audioBase64, 'hex').toString('base64');
+      } catch (e) {
+        console.warn('尝试将 Hex 转换为 Base64 失败，保留原值:', e);
+      }
+    }
 
     // 返回 Base64 编码的音频数据
     return response.status(200).json({
