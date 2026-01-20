@@ -85,8 +85,8 @@ const ModuleView: React.FC<{
     const renderTopicItem = (topic: Topic, index: number, isPrivateColumn: boolean) => {
       let badgeColor = "bg-gray-100 text-gray-600";
       let badgeText = "System";
-      if (topic.source === 'File') { badgeColor = "bg-green-100 text-green-700"; badgeText = "File"; }
-      else if (topic.source === 'AI') { badgeColor = "bg-purple-100 text-purple-700"; badgeText = "AI"; }
+      if (topic.source === 'File') { badgeColor = "bg-navy-100 text-navy-700"; badgeText = "File"; }
+      else if (topic.source === 'AI') { badgeColor = "bg-gold-100 text-gold-700"; badgeText = "AI"; }
       
       const isClickable = isPrivateColumn && !topic.fixedDuration;
       const isGeneratingThis = generatingTopicId === topic.id;

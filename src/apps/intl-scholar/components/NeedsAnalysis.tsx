@@ -52,7 +52,7 @@ const ProgressTimer = ({ active, estimatedTime = 90 }: { active: boolean, estima
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                 <div 
-                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300 ease-out" 
+                    className="bg-gold-500 h-2 rounded-full transition-all duration-300 ease-out" 
                     style={{ width: `${progress}%` }}
                 ></div>
             </div>
@@ -79,7 +79,7 @@ const InputField = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full p-3 bg-slate-700 text-white placeholder-slate-400 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+      className="w-full p-3 bg-slate-700 text-white placeholder-slate-400 border border-slate-600 rounded-lg focus:ring-2 focus:ring-gold-500 outline-none transition-all"
     />
   </div>
 );
@@ -126,7 +126,7 @@ const BlackSelectInput = ({
                     }}
                     onFocus={() => setIsOpen(true)}
                     placeholder={placeholder}
-                    className="w-full p-3 pr-10 bg-black text-white placeholder-slate-500 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-medium"
+                    className="w-full p-3 pr-10 bg-navy-950 text-white placeholder-slate-500 border border-slate-700 rounded-lg focus:ring-2 focus:ring-gold-500 outline-none transition-all font-medium"
                 />
                 
                 {/* Toggle Button */}
@@ -139,7 +139,7 @@ const BlackSelectInput = ({
 
                 {/* Custom Dropdown Options */}
                 {isOpen && (
-                    <div className="absolute z-50 w-full mt-1 bg-black border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-y-auto animate-fade-in">
+                    <div className="absolute z-50 w-full mt-1 bg-navy-950 border border-slate-700 rounded-lg shadow-xl max-h-60 overflow-y-auto animate-fade-in">
                         {options.map((opt) => (
                             <div
                                 key={opt}

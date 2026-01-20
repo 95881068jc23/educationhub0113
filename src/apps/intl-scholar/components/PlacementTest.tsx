@@ -52,7 +52,7 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-navy-900" />
         <p className="text-slate-500 animate-pulse">{t.generating}</p>
         <p className="text-xs text-slate-400">Fetching authoritative data...</p>
       </div>
@@ -65,7 +65,7 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
         <h2 className="text-2xl font-bold text-slate-800">{exam} {t.placementTest}</h2>
         <button 
           onClick={fetchTest}
-          className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800"
+          className="flex items-center gap-2 text-sm text-navy-600 hover:text-navy-800"
         >
           <RefreshCw size={16} /> {t.retry}
         </button>
@@ -86,7 +86,7 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
                 let btnClass = "w-full text-left p-3 rounded-md border transition-colors ";
                 if (submitted) {
                   if (optIdx === q.correctAnswerIndex) {
-                    btnClass += "bg-green-100 border-green-500 text-green-900";
+                    btnClass += "bg-gold-100 border-gold-500 text-gold-900";
                   } else if (answers[q.id] === optIdx) {
                     btnClass += "bg-red-100 border-red-500 text-red-900";
                   } else {
@@ -94,7 +94,7 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
                   }
                 } else {
                   if (answers[q.id] === optIdx) {
-                    btnClass += "bg-indigo-50 border-indigo-500 text-indigo-700 font-medium";
+                    btnClass += "bg-navy-50 border-gold-500 text-navy-900 font-medium";
                   } else {
                     btnClass += "bg-white border-slate-200 hover:bg-slate-50 text-slate-700";
                   }
@@ -109,9 +109,9 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
                   >
                     <div className="flex items-center">
                       <div className={`w-6 h-6 rounded-full border flex items-center justify-center mr-3 text-xs
-                        ${submitted && optIdx === q.correctAnswerIndex ? 'bg-green-500 border-green-500 text-white' : 
+                        ${submitted && optIdx === q.correctAnswerIndex ? 'bg-gold-500 border-gold-500 text-white' : 
                           submitted && answers[q.id] === optIdx ? 'bg-red-500 border-red-500 text-white' :
-                          answers[q.id] === optIdx ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'}
+                          answers[q.id] === optIdx ? 'bg-navy-900 border-navy-900 text-white' : 'border-slate-300'}
                       `}>
                         {String.fromCharCode(65 + optIdx)}
                       </div>
@@ -123,10 +123,10 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
             </div>
 
             {submitted && (
-              <div className={`mt-4 p-4 rounded-md ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+              <div className={`mt-4 p-4 rounded-md ${isCorrect ? 'bg-gold-50' : 'bg-red-50'}`}>
                 <div className="flex items-center gap-2 mb-2 font-bold">
-                  {isCorrect ? <CheckCircle className="text-green-600" size={20}/> : <XCircle className="text-red-600" size={20}/>}
-                  <span className={isCorrect ? 'text-green-800' : 'text-red-800'}>
+                  {isCorrect ? <CheckCircle className="text-gold-600" size={20}/> : <XCircle className="text-red-600" size={20}/>}
+                  <span className={isCorrect ? 'text-gold-800' : 'text-red-800'}>
                     {isCorrect ? t.correct : t.incorrect}
                   </span>
                 </div>
@@ -143,16 +143,16 @@ const PlacementTest: React.FC<Props> = ({ exam, language }) => {
         <button
           onClick={() => setSubmitted(true)}
           disabled={Object.keys(answers).length !== questions.length}
-          className="w-full py-4 bg-indigo-600 text-white rounded-lg font-bold text-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-transform active:scale-95"
+          className="w-full py-4 bg-navy-900 text-white rounded-lg font-bold text-lg hover:bg-navy-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-transform active:scale-95"
         >
           {t.submit}
         </button>
       )}
 
       {submitted && (
-        <div className="bg-slate-800 text-white p-6 rounded-xl text-center">
+        <div className="bg-navy-950 text-white p-6 rounded-xl text-center">
           <p className="text-lg opacity-80">{t.score}</p>
-          <p className="text-5xl font-black text-indigo-400 my-2">{calculateScore()} / {questions.length}</p>
+          <p className="text-5xl font-black text-gold-500 my-2">{calculateScore()} / {questions.length}</p>
         </div>
       )}
     </div>

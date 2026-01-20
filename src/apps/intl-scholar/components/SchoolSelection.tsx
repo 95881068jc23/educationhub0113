@@ -112,7 +112,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200">
           <div className="mb-8 border-b border-slate-100 pb-6">
              <div className="flex items-center gap-3 mb-2">
-                <div className="bg-indigo-600 p-2 rounded-lg text-white">
+                <div className="bg-navy-900 p-2 rounded-lg text-white">
                     <School size={28} />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900">{t.schoolGenerate}</h2>
@@ -125,7 +125,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
              <div className="space-y-5">
                 <div className="space-y-1">
                     <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <MapPin size={16} className="text-indigo-500"/> {t.schoolSelectCity}
+                        <MapPin size={16} className="text-navy-500"/> {t.schoolSelectCity}
                     </label>
                     <select 
                         value={profile.city}
@@ -133,7 +133,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
                             updateField('city', e.target.value);
                             updateField('targetSchools', []); // Clear schools on city change
                         }}
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-800 font-medium"
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-slate-800 font-medium"
                     >
                         {ADMISSION_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
@@ -146,7 +146,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
                         value={profile.studentAge}
                         onChange={(e) => updateField('studentAge', e.target.value)}
                         placeholder="e.g. 10 years old / G4"
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none"
                     />
                 </div>
 
@@ -157,7 +157,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
                         value={profile.currentSchool}
                         onChange={(e) => updateField('currentSchool', e.target.value)}
                         placeholder="e.g. Local Public School / Bilingual School"
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none"
                     />
                 </div>
 
@@ -168,7 +168,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
                         onChange={(e) => updateField('languageLevel', e.target.value)}
                         rows={3}
                         placeholder="e.g. English: PET passed with Merit; Math: Ahead of grade level; Chinese: Native."
-                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold-500 outline-none resize-none"
                     />
                 </div>
              </div>
@@ -177,12 +177,12 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
              <div className="space-y-5">
                 <div className="space-y-1">
                     <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                        <Star size={16} className="text-amber-500"/> {t.schoolTarget}
+                        <Star size={16} className="text-gold-500"/> {t.schoolTarget}
                     </label>
                     <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 h-64 overflow-y-auto custom-scrollbar">
                         {availableSchools.map(school => (
                             <label key={school} className="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-100">
-                                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${profile.targetSchools.includes(school) ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300 bg-white'}`}>
+                                <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${profile.targetSchools.includes(school) ? 'bg-navy-900 border-navy-900' : 'border-slate-300 bg-white'}`}>
                                     {profile.targetSchools.includes(school) && <div className="w-2 h-2 bg-white rounded-sm"></div>}
                                 </div>
                                 <input 
@@ -191,7 +191,7 @@ const SchoolSelection: React.FC<Props> = ({ exam, language, onBack }) => {
                                     checked={profile.targetSchools.includes(school)} 
                                     onChange={() => toggleSchool(school)}
                                 />
-                                <span className={`text-sm ${profile.targetSchools.includes(school) ? 'text-indigo-900 font-bold' : 'text-slate-600'}`}>{school}</span>
+                                <span className={`text-sm ${profile.targetSchools.includes(school) ? 'text-navy-900 font-bold' : 'text-slate-600'}`}>{school}</span>
                             </label>
                         ))}
                         {availableSchools.length === 0 && <p className="text-xs text-slate-400 p-2">Select a city to see school list.</p>}

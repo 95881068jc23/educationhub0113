@@ -79,7 +79,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
   };
 
   const cefrOptions = Object.values(CEFRLevel);
-  const inputClass = "w-full bg-gray-800 text-white border-gray-600 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 p-2 border placeholder-gray-400";
+  const inputClass = "w-full bg-gray-800 text-white border-gray-600 rounded-md shadow-sm focus:ring-gold-500 focus:border-gold-500 p-2 border placeholder-gray-400";
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
   
   // Single Select Component with Custom Support
@@ -119,7 +119,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
                {customOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
              </optgroup>
           )}
-          <option value="ADD_NEW" className="font-bold text-emerald-400">+ Add Custom...</option>
+          <option value="ADD_NEW" className="font-bold text-gold-400">+ Add Custom...</option>
         </select>
       ) : (
         <div className="flex space-x-2">
@@ -131,7 +131,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
             placeholder="Enter custom value..."
             autoFocus
           />
-          <button onClick={() => addCustomItem(inputValue, setCustomOptions, setIsAdding, (v) => handleChange(field, v))} className="bg-emerald-600 px-3 rounded text-white">OK</button>
+          <button onClick={() => addCustomItem(inputValue, setCustomOptions, setIsAdding, (v) => handleChange(field, v))} className="bg-gold-500 hover:bg-gold-600 px-3 rounded text-white font-bold">OK</button>
           <button onClick={() => setIsAdding(false)} className="bg-gray-600 px-3 rounded text-white">X</button>
         </div>
       )}
@@ -166,7 +166,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
        <label className={labelClass}>{label}</label>
        <div className="flex flex-wrap gap-2 mb-2">
           {selected.map(item => (
-            <span key={item} className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm flex items-center">
+            <span key={item} className="bg-gold-100 text-gold-800 px-3 py-1 rounded-full text-sm flex items-center">
               {item}
               <button onClick={() => toggleItem(field, item)} className="ml-2 hover:text-red-500">×</button>
             </span>
@@ -196,7 +196,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
                    {customOptions.filter(o => !selected.includes(o)).map(o => <option key={o} value={o}>{o}</option>)}
                 </optgroup>
              )}
-             <option value="ADD_NEW" className="font-bold text-emerald-400">+ Create New...</option>
+             <option value="ADD_NEW" className="font-bold text-gold-400">+ Create New...</option>
           </select>
        </div>
 

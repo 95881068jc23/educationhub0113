@@ -183,17 +183,17 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
       {/* 1. Quick Brief Section */}
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden transition-all duration-300">
         {/* Decorative background element */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-navy-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
         
         <div className="flex justify-between items-center mb-6 relative z-10">
            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-100 rounded-lg text-indigo-700">
+              <div className="p-2 bg-navy-100 rounded-lg text-navy-900">
                 <Sparkles size={24} />
               </div>
               <h2 className="text-xl font-bold text-slate-900">{t.quickBrief}</h2>
               <button 
                 onClick={() => setIsBriefOpen(!isBriefOpen)}
-                className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-indigo-600 transition-colors"
+                className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-navy-700 transition-colors"
                 title={isBriefOpen ? "Collapse" : "Expand"}
               >
                 {isBriefOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}

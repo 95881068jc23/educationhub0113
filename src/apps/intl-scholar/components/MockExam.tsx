@@ -79,37 +79,37 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
   if (score && isSubmitted) {
     // Result View
     return (
-        <div className="bg-white p-6 rounded-xl border border-indigo-100 shadow-sm animate-fade-in max-w-4xl mx-auto">
+        <div className="bg-white p-6 rounded-xl border border-navy-100 shadow-sm animate-fade-in max-w-4xl mx-auto">
             <div className="flex justify-between items-start mb-6">
                 <div>
                     <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                        <Award className="text-amber-500" /> Mock Exam Result
+                        <Award className="text-gold-500" /> Mock Exam Result
                     </h3>
                     <p className="text-slate-500 text-sm mt-1">
-                        Correct: <span className="font-bold text-indigo-600">{getCorrectCount()}</span> / {questions.length}
+                        Correct: <span className="font-bold text-navy-600">{getCorrectCount()}</span> / {questions.length}
                     </p>
                 </div>
                 <div className="text-right">
-                    <div className="text-4xl font-black text-indigo-600">{score}</div>
-                    <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Estimated Score</div>
+                    <div className="text-4xl font-black text-navy-900">{score}</div>
+                    <div className="text-xs font-bold text-gold-500 uppercase tracking-wider">Estimated Score</div>
                 </div>
             </div>
             
-            <div className="bg-indigo-50 p-4 rounded-lg text-sm text-indigo-800 mb-6">
+            <div className="bg-navy-50 p-4 rounded-lg text-sm text-navy-900 mb-6">
                 <p>This score has been saved. It can be automatically imported into the <strong>Diagnostic Analysis</strong> section.</p>
             </div>
 
             <div className="flex gap-3 mb-8">
                 <button 
                     onClick={() => setShowReview(!showReview)}
-                    className="flex-1 py-3 bg-white border-2 border-slate-200 text-slate-700 rounded-xl hover:border-indigo-500 hover:text-indigo-600 font-bold flex items-center justify-center gap-2 transition-all"
+                    className="flex-1 py-3 bg-white border-2 border-slate-200 text-slate-700 rounded-xl hover:border-gold-500 hover:text-navy-900 font-bold flex items-center justify-center gap-2 transition-all"
                 >
                     {showReview ? <ChevronUp size={18}/> : <ChevronDown size={18}/>}
                     {showReview ? 'Hide Mistakes' : 'Review Mistakes (查看错题)'}
                 </button>
                 <button 
                     onClick={startNewExam}
-                    className="flex-1 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-bold flex items-center justify-center gap-2 shadow-sm"
+                    className="flex-1 py-3 bg-navy-900 text-white rounded-xl hover:bg-navy-800 font-bold flex items-center justify-center gap-2 shadow-sm"
                 >
                     <RefreshCw size={18} /> Retake Exam
                 </button>
@@ -157,10 +157,10 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                                             {answers[q.id] !== undefined ? q.options[answers[q.id]] : 'Not Answered'}
                                         </div>
                                     </div>
-                                    <div className="p-3 bg-white border-2 border-green-200 rounded-lg text-sm">
-                                        <span className="text-xs text-green-500 font-bold uppercase block mb-1">Correct Answer</span>
+                                    <div className="p-3 bg-white border-2 border-gold-200 rounded-lg text-sm">
+                                        <span className="text-xs text-gold-600 font-bold uppercase block mb-1">Correct Answer</span>
                                         <div className="flex items-center gap-2 text-slate-700">
-                                            <span className="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold border border-green-200">
+                                            <span className="w-5 h-5 rounded-full bg-gold-100 text-gold-600 flex items-center justify-center text-xs font-bold border border-gold-200">
                                                 {String.fromCharCode(65 + q.answer)}
                                             </span>
                                             {q.options[q.answer]}
@@ -169,7 +169,7 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                                 </div>
 
                                 <div className="bg-white p-3 rounded-lg border border-slate-200 text-sm text-slate-600">
-                                    <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase mb-1">
+                                    <div className="flex items-center gap-2 text-navy-700 font-bold text-xs uppercase mb-1">
                                         <AlertCircle size={12} /> Explanation
                                     </div>
                                     {q.explanation}
@@ -179,7 +179,7 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                     })}
                     {getCorrectCount() === questions.length && (
                         <div className="text-center py-10 text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                            <CheckCircle size={40} className="text-green-500 mx-auto mb-2"/>
+                            <CheckCircle size={40} className="text-gold-500 mx-auto mb-2"/>
                             <p>Perfect Score! No mistakes to review.</p>
                         </div>
                     )}
@@ -197,7 +197,7 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
             <h3 className="text-xl font-bold text-slate-800">{exam} Mock Simulation</h3>
             <p className="text-slate-500 text-sm">20 Questions • Randomly Selected from Pool of 100+</p>
         </div>
-        <div className="flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full text-xs font-bold">
+        <div className="flex items-center gap-2 text-navy-900 bg-navy-50 px-3 py-1 rounded-full text-xs font-bold">
             <Clock size={14} /> Est. 20 mins
         </div>
       </div>

@@ -45,7 +45,7 @@ const ProgressTimer = ({ active, estimatedTime = 60 }: { active: boolean, estima
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                 <div 
-                    className="bg-indigo-600 h-2 rounded-full transition-all duration-300 ease-out" 
+                    className="bg-gold-500 h-2 rounded-full transition-all duration-300 ease-out" 
                     style={{ width: `${progress}%` }}
                 ></div>
             </div>

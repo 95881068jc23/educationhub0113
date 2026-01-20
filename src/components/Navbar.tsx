@@ -140,7 +140,7 @@ export const Navbar: React.FC = () => {
                   </div>
                 )}
                 {user && user.auditStatus === 1 && (
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-green-500/10 border border-green-500/30 text-green-400">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-gold-500/10 border border-gold-500/30 text-gold-400">
                     <CheckCircle className="w-4 h-4" />
                     <span>Account Verified</span>
                   </div>
