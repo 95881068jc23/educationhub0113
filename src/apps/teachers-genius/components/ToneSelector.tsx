@@ -38,14 +38,14 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
   return (
     <div className={`flex flex-col ${compact ? 'gap-2' : 'gap-3'}`}>
       <div className="flex items-center gap-2 flex-wrap">
-        <div className={`flex items-center justify-center rounded-full ${compact ? 'w-5 h-5 bg-purple-100' : 'w-8 h-8 bg-purple-100'}`}>
-          <Smile size={compact ? 12 : 18} className="text-purple-600" />
+        <div className={`flex items-center justify-center rounded-full ${compact ? 'w-5 h-5 bg-navy-50' : 'w-8 h-8 bg-navy-50'}`}>
+          <Smile size={compact ? 12 : 18} className="text-navy-600" />
         </div>
-        <label className={`font-bold text-slate-700 ${compact ? 'text-xs' : 'text-sm'}`}>
+        <label className={`font-bold text-navy-700 ${compact ? 'text-xs' : 'text-sm'}`}>
           {label || 'AI 语气与性格设定 (可多选 & 自定义)'}
         </label>
         {!compact && (
-           <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+           <span className="text-[10px] text-navy-600 bg-navy-50 px-2 py-0.5 rounded-full border border-navy-100">
              已选: {selectedTones.length}
            </span>
         )}
@@ -60,22 +60,22 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
               key={tone.id}
               onClick={() => toggleTone(tone.value)}
               className={`
-                relative flex items-center gap-2 rounded-lg font-bold transition-all duration-200 border
+                relative flex items-center gap-2 rounded-lg font-bold transition-all duration-300 border
                 ${compact 
                   ? 'px-3 py-1.5 text-xs' 
                   : 'px-4 py-2 text-sm shadow-sm hover:-translate-y-0.5'
                 }
                 ${isSelected
-                  ? 'bg-gradient-to-br from-purple-600 to-indigo-600 text-white border-transparent shadow-purple-200'
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700'
+                  ? 'bg-gradient-to-br from-navy-600 to-navy-800 text-white border-transparent shadow-navy-200'
+                  : 'bg-white text-navy-600 border-navy-200 hover:bg-navy-50 hover:border-navy-200 hover:text-navy-700'
                 }
               `}
             >
-              {isSelected && <Check size={compact ? 10 : 14} strokeWidth={3} />}
-              {!isSelected && !compact && <span className="w-3.5 h-3.5 rounded-full border border-slate-300"></span>}
+              {isSelected && <Check size={compact ? 10 : 14} strokeWidth={3} className="text-gold-400" />}
+              {!isSelected && !compact && <span className="w-3.5 h-3.5 rounded-full border border-navy-300"></span>}
               <span>{tone.label.split('(')[0]}</span>
               {isSelected && !compact && (
-                <Sparkles size={14} className="absolute -top-1 -right-1 text-yellow-300 fill-current animate-pulse" />
+                <Sparkles size={14} className="absolute -top-1 -right-1 text-gold-400 fill-current animate-pulse" />
               )}
             </button>
           );
@@ -87,17 +87,17 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
               key={`custom-${idx}`}
               onClick={() => toggleTone(customTone)}
               className={`
-                relative flex items-center gap-2 rounded-lg font-bold transition-all duration-200 border
+                relative flex items-center gap-2 rounded-lg font-bold transition-all duration-300 border
                 ${compact 
                   ? 'px-3 py-1.5 text-xs' 
                   : 'px-4 py-2 text-sm shadow-sm hover:-translate-y-0.5'
                 }
-                bg-gradient-to-br from-pink-500 to-rose-500 text-white border-transparent shadow-pink-200
+                bg-gradient-to-br from-gold-500 to-gold-600 text-white border-transparent shadow-gold-200
               `}
             >
-              <Check size={compact ? 10 : 14} strokeWidth={3} />
+              <Check size={compact ? 10 : 14} strokeWidth={3} className="text-white" />
               <span>{customTone}</span>
-              <span className="absolute -top-1 -right-1 bg-white text-rose-500 text-[8px] px-1 rounded-full border border-rose-200">自定义</span>
+              <span className="absolute -top-1 -right-1 bg-white text-gold-600 text-[8px] px-1 rounded-full border border-gold-200">自定义</span>
            </button>
         ))}
 
@@ -110,7 +110,7 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
               value={customToneInput}
               onChange={(e) => setCustomToneInput(e.target.value)}
               placeholder="输入自定义人设..."
-              className="border border-purple-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-purple-500 w-32 h-full"
+              className="border border-navy-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-navy-500 w-32 h-full transition-all duration-300"
               onKeyDown={(e) => e.key === 'Enter' && handleAddCustomTone()}
               onBlur={() => {
                 if(!customToneInput) setIsAddingCustom(false);
@@ -118,7 +118,7 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
             />
             <button 
               onClick={handleAddCustomTone}
-              className="bg-purple-600 text-white rounded-lg px-2 h-full hover:bg-purple-700"
+              className="bg-navy-600 text-white rounded-lg px-2 h-full hover:bg-navy-700 transition-all duration-300"
             >
               <Check size={14}/>
             </button>
@@ -127,7 +127,7 @@ export const ToneSelector: React.FC<ToneSelectorProps> = ({ selectedTones, onCha
           <button
             onClick={() => setIsAddingCustom(true)}
             className={`
-              flex items-center gap-1 rounded-lg font-bold text-slate-400 border border-dashed border-slate-300 hover:border-purple-400 hover:text-purple-600 transition-colors
+              flex items-center gap-1 rounded-lg font-bold text-navy-400 border border-dashed border-navy-300 hover:border-navy-400 hover:text-navy-600 transition-all duration-300
               ${compact ? 'px-2 py-1 text-xs' : 'px-3 py-2 text-sm'}
             `}
           >

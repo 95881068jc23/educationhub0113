@@ -12,28 +12,24 @@ const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components
   // Headers: distinct sections with spacing and icons implied by the text
   h3: ({ node, ...props }) => (
     <h3 
-      className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2 border-b pb-2 border-slate-200" 
+      className="text-lg font-bold text-navy-900 mt-6 mb-3 flex items-center gap-2 border-b pb-2 border-slate-200" 
       {...props} 
     />
   ),
   // Blockquote: Used for "Scripts" / "Recommended Replies" - High visibility box
   blockquote: ({ node, ...props }) => (
-    <div className="relative group my-4">
-       <div className="bg-indigo-50 border-l-4 border-indigo-600 rounded-r-lg p-4 shadow-sm">
-          <div className="text-slate-800 italic leading-relaxed" {...props} />
-       </div>
-    </div>
+    <blockquote className="relative group my-4 bg-navy-50 border-l-4 border-navy-600 rounded-r-lg p-4 shadow-sm text-navy-900 italic leading-relaxed" {...props} />
   ),
   // Lists: Cleaner spacing
   ul: ({ node, ...props }) => (
     <ul className="list-disc list-outside ml-5 space-y-2 text-slate-700 mb-4" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="pl-1 leading-relaxed" {...props} />
+    <li className="pl-1 leading-relaxed marker:text-gold-500" {...props} />
   ),
   // Strong: Highlight key terms
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-indigo-800 bg-indigo-100/60 px-1 rounded-sm" {...props} />
+    <span className="font-bold text-navy-900 bg-gold-100/50 px-1 rounded-sm" {...props} />
   ),
   // Paragraphs
   p: ({ node, ...props }) => (
@@ -46,7 +42,7 @@ const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-blue-600 text-white" {...props} />
+    <thead className="bg-navy-800 text-white" {...props} />
   ),
   tbody: ({ node, ...props }) => (
     <tbody className="bg-white divide-y divide-slate-200" {...props} />
@@ -55,7 +51,7 @@ const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components
     <tr className="hover:bg-slate-50 transition-colors" {...props} />
   ),
   th: ({ node, ...props }) => (
-    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white border-r border-blue-500 last:border-r-0" {...props} />
+    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gold-400 border-r border-navy-700 last:border-r-0" {...props} />
   ),
   td: ({ node, ...props }) => (
     <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap border-r border-slate-100 last:border-r-0" {...props} />
@@ -272,8 +268,8 @@ export const ChatInterface: React.FC = () => {
             onClick={() => setSelectedProduct(type)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
               selectedProduct === type
-                ? 'bg-blue-600 text-white shadow-md transform scale-105'
-                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 hover:text-slate-900'
+                ? 'bg-navy-800 text-gold-400 shadow-md transform scale-105 ring-1 ring-gold-500/50'
+                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-navy-50 hover:text-navy-900 hover:border-navy-200'
             }`}
           >
             {type}
@@ -291,7 +287,7 @@ export const ChatInterface: React.FC = () => {
             <div
               className={`max-w-[90%] md:max-w-[85%] rounded-2xl p-5 shadow-sm transition-all ${
                 msg.role === MessageRole.USER
-                  ? 'bg-blue-600 text-white rounded-br-none shadow-blue-200'
+                  ? 'bg-navy-800 text-white rounded-br-none shadow-navy-200/50'
                   : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-slate-200'
               } ${msg.isError ? 'bg-red-50 text-red-600 border-red-200' : ''}`}
             >
@@ -356,7 +352,7 @@ export const ChatInterface: React.FC = () => {
           <div className="flex justify-start">
             <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-none p-5 shadow-sm">
               <div className="flex items-center gap-3 text-slate-600">
-                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                <Loader2 className="w-5 h-5 animate-spin text-navy-600" />
                 <span className="text-sm font-medium">ME 智能顾问正在分析数据...</span>
               </div>
             </div>
@@ -385,11 +381,11 @@ export const ChatInterface: React.FC = () => {
             
             {/* Audio Indicator */}
             {recordedAudio && !isRecording && (
-              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 relative group">
-                <Mic size={16} className="text-blue-600" />
+              <div className="flex items-center gap-2 bg-navy-50 px-3 py-1 rounded-lg border border-navy-100 relative group">
+                <Mic size={16} className="text-navy-600" />
                 <div className="flex flex-col">
-                   <span className="text-xs text-blue-800 font-bold">音频就绪</span>
-                   {recordingDuration > 0 && <span className="text-[10px] text-blue-600 font-mono">{formatTime(recordingDuration)}</span>}
+                   <span className="text-xs text-navy-800 font-bold">音频就绪</span>
+                   {recordingDuration > 0 && <span className="text-[10px] text-navy-600 font-mono">{formatTime(recordingDuration)}</span>}
                 </div>
                 <audio src={recordedAudio} className="hidden" />
                 <button 
@@ -407,7 +403,7 @@ export const ChatInterface: React.FC = () => {
             {/* One Click Analysis Button */}
             <button
               onClick={handleOneClickAnalysis}
-              className="ml-auto flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-xs font-bold rounded-lg hover:from-indigo-700 hover:to-blue-700 shadow-md transform hover:-translate-y-0.5 transition-all"
+              className="ml-auto flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-navy-700 to-navy-600 text-white text-xs font-bold rounded-lg hover:from-navy-800 hover:to-navy-700 shadow-md transform hover:-translate-y-0.5 transition-all"
             >
               <Wand2 size={14} /> 一键智能分析
             </button>
@@ -434,7 +430,7 @@ export const ChatInterface: React.FC = () => {
           {/* Image Upload */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95"
+            className="p-3 text-slate-500 hover:text-navy-600 hover:bg-navy-50 rounded-xl transition-all active:scale-95"
             title="上传聊天截图"
             disabled={isRecording}
           >
@@ -452,7 +448,7 @@ export const ChatInterface: React.FC = () => {
           {/* Audio File Upload */}
           <button
             onClick={() => audioInputRef.current?.click()}
-            className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95"
+            className="p-3 text-slate-500 hover:text-navy-600 hover:bg-navy-50 rounded-xl transition-all active:scale-95"
             title="上传录音文件"
             disabled={isRecording}
           >
@@ -465,14 +461,14 @@ export const ChatInterface: React.FC = () => {
             accept="audio/*"
             onChange={handleAudioUpload}
           />
-
+          
           {/* Audio Recorder */}
           <button
             onClick={isRecording ? stopRecording : startRecording}
             className={`p-3 rounded-xl transition-all active:scale-95 ${
               isRecording 
                 ? 'text-red-600 bg-red-100 hover:bg-red-200 ring-2 ring-red-100' 
-                : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50'
+                : 'text-slate-500 hover:text-navy-600 hover:bg-navy-50'
             }`}
             title="实时录音 (最大120分钟)"
           >
@@ -490,13 +486,13 @@ export const ChatInterface: React.FC = () => {
             }}
             placeholder={isRecording ? "正在录音中..." : "输入问题，或上传素材后点击一键分析..."}
             disabled={isRecording}
-            className="flex-1 resize-none bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32 text-sm text-slate-900 placeholder:text-slate-400 disabled:bg-slate-50 shadow-sm"
+            className="flex-1 resize-none bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-transparent max-h-32 text-sm text-slate-900 placeholder:text-slate-400 disabled:bg-slate-50 shadow-sm"
             rows={1}
           />
           <button
             onClick={() => handleSend()}
             disabled={(!input.trim() && selectedImages.length === 0 && !recordedAudio) || isLoading || isRecording}
-            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-all active:scale-95 flex-shrink-0"
+            className="p-3 bg-navy-900 text-white rounded-xl hover:bg-navy-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-all active:scale-95 flex-shrink-0"
           >
             <Send size={20} />
           </button>

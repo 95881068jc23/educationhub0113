@@ -41,45 +41,45 @@ interface SimMessage extends ChatMessage {
 // --- Markdown Components ---
 const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-2xl font-black text-slate-900 border-b-2 border-indigo-100 pb-3 mb-6" {...props} />
+    <h1 className="text-2xl font-black text-navy-900 border-b-2 border-navy-100 pb-3 mb-6" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2" {...props} />
+    <h3 className="text-lg font-bold text-navy-800 mt-6 mb-3 flex items-center gap-2" {...props} />
   ),
   ul: ({ node, ...props }) => (
     <ul className="space-y-2 mb-4" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="flex items-start gap-2 text-slate-700 text-sm leading-relaxed" {...props}>
-       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0"></span>
+    <li className="flex items-start gap-2 text-navy-700 text-sm leading-relaxed" {...props}>
+       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-500 flex-shrink-0"></span>
        <span>{props.children}</span>
     </li>
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-indigo-700 bg-indigo-50 px-1 rounded" {...props} />
+    <span className="font-bold text-navy-700 bg-navy-50 px-1 rounded" {...props} />
   ),
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-6 rounded-lg border border-slate-200 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-slate-100" {...props} />
+    <div className="overflow-x-auto my-6 rounded-lg border border-navy-200 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-100" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-indigo-50 text-indigo-900" {...props} />
+    <thead className="bg-navy-50 text-navy-900" {...props} />
   ),
   tbody: ({ node, ...props }) => (
-    <tbody className="bg-white divide-y divide-slate-50" {...props} />
+    <tbody className="bg-white divide-y divide-navy-50" {...props} />
   ),
   th: ({ node, ...props }) => (
     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap" {...props} />
+    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap" {...props} />
   ),
 };
 
 const ChatMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   p: ({ node, ...props }) => <p className="mb-2 last:mb-0 leading-relaxed" {...props} />,
-  strong: ({ node, ...props }) => <span className="font-bold text-indigo-700" {...props} />,
+  strong: ({ node, ...props }) => <span className="font-bold text-navy-700" {...props} />,
 };
 
 export const SalesSimulation: React.FC = () => {
@@ -375,48 +375,48 @@ ${fullTranscript}
   if (gameState === 'setup') {
     return (
       <div className="h-full flex flex-col items-center justify-center p-6 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 max-w-2xl w-full">
+        <div className="bg-white rounded-2xl shadow-xl border border-navy-200 p-8 max-w-2xl w-full">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Bot size={32} className="text-indigo-600" />
+            <div className="w-16 h-16 bg-navy-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Bot size={32} className="text-navy-600" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-800">AI 模拟谈单训练</h2>
-            <p className="text-slate-500 mt-2">选择客户人设，开启 1对1 实战演练</p>
+            <h2 className="text-2xl font-bold text-navy-800">AI 模拟谈单训练</h2>
+            <p className="text-navy-500 mt-2">选择客户人设，开启 1对1 实战演练</p>
           </div>
 
           <div className="space-y-6">
             {/* Persona Selection */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-3">1. 选择客户类型</label>
+              <label className="block text-sm font-bold text-navy-700 mb-3">1. 选择客户类型</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {SIMULATION_PERSONAS.map(p => (
                   <button
                     key={p.id}
                     onClick={() => setSelectedPersonaId(p.id)}
-                    className={`p-4 rounded-xl border text-left transition-all ${
+                    className={`p-4 rounded-xl border text-left transition-all duration-300 ${
                       selectedPersonaId === p.id 
-                        ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600' 
-                        : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
+                        ? 'border-navy-600 bg-navy-50 ring-1 ring-navy-600 shadow-md' 
+                        : 'border-navy-200 hover:border-navy-300 hover:bg-navy-50 hover:shadow-sm'
                     }`}
                   >
-                    <div className="font-bold text-sm text-slate-800">{p.label}</div>
-                    <div className="text-xs text-slate-500 mt-1">{p.desc}</div>
+                    <div className="font-bold text-sm text-navy-800">{p.label}</div>
+                    <div className="text-xs text-navy-500 mt-1">{p.desc}</div>
                   </button>
                 ))}
                 
                 {/* Custom Persona Option */}
                 <button
                   onClick={() => setSelectedPersonaId('custom')}
-                  className={`p-4 rounded-xl border text-left transition-all relative overflow-hidden ${
+                  className={`p-4 rounded-xl border text-left transition-all duration-300 relative overflow-hidden ${
                     selectedPersonaId === 'custom' 
-                      ? 'border-pink-500 bg-pink-50 ring-1 ring-pink-500' 
-                      : 'border-slate-200 hover:border-pink-300 hover:bg-slate-50'
+                      ? 'border-gold-500 bg-gold-50 ring-1 ring-gold-500 shadow-md' 
+                      : 'border-navy-200 hover:border-gold-300 hover:bg-navy-50 hover:shadow-sm'
                   }`}
                 >
-                  <div className="font-bold text-sm text-pink-600 flex items-center gap-2">
+                  <div className="font-bold text-sm text-gold-600 flex items-center gap-2">
                     <Settings2 size={16} /> 自定义客户人设
                   </div>
-                  <div className="text-xs text-pink-400 mt-1">输入特定背景或刁钻性格</div>
+                  <div className="text-xs text-gold-500/80 mt-1">输入特定背景或刁钻性格</div>
                 </button>
               </div>
 
@@ -427,7 +427,7 @@ ${fullTranscript}
                     value={customPersona}
                     onChange={(e) => setCustomPersona(e.target.value)}
                     placeholder="例如: 某大厂技术总监，预算充足但极度挑剔，只关心是否能3个月内流利沟通..."
-                    className="w-full p-3 border-2 border-pink-200 rounded-lg text-sm focus:border-pink-500 focus:outline-none text-pink-700 font-medium placeholder:text-pink-300/70"
+                    className="w-full p-3 border-2 border-gold-200 rounded-lg text-sm focus:border-gold-500 focus:outline-none text-gold-700 font-medium placeholder:text-gold-300/70 transition-all duration-300"
                   />
                 </div>
               )}
@@ -435,27 +435,27 @@ ${fullTranscript}
 
             {/* Topic Selection */}
             <div>
-               <label className="block text-sm font-bold text-slate-700 mb-3">2. 设定咨询场景/主题</label>
+               <label className="block text-sm font-bold text-navy-700 mb-3">2. 设定咨询场景/主题</label>
                <div className="relative">
-                  <BookOpen className="absolute left-4 top-3.5 text-slate-400" size={18}/>
+                  <BookOpen className="absolute left-4 top-3.5 text-navy-400" size={18}/>
                   <input 
                     type="text" 
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     placeholder="例如: 商务英语课程咨询, 雅思备考规划..."
-                    className="w-full p-3 pl-10 border-2 border-slate-200 rounded-xl text-sm focus:border-indigo-500 focus:outline-none font-medium placeholder:text-slate-400"
+                    className="w-full p-3 pl-10 border-2 border-navy-200 rounded-xl text-sm focus:border-navy-500 focus:outline-none font-medium placeholder:text-navy-400 transition-all duration-300"
                   />
                </div>
             </div>
 
             {/* Difficulty Selection */}
             <div>
-               <label className="block text-sm font-bold text-slate-700 mb-3">3. 选择训练难度</label>
+               <label className="block text-sm font-bold text-navy-700 mb-3">3. 选择训练难度</label>
                <div className="flex gap-4">
                  <button 
                    onClick={() => setDifficulty('standard')}
-                   className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                     difficulty === 'standard' ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-slate-200 text-slate-500'
+                   className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all duration-300 ${
+                     difficulty === 'standard' ? 'bg-navy-50 border-navy-500 text-navy-700 shadow-md' : 'bg-white border-navy-200 text-navy-500 hover:border-navy-200 hover:bg-navy-50'
                    }`}
                  >
                    <Shield size={24} />
@@ -465,8 +465,8 @@ ${fullTranscript}
 
                  <button 
                    onClick={() => setDifficulty('challenge')}
-                   className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                     difficulty === 'challenge' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-slate-200 text-slate-500'
+                   className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all duration-300 ${
+                     difficulty === 'challenge' ? 'bg-gold-50 border-gold-500 text-gold-700 shadow-md' : 'bg-white border-navy-200 text-navy-500 hover:border-gold-200 hover:bg-navy-50'
                    }`}
                  >
                    <Sword size={24} />
@@ -479,7 +479,7 @@ ${fullTranscript}
             <button 
               onClick={startGame}
               disabled={selectedPersonaId === 'custom' && !customPersona.trim()}
-              className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-transform active:scale-[0.99] flex items-center justify-center gap-2"
+              className="w-full py-4 bg-gradient-to-r from-navy-700 to-navy-900 text-white rounded-xl font-bold text-lg hover:from-navy-600 hover:to-navy-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-all duration-300 active:scale-[0.99] flex items-center justify-center gap-2"
             >
               <Play fill="currentColor" /> 开始模拟
             </button>
@@ -492,19 +492,19 @@ ${fullTranscript}
   // --- Render: Chat Screen ---
   if (gameState === 'playing') {
     return (
-      <div className="h-full flex flex-col bg-slate-50 rounded-xl overflow-hidden shadow-sm border border-slate-200">
+      <div className="h-full flex flex-col bg-navy-50 rounded-xl overflow-hidden shadow-sm border border-navy-200">
         {/* Header */}
-        <div className="bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm z-10">
+        <div className="bg-white p-4 border-b border-navy-200 flex justify-between items-center shadow-sm z-10">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-               <User className="text-indigo-600" size={20} />
+             <div className="w-10 h-10 rounded-full bg-navy-100 flex items-center justify-center">
+               <User className="text-navy-600" size={20} />
              </div>
              <div>
-               <h3 className="font-bold text-slate-800 text-sm">
+               <h3 className="font-bold text-navy-800 text-sm">
                  {selectedPersonaId === 'custom' ? '自定义客户' : SIMULATION_PERSONAS.find(p => p.id === selectedPersonaId)?.label.split('(')[0]}
                </h3>
-               <div className="flex items-center gap-2 text-xs text-slate-500">
-                 <span className={`px-1.5 py-0.5 rounded ${difficulty === 'challenge' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+               <div className="flex items-center gap-2 text-xs text-navy-500">
+                 <span className={`px-1.5 py-0.5 rounded ${difficulty === 'challenge' ? 'bg-gold-100 text-gold-700' : 'bg-navy-100 text-navy-700'}`}>
                     {difficulty === 'challenge' ? '挑战模式' : '标准模式'}
                  </span>
                  <span>• 第 {turnCount} 轮</span>
@@ -513,7 +513,7 @@ ${fullTranscript}
           </div>
           <button 
             onClick={generateReport}
-            className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 flex items-center gap-2 transition-colors"
+            className="px-4 py-2 bg-navy-800 text-white text-xs font-bold rounded-lg hover:bg-navy-700 flex items-center gap-2 transition-all duration-300"
           >
             <FileCheck size={14} /> 结束并生成报告
           </button>
@@ -524,13 +524,13 @@ ${fullTranscript}
           {messages.map((msg) => (
             <div key={msg.id} className={`flex flex-col gap-1 w-full`}>
                 <div className={`flex gap-3 ${msg.role === MessageRole.USER ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-blue-600' : 'bg-white border border-slate-200'}`}>
-                        {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-indigo-600"/>}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-navy-600' : 'bg-white border border-navy-200'}`}>
+                        {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-navy-600"/>}
                     </div>
                     <div className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed shadow-sm ${
                         msg.role === MessageRole.USER 
-                        ? 'bg-blue-600 text-white rounded-tr-none' 
-                        : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none'
+                        ? 'bg-navy-600 text-white rounded-tr-none' 
+                        : 'bg-white text-navy-800 border border-navy-200 rounded-tl-none'
                     }`}>
                         {/* Render Message Text */}
                         {msg.role === MessageRole.MODEL ? (
@@ -546,14 +546,14 @@ ${fullTranscript}
                 {/* Render Coach Feedback (Only for Model messages that have feedback) */}
                 {msg.role === MessageRole.MODEL && msg.feedback && (
                   <div className="flex flex-row ml-11 max-w-[85%] animate-in slide-in-from-top-2 fade-in">
-                      <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-3 shadow-sm relative">
-                          <div className="absolute -top-1.5 left-4 w-3 h-3 bg-amber-50 border-t border-l border-amber-100 transform rotate-45"></div>
-                          <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <Lightbulb size={14} className="text-amber-600" />
+                      <div className="bg-gold-50 border border-gold-100 rounded-xl p-3 flex gap-3 shadow-sm relative">
+                          <div className="absolute -top-1.5 left-4 w-3 h-3 bg-gold-50 border-t border-l border-gold-100 transform rotate-45"></div>
+                          <div className="w-6 h-6 rounded-full bg-gold-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <Lightbulb size={14} className="text-gold-600" />
                           </div>
-                          <div className="w-full">
-                              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1">💡 优化话术建议 (Suggested Script)</p>
-                              <div className="text-sm text-slate-800 leading-relaxed bg-white/50 p-2 rounded-lg border border-amber-100">
+                          <div className="flex-1">
+                              <p className="text-[10px] font-bold text-gold-600 uppercase tracking-wider mb-1">💡 优化话术建议 (Suggested Script)</p>
+                              <div className="text-sm text-navy-800 leading-relaxed bg-white/50 p-2 rounded-lg border border-gold-100">
                                   <ReactMarkdown components={{p: ({node, ...props}) => <span {...props}/>}}>
                                      {msg.feedback}
                                   </ReactMarkdown>
@@ -566,7 +566,7 @@ ${fullTranscript}
           ))}
           
           {isProcessing && (
-            <div className="flex items-center gap-2 text-slate-400 text-xs ml-12">
+            <div className="flex items-center gap-2 text-navy-400 text-xs ml-12">
                <Loader2 className="animate-spin" size={14} /> 
                {isRecording ? "正在接收语音..." : "对方正在输入..."}
             </div>
@@ -574,15 +574,15 @@ ${fullTranscript}
         </div>
 
         {/* Input */}
-        <div className="bg-white p-4 border-t border-slate-200">
+        <div className="bg-white p-4 border-t border-navy-200">
            <div className="flex items-end gap-2">
              <button
                onClick={toggleRecording}
                disabled={isProcessing}
-               className={`p-3 rounded-xl transition-all active:scale-95 flex-shrink-0 ${
+               className={`p-3 rounded-xl transition-all duration-300 active:scale-95 flex-shrink-0 ${
                  isRecording 
-                   ? 'bg-red-500 text-white ring-4 ring-red-200 animate-pulse' 
-                   : 'bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700'
+                   ? 'bg-gold-500 text-white ring-4 ring-gold-200 animate-pulse' 
+                   : 'bg-navy-100 text-navy-500 hover:bg-navy-200 hover:text-navy-700'
                }`}
              >
                {isRecording ? <Square fill="currentColor" size={20}/> : <Mic size={20}/>}
@@ -595,88 +595,88 @@ ${fullTranscript}
                placeholder={isRecording ? "正在录音... 再次点击麦克风结束" : "输入回复..."}
                disabled={isProcessing || isRecording}
                rows={1}
-               // Updated classes: bg-white for contrast, text-slate-900 for visibility
-               className="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm text-slate-900 placeholder:text-slate-400 disabled:bg-slate-100 disabled:text-slate-400"
+               // Updated classes: bg-white for contrast, text-navy-900 for visibility
+               className="flex-1 bg-white border border-navy-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-navy-500 resize-none text-sm text-navy-900 placeholder:text-navy-300 disabled:bg-navy-50 disabled:text-navy-300 transition-all duration-300"
              />
              
              <button
                onClick={() => handleSendMessage()}
                disabled={!input.trim() || isProcessing || isRecording}
-               className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all flex-shrink-0"
+               className="p-3 bg-navy-600 text-white rounded-xl hover:bg-navy-700 disabled:opacity-50 transition-all duration-300 flex-shrink-0"
              >
                <Send size={20} />
              </button>
            </div>
-           <p className="text-[10px] text-center text-slate-400 mt-2">
-             {isRecording ? "点击麦克风停止录音并发送" : "点击麦克风开始录音，或回车发送文字"}
-           </p>
+           <p className="text-[10px] text-center text-navy-400 mt-2">
+            {isRecording ? "点击麦克风停止录音并发送" : "点击麦克风开始录音，或回车发送文字"}
+          </p>
+       </div>
+     </div>
+   );
+ }
+
+ // --- Render: Report Screen ---
+ return (
+   <div className="h-full flex flex-col p-4 md:p-6 overflow-y-auto">
+     <div className="max-w-4xl mx-auto w-full">
+        <div className="mb-6 flex justify-between items-center">
+           <button 
+             onClick={() => setGameState('setup')} 
+             className="flex items-center gap-2 text-navy-500 hover:text-navy-800 transition-colors duration-300 font-bold text-sm"
+           >
+              <RotateCcw size={16}/> 再练一次
+           </button>
+           <div className="flex gap-2">
+              <button onClick={() => handleDownloadReport('image')} className="bg-white border border-navy-200 text-navy-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-navy-50 transition-all duration-300 flex items-center gap-2">
+                <Download size={14}/> 导出图片
+              </button>
+              <button onClick={() => handleDownloadReport('pdf')} className="bg-white border border-navy-200 text-navy-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-navy-50 transition-all duration-300 flex items-center gap-2">
+                <Download size={14}/> 导出 PDF
+              </button>
+           </div>
         </div>
-      </div>
-    );
-  }
 
-  // --- Render: Report Screen ---
-  return (
-    <div className="h-full flex flex-col p-4 md:p-6 overflow-y-auto">
-      <div className="max-w-4xl mx-auto w-full">
-         <div className="mb-6 flex justify-between items-center">
-            <button 
-              onClick={() => setGameState('setup')} 
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold text-sm"
-            >
-               <RotateCcw size={16}/> 再练一次
-            </button>
-            <div className="flex gap-2">
-               <button onClick={() => handleDownloadReport('image')} className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-slate-50 flex items-center gap-2">
-                 <Download size={14}/> 导出图片
-               </button>
-               <button onClick={() => handleDownloadReport('pdf')} className="bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold shadow-sm hover:bg-slate-50 flex items-center gap-2">
-                 <Download size={14}/> 导出 PDF
-               </button>
-            </div>
-         </div>
+        <div ref={reportRef} className="bg-white rounded-2xl shadow-lg border border-navy-200 p-8 min-h-[600px] relative">
+           {/* Header */}
+           <div className="flex items-center gap-4 mb-8 border-b border-navy-100 pb-6">
+              <div className="w-16 h-16 bg-gold-100 rounded-full flex items-center justify-center">
+                 <Trophy size={32} className="text-gold-600" />
+              </div>
+              <div>
+                 <h1 className="text-2xl font-black text-navy-900 m-0 border-none p-0 mb-1">模拟谈单训练报告</h1>
+                 <div className="flex gap-4 text-sm text-navy-500">
+                    <span className="flex items-center gap-1"><User size={14}/> 对象: {selectedPersonaId === 'custom' ? '自定义' : SIMULATION_PERSONAS.find(p => p.id === selectedPersonaId)?.label.split('(')[0]}</span>
+                    <span className="flex items-center gap-1"><Clock size={14}/> 轮次: {turnCount}</span>
+                    <span className={`flex items-center gap-1 font-bold ${difficulty === 'challenge' ? 'text-gold-600' : 'text-navy-600'}`}>
+                       {difficulty === 'challenge' ? <Sword size={14}/> : <Shield size={14}/>} {difficulty === 'challenge' ? '挑战模式' : '标准模式'}
+                    </span>
+                 </div>
+              </div>
+           </div>
 
-         <div ref={reportRef} className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 min-h-[600px] relative">
-            {/* Header */}
-            <div className="flex items-center gap-4 mb-8 border-b border-slate-100 pb-6">
-               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Trophy size={32} className="text-yellow-600" />
+           {/* Content */}
+           {isGeneratingReport ? (
+              <div className="flex flex-col items-center justify-center py-20 text-navy-400">
+                 <Loader2 size={48} className="animate-spin text-navy-500 mb-4" />
+                 <p className="font-medium text-navy-600">销售总监正在批改试卷...</p>
+                 <p className="text-xs mt-2">正在分析 {messages.length} 条对话记录</p>
+              </div>
+           ) : (
+              <div className="prose prose-sm max-w-none prose-headings:text-navy-900 prose-p:text-navy-700 prose-strong:text-navy-900 prose-li:text-navy-700">
+                 <ReactMarkdown remarkPlugins={[remarkGfm]} components={ReportMarkdownComponents}>
+                   {reportContent}
+                 </ReactMarkdown>
+              </div>
+           )}
+           
+           {/* Watermark */}
+           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] select-none overflow-hidden">
+               <div className="transform -rotate-12 text-6xl font-black text-navy-900 whitespace-nowrap">
+                 ME Training Simulation
                </div>
-               <div>
-                  <h1 className="text-2xl font-black text-slate-900 m-0 border-none p-0 mb-1">模拟谈单训练报告</h1>
-                  <div className="flex gap-4 text-sm text-slate-500">
-                     <span className="flex items-center gap-1"><User size={14}/> 对象: {selectedPersonaId === 'custom' ? '自定义' : SIMULATION_PERSONAS.find(p => p.id === selectedPersonaId)?.label.split('(')[0]}</span>
-                     <span className="flex items-center gap-1"><Clock size={14}/> 轮次: {turnCount}</span>
-                     <span className={`flex items-center gap-1 font-bold ${difficulty === 'challenge' ? 'text-red-500' : 'text-green-500'}`}>
-                        {difficulty === 'challenge' ? <Sword size={14}/> : <Shield size={14}/>} {difficulty === 'challenge' ? '挑战模式' : '标准模式'}
-                     </span>
-                  </div>
-               </div>
-            </div>
-
-            {/* Content */}
-            {isGeneratingReport ? (
-               <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                  <Loader2 size={48} className="animate-spin text-indigo-500 mb-4" />
-                  <p className="font-medium text-slate-600">销售总监正在批改试卷...</p>
-                  <p className="text-xs mt-2">正在分析 {messages.length} 条对话记录</p>
-               </div>
-            ) : (
-               <div className="prose prose-sm max-w-none prose-slate">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={ReportMarkdownComponents}>
-                    {reportContent}
-                  </ReactMarkdown>
-               </div>
-            )}
-            
-            {/* Watermark */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] select-none overflow-hidden">
-                <div className="transform -rotate-12 text-6xl font-black text-slate-900 whitespace-nowrap">
-                  ME Training Simulation
-                </div>
-            </div>
-         </div>
-      </div>
-    </div>
-  );
+           </div>
+        </div>
+     </div>
+   </div>
+ );
 };

@@ -51,7 +51,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-slate-50 overscroll-none">
+    <div className="flex h-[100dvh] overflow-hidden bg-navy-50 overscroll-none">
       {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex flex-col w-64 bg-navy-900 text-white h-full shadow-xl z-20 flex-shrink-0">
         <div className="p-6 border-b border-navy-800">
@@ -67,80 +67,80 @@ const App: React.FC = () => {
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <button 
             onClick={() => setActiveTab('process')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'process' ? 'bg-navy-700 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'process' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <ClipboardList size={20} />
             <div className="text-left">
               <div className="font-medium">咨询流程 SOP</div>
-              <div className="text-[10px] text-slate-400">上半场挖需 / 下半场成交</div>
+              <div className="text-[10px] text-navy-300">上半场挖需 / 下半场成交</div>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTab('chat')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'chat' ? 'bg-navy-700 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'chat' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <MessageSquare size={20} />
             <div className="text-left">
               <div className="font-medium">智能问答 Q&A</div>
-              <div className="text-[10px] text-slate-400">售前攻单 / 售后服务</div>
+              <div className="text-[10px] text-navy-300">售前攻单 / 售后服务</div>
             </div>
           </button>
 
            <button 
             onClick={() => setActiveTab('value')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'value' ? 'bg-gold-600 text-white shadow-lg' : 'text-slate-300 hover:bg-navy-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'value' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <Gift size={20} />
             <div className="text-left">
               <div className="font-medium">价值赋能锦囊</div>
-              <div className="text-[10px] text-slate-400">生成客户行业资料</div>
+              <div className="text-[10px] text-navy-300">生成客户行业资料</div>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTab('diagnosis')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'diagnosis' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'diagnosis' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <FileText size={20} />
             <div className="text-left">
               <div className="font-medium">案例 AI 复盘</div>
-              <div className="text-[10px] text-slate-400">录音/截图 深度分析</div>
+              <div className="text-[10px] text-navy-300">录音/截图 深度分析</div>
             </div>
           </button>
           
           <button 
             onClick={() => setActiveTab('live')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'live' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'live' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <Zap size={20} />
             <div className="text-left">
               <div className="font-medium">实时建议 Live</div>
-              <div className="text-[10px] text-slate-400">实时话术提醒</div>
+              <div className="text-[10px] text-navy-300">实时话术提醒</div>
             </div>
           </button>
 
           <button 
             onClick={() => setActiveTab('simulation')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'simulation' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-300 hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'simulation' ? 'bg-navy-700 text-white shadow-lg' : 'text-navy-200 hover:bg-navy-800'}`}
           >
             <Bot size={20} />
             <div className="text-left">
               <div className="font-medium">模拟谈单训练</div>
-              <div className="text-[10px] text-slate-400">AI 客户实战演练</div>
+              <div className="text-[10px] text-navy-300">AI 客户实战演练</div>
             </div>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-800">
-           <p className="text-xs text-slate-500 text-center">© 2024 Marvellous Education</p>
+        <div className="p-4 border-t border-navy-800">
+           <p className="text-xs text-navy-400 text-center">© 2024 Marvellous Education</p>
         </div>
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 w-full bg-slate-900 text-white z-50 h-14 flex items-center justify-between px-4 shadow-md">
+      <div className="md:hidden fixed top-0 w-full bg-navy-900 text-white z-50 h-14 flex items-center justify-between px-4 shadow-md">
         <div className="flex items-center gap-2">
-          <GraduationCap className="w-6 h-6 text-blue-400" />
+          <GraduationCap className="w-6 h-6 text-gold-400" />
           <span className="font-bold text-sm">ME Magic Box</span>
         </div>
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2">
@@ -150,40 +150,40 @@ const App: React.FC = () => {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-slate-900 z-40 pt-16 px-4 space-y-3 overflow-y-auto">
+        <div className="md:hidden fixed inset-0 bg-navy-900 z-40 pt-16 px-4 space-y-3 overflow-y-auto">
            <button 
             onClick={() => { setActiveTab('process'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'process' ? 'bg-blue-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'process' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <ClipboardList size={18} /> 咨询流程 SOP
           </button>
            <button 
             onClick={() => { setActiveTab('chat'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'chat' ? 'bg-blue-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'chat' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <MessageSquare size={18} /> 智能问答 Q&A
           </button>
           <button 
             onClick={() => { setActiveTab('value'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'value' ? 'bg-purple-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'value' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <Gift size={18} /> 价值赋能锦囊
           </button>
           <button 
             onClick={() => { setActiveTab('diagnosis'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'diagnosis' ? 'bg-blue-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'diagnosis' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <FileText size={18} /> 案例 AI 复盘
           </button>
           <button 
             onClick={() => { setActiveTab('live'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'live' ? 'bg-blue-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'live' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <Zap size={18} /> 实时建议 Live
           </button>
           <button 
             onClick={() => { setActiveTab('simulation'); setMobileMenuOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'simulation' ? 'bg-indigo-600' : 'bg-slate-800'} text-white`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base ${activeTab === 'simulation' ? 'bg-navy-700' : 'bg-navy-800'} text-white hover:bg-navy-700`}
           >
             <Bot size={18} /> 模拟谈单训练
           </button>
@@ -194,9 +194,9 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col h-full overflow-hidden relative md:static pt-14 md:pt-0">
          <div className="flex-1 flex flex-col h-full p-2 md:p-6 w-full max-w-6xl mx-auto overflow-hidden">
             <header className="mb-3 md:mb-4 flex-shrink-0 hidden md:block">
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">{getTitle()}</h2>
+              <h2 className="text-2xl font-bold text-navy-900 tracking-tight">{getTitle()}</h2>
             </header>
-            <div className="flex-1 overflow-hidden relative rounded-xl bg-white shadow-sm md:shadow-none border md:border-none border-slate-200">
+            <div className="flex-1 overflow-hidden relative rounded-xl bg-white shadow-sm md:shadow-none border md:border-none border-navy-200">
                <div className="absolute inset-0">
                  {renderContent()}
                </div>

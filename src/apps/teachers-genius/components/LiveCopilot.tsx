@@ -187,7 +187,7 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                             role: 'user', 
                             parts: [{ text: "Start monitoring. Please output insights using tags like 【建议】 or [Warning] immediately if you detect issues." }] 
                         } 
-                    }));
+                    } as any));
                 },
                 onmessage: async (msg: LiveServerMessage) => {
                     // 1. Handle User Input Transcription
@@ -430,30 +430,30 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   if (step === 'setup') {
     return (
       <div className="flex flex-col items-center justify-center h-full p-4 overflow-y-auto w-full">
-      <div className="max-w-xl w-full p-6 md:p-8 bg-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white">
+      <div className="max-w-xl w-full p-6 md:p-8 bg-navy-900 rounded-2xl shadow-xl border border-navy-700 text-white">
          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-             <Activity className="text-teal-400" /> Teaching Copilot Setup
+             <Activity className="text-gold-400" /> Teaching Copilot Setup
          </h2>
          <div className="space-y-6">
              <div>
-               <label className="block text-sm font-bold mb-2 text-slate-300">Student Level (CEFR)</label>
+               <label className="block text-sm font-bold mb-2 text-navy-200">Student Level (CEFR)</label>
                <input 
-                  className="w-full border border-slate-600 bg-slate-800 p-3 rounded-lg text-white placeholder-slate-500 focus:ring-2 focus:ring-teal-500 focus:outline-none" 
+                  className="w-full border border-navy-600 bg-navy-800 p-3 rounded-lg text-white placeholder-navy-400 focus:ring-2 focus:ring-gold-500 focus:outline-none" 
                   value={studentProfile.level} 
                   onChange={e => setStudentProfile(prev => ({...prev, level: e.target.value}))} 
                   placeholder="e.g. A2 - B1"
                />
              </div>
              <div>
-               <label className="block text-sm font-bold mb-2 text-slate-300">Student Goal / Context</label>
+               <label className="block text-sm font-bold mb-2 text-navy-200">Student Goal / Context</label>
                <input 
-                  className="w-full border border-slate-600 bg-slate-800 p-3 rounded-lg text-white placeholder-slate-500 focus:ring-2 focus:ring-teal-500 focus:outline-none" 
+                  className="w-full border border-navy-600 bg-navy-800 p-3 rounded-lg text-white placeholder-navy-400 focus:ring-2 focus:ring-gold-500 focus:outline-none" 
                   value={studentProfile.goal} 
                   onChange={e => setStudentProfile(prev => ({...prev, goal: e.target.value}))} 
                   placeholder="e.g. Preparing for IELTS, Needs confidence"
                />
              </div>
-             <button onClick={() => setStep('live')} className="w-full bg-teal-600 hover:bg-teal-500 text-white py-4 rounded-xl font-bold shadow-lg shadow-teal-900/50 transition-all flex items-center justify-center gap-2">
+             <button onClick={() => setStep('live')} className="w-full bg-gradient-to-r from-navy-600 to-navy-800 hover:from-navy-500 hover:to-navy-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-navy-900/50 transition-all duration-300 flex items-center justify-center gap-2">
                  <Zap size={20} /> Initialize Live Monitor
              </button>
          </div>
@@ -464,42 +464,42 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
   // Live HUD
   return (
-    <div className="h-full flex flex-col gap-3 md:gap-4 bg-slate-950 p-2 md:p-4 rounded-xl border border-slate-800 md:rounded-2xl overflow-hidden">
+    <div className="h-full flex flex-col gap-3 md:gap-4 bg-navy-950 p-2 md:p-4 rounded-xl border border-navy-800 md:rounded-2xl overflow-hidden">
        {/* Control Bar */}
-       <div className="bg-slate-900 p-3 md:p-4 border border-slate-800 rounded-xl flex flex-col md:flex-row justify-between items-center shadow-lg gap-3 md:gap-0 flex-shrink-0">
+       <div className="bg-navy-900 p-3 md:p-4 border border-navy-800 rounded-xl flex flex-col md:flex-row justify-between items-center shadow-lg gap-3 md:gap-0 flex-shrink-0">
           <div className="flex items-center gap-3 w-full md:w-auto">
-             <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-red-500 animate-pulse' : 'bg-slate-600'}`}></div>
+             <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-gold-500 animate-pulse' : 'bg-navy-600'}`}></div>
              <div className="flex-1 md:flex-none">
-                <div className="font-bold text-slate-200 text-sm md:text-base flex items-center gap-2">
+                <div className="font-bold text-navy-100 text-sm md:text-base flex items-center gap-2">
                     Live Copilot 
-                    <span className="text-[10px] text-teal-400 font-normal px-2 py-0.5 rounded border border-teal-800 bg-teal-950/50">BETA</span>
+                    <span className="text-[10px] text-gold-400 font-normal px-2 py-0.5 rounded border border-gold-800 bg-gold-950/50">BETA</span>
                 </div>
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider flex items-center gap-2 mt-1">
-                    {isActive ? <span className="text-red-400 font-bold">● REC</span> : <span>● Ready</span>}
-                    <span className="text-slate-600">|</span>
-                    <span className={`font-mono ${isActive ? 'text-white' : 'text-slate-500'}`}>{formatTime(duration)}</span>
-                    <span className="text-slate-600">|</span>
+                <div className="text-[10px] text-navy-400 uppercase tracking-wider flex items-center gap-2 mt-1">
+                    {isActive ? <span className="text-gold-400 font-bold">● REC</span> : <span>● Ready</span>}
+                    <span className="text-navy-500">|</span>
+                    <span className={`font-mono ${isActive ? 'text-white' : 'text-navy-400'}`}>{formatTime(duration)}</span>
+                    <span className="text-navy-500">|</span>
                     
                     {/* Connection Status Indicator */}
                     {connectionStatus === 'connected' && (
-                        <span className="text-green-400 flex items-center gap-1"><Wifi size={10}/> AI Online</span>
+                        <span className="text-gold-400 flex items-center gap-1"><Wifi size={10}/> AI Online</span>
                     )}
                     {connectionStatus === 'connecting' && (
-                        <span className="text-yellow-400 flex items-center gap-1 animate-pulse"><Loader2 size={10} className="animate-spin"/> AI Connecting...</span>
+                        <span className="text-gold-400/80 flex items-center gap-1 animate-pulse"><Loader2 size={10} className="animate-spin"/> AI Connecting...</span>
                     )}
                     {connectionStatus === 'reconnecting' && (
-                        <span className="text-orange-500 flex items-center gap-1 animate-pulse"><WifiOff size={10}/> Reconnecting... (Audio Safe)</span>
+                        <span className="text-gold-500 flex items-center gap-1 animate-pulse"><WifiOff size={10}/> Reconnecting... (Audio Safe)</span>
                     )}
                     {connectionStatus === 'error' && (
-                         <span className="text-red-500 flex items-center gap-1"><AlertTriangle size={10}/> AI Error (Recording Only)</span>
+                        <span className="text-gold-600 flex items-center gap-1"><AlertTriangle size={10}/> AI Error (Recording Only)</span>
                     )}
                     {connectionStatus === 'disconnected' && isActive && (
-                        <span className="text-red-500 flex items-center gap-1"><WifiOff size={10}/> AI Offline</span>
+                        <span className="text-gold-600 flex items-center gap-1"><WifiOff size={10}/> AI Offline</span>
                     )}
                 </div>
              </div>
           </div>
-          <button onClick={isActive ? stopEverything : startRecordingSession} className={`w-full md:w-auto px-6 py-2.5 rounded-lg font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 text-sm md:text-base ${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-teal-600 hover:bg-teal-500'}`}>
+          <button onClick={isActive ? stopEverything : startRecordingSession} className={`w-full md:w-auto px-6 py-2.5 rounded-lg font-bold text-white shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm md:text-base ${isActive ? 'bg-navy-700 hover:bg-navy-600' : 'bg-navy-600 hover:bg-navy-500'}`}>
              {isActive ? <><Zap size={16} fill="white"/> End Class</> : <><Mic size={16}/> Start Class</>}
           </button>
        </div>
@@ -507,23 +507,23 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
        {/* Main Content Area */}
        <div className="flex-1 flex flex-col lg:flex-row gap-3 md:gap-4 overflow-hidden min-h-0">
           {/* Transcript Panel */}
-          <div className="flex-1 bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-6 overflow-hidden flex flex-col shadow-inner min-h-[250px] lg:min-h-0 order-2 lg:order-1">
-             <h3 className="font-bold text-slate-400 mb-2 md:mb-4 flex items-center gap-2 uppercase text-xs tracking-wider border-b border-slate-800 pb-2 flex-shrink-0">
-               <Activity size={14} className="text-teal-500"/> Real-time Transcript
+          <div className="flex-1 bg-navy-900 border border-navy-800 rounded-xl p-3 md:p-6 overflow-hidden flex flex-col shadow-inner min-h-[250px] lg:min-h-0 order-2 lg:order-1">
+             <h3 className="font-bold text-navy-300 mb-2 md:mb-4 flex items-center gap-2 uppercase text-xs tracking-wider border-b border-navy-800 pb-2 flex-shrink-0">
+               <Activity size={14} className="text-gold-500"/> Real-time Transcript
              </h3>
-             <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent" ref={scrollRef}>
+             <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-navy-700 scrollbar-track-transparent" ref={scrollRef}>
                 {transcriptSegments.length === 0 && !currentSegmentDisplay && isActive && (
-                    <div className="text-slate-600 text-sm italic p-4 text-center">Listening for speech... (May take ~5s to start)</div>
+                    <div className="text-navy-400 text-sm italic p-4 text-center">Listening for speech... (May take ~5s to start)</div>
                 )}
                 {transcriptSegments.map(s => (
-                   <div key={s.id} className="p-3 bg-slate-800/50 rounded-lg border border-slate-700/50 animate-in fade-in slide-in-from-bottom-2">
-                      <span className="text-[10px] text-slate-500 block mb-1 font-mono">{s.time}</span>
-                      <p className="text-slate-200 text-sm leading-relaxed whitespace-pre-wrap">{s.text}</p>
+                   <div key={s.id} className="p-3 bg-navy-800/50 rounded-lg border border-navy-700/50 animate-in fade-in slide-in-from-bottom-2">
+                      <span className="text-[10px] text-navy-400 block mb-1 font-mono">{s.time}</span>
+                      <p className="text-navy-100 text-sm leading-relaxed whitespace-pre-wrap">{s.text}</p>
                    </div>
                 ))}
                 {currentSegmentDisplay && (
-                   <div className="p-3 rounded-lg border border-dashed border-slate-700 bg-slate-800/30">
-                      <p className="text-teal-400 text-sm italic whitespace-pre-wrap">{currentSegmentDisplay}</p>
+                   <div className="p-3 rounded-lg border border-dashed border-navy-700 bg-navy-800/30">
+                      <p className="text-gold-400 text-sm italic whitespace-pre-wrap">{currentSegmentDisplay}</p>
                    </div>
                 )}
                 {/* Spacer to ensure auto-scroll has room */}
@@ -532,27 +532,27 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
           </div>
 
           {/* AI Feedback Panel */}
-          <div className="h-[200px] lg:h-auto w-full lg:w-[350px] bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-6 overflow-hidden shadow-inner flex flex-col flex-shrink-0 order-1 lg:order-2">
-             <div className="flex justify-between items-center border-b border-slate-800 pb-2 mb-2 md:mb-4 flex-shrink-0">
-                <h3 className="font-bold text-teal-400 flex items-center gap-2 uppercase text-xs tracking-wider">
+          <div className="h-[200px] lg:h-auto w-full lg:w-[350px] bg-navy-900 border border-navy-800 rounded-xl p-3 md:p-6 overflow-hidden shadow-inner flex flex-col flex-shrink-0 order-1 lg:order-2">
+             <div className="flex justify-between items-center border-b border-navy-800 pb-2 mb-2 md:mb-4 flex-shrink-0">
+                <h3 className="font-bold text-gold-400 flex items-center gap-2 uppercase text-xs tracking-wider">
                     <Zap size={14}/> Copilot Insights
                 </h3>
              </div>
              
-             <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-slate-700">
+             <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-navy-700">
                 {strategyCards.slice().reverse().map(c => { 
-                  let bgClass = "bg-teal-950/30 border-teal-800/50";
-                  let titleColor = "text-teal-300";
-                  let icon = <Lightbulb size={16} className="text-teal-400"/>;
+                  let bgClass = "bg-navy-800/50 border-navy-600/50";
+                  let titleColor = "text-navy-300";
+                  let icon = <Lightbulb size={16} className="text-gold-400"/>;
                   
                   if (c.type === 'warning') {
-                     bgClass = "bg-red-950/30 border-red-800/50";
-                     titleColor = "text-red-400";
-                     icon = <AlertTriangle size={16} className="text-red-500"/>;
+                     bgClass = "bg-navy-800/80 border-gold-500/50";
+                     titleColor = "text-gold-400";
+                     icon = <AlertTriangle size={16} className="text-gold-500"/>;
                   } else if (c.type === 'script') {
-                     bgClass = "bg-indigo-950/30 border-indigo-800/50";
-                     titleColor = "text-indigo-300";
-                     icon = <Bot size={16} className="text-indigo-400"/>;
+                     bgClass = "bg-navy-700/50 border-navy-500/50";
+                     titleColor = "text-white";
+                     icon = <Bot size={16} className="text-white"/>;
                   }
 
                   return (
@@ -561,12 +561,12 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                           {icon}
                           <span className={`font-bold text-xs ${titleColor}`}>{c.title}</span>
                        </div>
-                       <p className="text-sm text-slate-200 font-medium leading-relaxed">{c.content}</p>
+                       <p className="text-sm text-navy-100 font-medium leading-relaxed">{c.content}</p>
                     </div>
                   );
                 })}
                 {strategyCards.length === 0 && (
-                   <div className="text-center text-slate-600 py-6 flex flex-col items-center">
+                   <div className="text-center text-navy-500 py-6 flex flex-col items-center">
                       <Bot size={24} className="mb-2 opacity-20"/>
                       <p className="text-xs">Listening for teaching patterns...</p>
                    </div>
@@ -576,11 +576,11 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
        </div>
 
        {recordedAudioUrl && !isActive && (
-          <div className="flex flex-col md:flex-row justify-center bg-slate-900 p-4 border border-slate-800 rounded-xl shadow-lg gap-3 animate-in slide-in-from-bottom-4 flex-shrink-0">
-             <button onClick={handleDownload} className="w-full md:w-auto bg-slate-700 hover:bg-slate-600 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg transition-all">
+          <div className="flex flex-col md:flex-row justify-center bg-navy-900 p-4 border border-navy-800 rounded-xl shadow-lg gap-3 animate-in slide-in-from-bottom-4 flex-shrink-0">
+             <button onClick={handleDownload} className="w-full md:w-auto bg-navy-700 hover:bg-navy-600 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg transition-all duration-300">
                 <Download size={18}/> Download WAV
              </button>
-             <button onClick={() => onSaveAndAnalyze?.(recordedAudioUrl)} className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 transition-all">
+             <button onClick={() => onSaveAndAnalyze?.(recordedAudioUrl)} className="w-full md:w-auto bg-gradient-to-r from-gold-500 to-gold-700 hover:from-gold-400 hover:to-gold-600 text-white px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-gold-900/20 transition-all duration-300">
                 <Save size={18}/> One-Click Diagnosis
              </button>
           </div>

@@ -83,7 +83,7 @@ const ModuleView: React.FC<{
     const isCompact = isPreviewMode;
 
     const renderTopicItem = (topic: Topic, index: number, isPrivateColumn: boolean) => {
-      let badgeColor = "bg-gray-100 text-gray-600";
+      let badgeColor = "bg-navy-50 text-navy-600";
       let badgeText = "System";
       if (topic.source === 'File') { badgeColor = "bg-navy-100 text-navy-700"; badgeText = "File"; }
       else if (topic.source === 'AI') { badgeColor = "bg-gold-100 text-gold-700"; badgeText = "AI"; }
@@ -97,7 +97,7 @@ const ModuleView: React.FC<{
           className={`
             ${isCompact ? 'p-2 mb-1.5' : 'p-3 mb-2'} 
             bg-white rounded border transition-all shadow-sm flex flex-col gap-1 break-inside-avoid relative group
-            ${isClickable ? 'hover:border-gold-500 cursor-pointer hover:shadow-md' : 'border-gray-100'}`}
+            ${isClickable ? 'hover:border-gold-500 cursor-pointer hover:shadow-md' : 'border-navy-100'}`}
           onClick={() => isClickable && onHandleTopicClick(module.level, topic.id)}
         >
           {isGeneratingThis && (
@@ -115,11 +115,11 @@ const ModuleView: React.FC<{
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <div className={`${isCompact ? 'text-xs' : 'text-sm'} font-medium text-gray-800`}>{topic.title}</div>
+                <div className={`${isCompact ? 'text-xs' : 'text-sm'} font-medium text-navy-800`}>{topic.title}</div>
                 <span className={`text-[9px] px-1 rounded uppercase font-bold ${badgeColor}`}>{badgeText}</span>
               </div>
               {topic.practicalScenario && (
-                <div className="text-[10px] text-gray-500 mt-0.5 italic border-l-2 border-gold-200 pl-1.5">
+                <div className="text-[10px] text-navy-500 mt-0.5 italic border-l-2 border-gold-200 pl-1.5">
                    "{topic.practicalScenario}"
                 </div>
               )}
@@ -131,14 +131,14 @@ const ModuleView: React.FC<{
             </div>
             {showTools && (
                 <div className="flex flex-col items-end gap-2 ml-2 print:hidden" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => onRemoveTopic(module.level, topic.id)} className="text-gray-300 hover:text-red-500">
+                    <button onClick={() => onRemoveTopic(module.level, topic.id)} className="text-navy-300 hover:text-navy-900">
                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                    
                    {isPrivateColumn && !topic.fixedDuration && (
                      <div className="flex flex-col gap-1">
                         {[0.75, 1, 1.5, 2].map(h => (
-                            <button key={h} onClick={() => onUpdateTopicHours(module.level, topic.id, h)} className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors w-full ${topic.minHours === h ? 'bg-gold-100 text-gold-700 border-gold-300' : 'bg-gray-50 text-gray-400'}`}>
+                            <button key={h} onClick={() => onUpdateTopicHours(module.level, topic.id, h)} className={`text-[9px] font-bold px-1.5 py-0.5 rounded border transition-colors w-full ${topic.minHours === h ? 'bg-gold-100 text-gold-700 border-gold-300' : 'bg-navy-50 text-navy-400'}`}>
                               {h * 60}m
                             </button>
                         ))}
@@ -152,20 +152,20 @@ const ModuleView: React.FC<{
     };
 
     return (
-      <div className={`bg-white rounded-xl shadow-lg border border-navy-100 overflow-hidden print:border-none print:shadow-none print:mb-6 module-container relative ${isCompact ? 'print:border print:border-gray-200' : ''}`}>
-         <div className={`${isCompact ? 'p-4' : 'p-6'} bg-gradient-to-r from-navy-50 to-white border-b border-gray-200 flex justify-between items-start relative z-10 break-inside-avoid`}>
+      <div className={`bg-white rounded-xl shadow-lg border border-navy-100 overflow-hidden print:border-none print:shadow-none print:mb-6 module-container relative ${isCompact ? 'print:border print:border-navy-200' : ''}`}>
+         <div className={`${isCompact ? 'p-4' : 'p-6'} bg-gradient-to-r from-navy-50 to-white border-b border-navy-200 flex justify-between items-start relative z-10 break-inside-avoid`}>
             <div>
-            <h3 className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-extrabold text-gray-800`}>Level {module.level} Curriculum</h3>
-            <p className="text-gray-600 text-sm mt-1 max-w-lg">{officialConfig?.description}</p>
-            <div className="flex flex-col gap-1 mt-2 text-sm text-gray-600">
+            <h3 className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-extrabold text-navy-800`}>Level {module.level} Curriculum</h3>
+            <p className="text-navy-600 text-sm mt-1 max-w-lg">{officialConfig?.description}</p>
+            <div className="flex flex-col gap-1 mt-2 text-sm text-navy-600">
                 <div className="flex items-center"><span className="w-32 font-bold text-navy-700">Vocab (词汇):</span> {officialConfig?.coreVocabCount} words</div>
             </div>
             </div>
-            <div className={`text-right bg-white ${isCompact ? 'p-3' : 'p-4'} rounded-lg shadow-sm border border-gray-100 min-w-[140px]`}>
-                <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">Level Total</div>
+            <div className={`text-right bg-white ${isCompact ? 'p-3' : 'p-4'} rounded-lg shadow-sm border border-navy-100 min-w-[140px]`}>
+                <div className="text-xs text-navy-400 uppercase tracking-wider mb-1">Level Total</div>
                 <div className={`${isCompact ? 'text-2xl' : 'text-3xl'} font-bold text-navy-700`}>{totalHours}h</div>
                 <div className="text-xs text-gold-600 font-bold mt-1">~ {estimatedMonths} Months</div>
-                <div className="flex flex-col items-end gap-1 mt-2 text-xs text-gray-500">
+                <div className="flex flex-col items-end gap-1 mt-2 text-xs text-navy-500">
                     <span title="Private Hours">P: <b>{offlinePrivateHours}h ({formattedPrivateSessions} Sessions)</b></span>
                     <span title="Group Hours">G: <b>{offlineGroupHours}h ({groupTopicCount} Topics)</b></span>
                     <span title="Online/Supp Hours">O/S: <b>{onlineHours}h</b></span>
@@ -177,10 +177,10 @@ const ModuleView: React.FC<{
         </div>
 
         {showTools && (
-            <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10 print:hidden relative">
-                <h4 className="font-bold text-gray-700 uppercase tracking-wide text-xs">Topic Distribution</h4>
+            <div className="p-4 bg-navy-50 border-b border-navy-200 flex justify-between items-center sticky top-0 z-10 print:hidden relative">
+                <h4 className="font-bold text-navy-700 uppercase tracking-wide text-xs">Topic Distribution</h4>
                 <div className="flex gap-3">
-                    <button onClick={() => onRemoveAllCustom(module.level)} className="px-3 py-1.5 text-gray-500 hover:text-red-500 text-xs border border-gray-300 rounded bg-white">Clear Custom / 清空定制</button>
+                    <button onClick={() => onRemoveAllCustom(module.level)} className="px-3 py-1.5 text-navy-500 hover:text-navy-900 text-xs border border-navy-300 rounded bg-white">Clear Custom / 清空定制</button>
                     {profile.mode !== CourseMode.Group && (
                         <button onClick={onShowAddModal} className="flex items-center px-4 py-1.5 bg-navy-800 text-white rounded hover:bg-navy-900 shadow-sm transition-all text-xs font-bold uppercase tracking-wide">+ Add 1-on-1 Custom Topics / 添加1对1定制话题</button>
                     )}
@@ -188,13 +188,13 @@ const ModuleView: React.FC<{
             </div>
         )}
 
-        <div className={`relative z-10 grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-gray-200 ${isCompact ? 'min-h-[300px]' : 'min-h-[500px]'} bg-gray-50 print:min-h-0 print:bg-white`}>
+        <div className={`relative z-10 grid grid-cols-1 md:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-navy-200 ${isCompact ? 'min-h-[300px]' : 'min-h-[500px]'} bg-navy-50 print:min-h-0 print:bg-white`}>
             {/* Group / Standard Column */}
-            <div className={`${isCompact ? 'p-3' : 'p-4'} bg-gray-50/50 print:bg-transparent`}>
-                <div className="mb-3 border-b border-gray-200 pb-2 break-inside-avoid">
+            <div className={`${isCompact ? 'p-3' : 'p-4'} bg-navy-50/50 print:bg-transparent`}>
+                <div className="mb-3 border-b border-navy-200 pb-2 break-inside-avoid">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-gray-700 text-sm">Standard/Group (标化/班课)</span>
-                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-bold">{groupTopics.length}</span>
+                        <span className="font-bold text-navy-700 text-sm">Standard/Group (标化/班课)</span>
+                        <span className="text-xs bg-navy-200 text-navy-600 px-2 py-0.5 rounded-full font-bold">{groupTopics.length}</span>
                     </div>
                     {showTools && (
                         <div className="flex items-center justify-between gap-2 h-7">
@@ -208,12 +208,12 @@ const ModuleView: React.FC<{
                                 <option value={StandardTrackMode.Alternate}>Alternate (Life/Daily)</option>
                                 <option value={StandardTrackMode.Combined}>Combined (Both)</option>
                                 </select>
-                            ) : <span className="text-[10px] text-gray-400">Fixed Curriculum</span>}
-                            <button onClick={() => onRemoveAllStandard(module.level)} className="text-[10px] text-gray-400 hover:text-red-500 px-2 transition-colors">Clear / 清空</button>
+                            ) : <span className="text-[10px] text-navy-400">Fixed Curriculum</span>}
+                            <button onClick={() => onRemoveAllStandard(module.level)} className="text-[10px] text-navy-400 hover:text-navy-900 px-2 transition-colors">Clear / 清空</button>
                         </div>
                     )}
                 </div>
-                {groupTopics.length === 0 && <div className="text-sm text-gray-400 italic text-center mt-10">No standard topics.</div>}
+                {groupTopics.length === 0 && <div className="text-sm text-navy-400 italic text-center mt-10">No standard topics.</div>}
                 {groupTopics.map((t, i) => renderTopicItem(t, i, false))}
             </div>
 
@@ -233,7 +233,7 @@ const ModuleView: React.FC<{
                                     e.stopPropagation();
                                     onBatchGenerate(module.level);
                                 }}
-                                className="flex-1 text-[10px] bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-200 rounded px-2 h-full font-bold flex items-center justify-center transition-colors cursor-pointer shadow-sm hover:shadow"
+                                className="flex-1 text-[10px] bg-navy-100 text-navy-700 hover:bg-navy-200 border border-navy-200 rounded px-2 h-full font-bold flex items-center justify-center transition-colors cursor-pointer shadow-sm hover:shadow"
                                 title="Generate syllabus for all topics in this column"
                             >
                                 ✨ Gen All / 全生成
@@ -1122,7 +1122,7 @@ const PlanBuilder: React.FC<Props> = ({ profile, isSystemLoaded, isPreviewMode }
                  const isPassed = total >= required;
 
                  return (
-                   <div key={m.id} className={`p-4 rounded border ${isPassed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                   <div className={`p-4 rounded border ${isPassed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                      <div className="flex justify-between font-bold items-center mb-2">
                        <span className="text-lg text-navy-800">Level {m.level}</span>
                        <span className={`text-sm border px-3 py-1 rounded-full font-bold ${isPassed ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>

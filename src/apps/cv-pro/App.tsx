@@ -205,29 +205,29 @@ const App: React.FC = () => {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="bg-blue-600 p-2 rounded-lg">
+            <div className="bg-navy-700 p-2 rounded-lg">
                <GraduationCap className="text-white" size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
-                GlobalCV Pro
+              <h1 className="text-xl font-bold text-navy-900">
+                CV Pro - 简历优化专家
               </h1>
-              <p className="text-xs text-slate-500 font-medium tracking-wide">INTELLIGENT RESUME OPTIMIZER</p>
+              <p className="text-xs text-slate-500 font-medium tracking-wide">AI INTELLIGENT RESUME OPTIMIZER</p>
             </div>
           </div>
           
           <nav className="hidden md:flex items-center gap-6">
-            <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'input' ? 'text-blue-600' : 'text-slate-400'}`}>
+            <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'input' ? 'text-navy-600' : 'text-slate-400'}`}>
               <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs">1</span>
               输入履历
             </div>
             <ArrowRight size={14} className="text-slate-300" />
-             <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'analyzing' ? 'text-blue-600' : (state.step === 'results' ? 'text-green-600' : 'text-slate-400')}`}>
+             <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'analyzing' ? 'text-navy-600' : (state.step === 'results' ? 'text-green-600' : 'text-slate-400')}`}>
               <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs">2</span>
               目标设定
             </div>
             <ArrowRight size={14} className="text-slate-300" />
-             <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'results' ? 'text-blue-600' : 'text-slate-400'}`}>
+             <div className={`flex items-center gap-2 text-sm font-medium ${state.step === 'results' ? 'text-navy-600' : 'text-slate-400'}`}>
               <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-xs">3</span>
               生成结果
             </div>

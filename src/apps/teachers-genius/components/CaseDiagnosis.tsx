@@ -25,47 +25,47 @@ const CLASS_SIZES = ["1对1 (1-on-1)", "小组课 (Group Class)"];
 
 const DiagnosisMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-3xl font-black text-slate-900 mb-6 border-b-2 border-slate-200 pb-4" {...props} />
+    <h1 className="text-3xl font-black text-navy-900 mb-6 border-b-2 border-navy-200 pb-4" {...props} />
   ),
   h2: ({ node, ...props }) => (
-    <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2" {...props} />
+    <h2 className="text-xl font-bold text-navy-800 mt-8 mb-4 flex items-center gap-2" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-teal-700 mt-6 mb-3 bg-teal-50 px-3 py-2 rounded-lg border-l-4 border-teal-500" {...props} />
+    <h3 className="text-lg font-bold text-navy-700 mt-6 mb-3 bg-navy-50 px-3 py-2 rounded-lg border-l-4 border-navy-500" {...props} />
   ),
   p: ({ node, ...props }) => (
-    <p className="mb-4 text-slate-700 leading-relaxed text-sm" {...props} />
+    <p className="mb-4 text-navy-700 leading-relaxed text-sm" {...props} />
   ),
   ul: ({ node, ...props }) => (
-    <ul className="list-disc ml-5 space-y-2 mb-6 text-slate-700 text-sm" {...props} />
+    <ul className="list-disc ml-5 space-y-2 mb-6 text-navy-700 text-sm" {...props} />
   ),
   ol: ({ node, ...props }) => (
-    <ol className="list-decimal ml-5 space-y-2 mb-6 text-slate-700 text-sm" {...props} />
+    <ol className="list-decimal ml-5 space-y-2 mb-6 text-navy-700 text-sm" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="pl-1 text-slate-700" {...props} />
+    <li className="pl-1 text-navy-700" {...props} />
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-slate-900" {...props} />
+    <span className="font-bold text-navy-900" {...props} />
   ),
   blockquote: ({ node, ...props }) => (
-    <div className="my-4 pl-4 border-l-4 border-slate-300 bg-slate-50 py-3 pr-3 rounded-r-lg italic text-slate-600 text-sm">
+    <div className="my-4 pl-4 border-l-4 border-navy-300 bg-navy-50 py-3 pr-3 rounded-r-lg italic text-navy-600 text-sm">
       {props.children}
     </div>
   ),
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-6 rounded-lg border border-slate-200 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-slate-200" {...props} />
+    <div className="overflow-x-auto my-6 rounded-lg border border-navy-200 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-200" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-slate-800 text-white" {...props} />
+    <thead className="bg-navy-800 text-white" {...props} />
   ),
   th: ({ node, ...props }) => (
     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap border-t border-slate-100" {...props} />
+    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap border-t border-navy-100" {...props} />
   ),
 };
 
@@ -286,12 +286,12 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     // Check if it's an image
     if (fileData.startsWith('data:image')) {
       return (
-        <img src={fileData} alt={`upload-${index}`} className="w-12 h-12 object-cover rounded-lg border border-slate-200" />
+        <img src={fileData} alt={`upload-${index}`} className="w-12 h-12 object-cover rounded-lg border border-navy-200" />
       );
     }
     // For docs, pdfs, excel
     return (
-      <div className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-lg border border-slate-200 text-slate-500">
+      <div className="w-12 h-12 flex items-center justify-center bg-navy-50 rounded-lg border border-navy-200 text-navy-500">
         <FileText size={20} />
       </div>
     );
@@ -301,13 +301,13 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     <div className="h-full flex flex-col gap-6 w-full max-w-[95%] mx-auto p-4 md:p-0 overflow-y-auto pb-20">
       
       {/* Configuration & Upload Area */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-navy-200">
         <div className="flex justify-between items-start mb-6">
-            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <FileText className="text-teal-600" /> 教学质量 AI 深度诊断
+            <h2 className="text-xl font-bold text-navy-800 flex items-center gap-2">
+            <FileText className="text-navy-600" /> 教学质量 AI 深度诊断
             </h2>
             {result && (
-                <button onClick={reset} className="text-xs text-slate-500 hover:text-red-500 flex items-center gap-1 transition-colors">
+                <button onClick={reset} className="text-xs text-navy-500 hover:text-gold-600 flex items-center gap-1 transition-colors">
                     <RefreshCw size={12}/> 重置
                 </button>
             )}
@@ -316,23 +316,23 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         {/* Row 1: Product & Focus */}
         <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label className="block text-xs font-bold text-slate-500 mb-2 uppercase">1. 课程类型 (Product Line)</label>
+                <label className="block text-xs font-bold text-navy-500 mb-2 uppercase">1. 课程类型 (Product Line)</label>
                 <div className="flex flex-wrap gap-2">
                     {Object.values(ProductType).map((type) => (
                     <button key={type} onClick={() => setSelectedProduct(type)}
-                        className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all ${
-                        selectedProduct === type ? 'bg-teal-600 text-white shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}>
+                        className={`px-3 py-2 rounded-lg text-xs font-bold border transition-all duration-300 ${
+                        selectedProduct === type ? 'bg-navy-600 text-white shadow-md' : 'bg-white text-navy-600 border-navy-200 hover:bg-navy-50'}`}>
                         {type}
                     </button>
                     ))}
                 </div>
             </div>
             <div>
-                 <label className="block text-xs font-bold text-slate-500 mb-2 uppercase flex items-center gap-1">
+                 <label className="block text-xs font-bold text-navy-500 mb-2 uppercase flex items-center gap-1">
                     <Compass size={14}/> 重点关注 (Custom Focus)</label>
                  <input type="text" value={customDirection} onChange={(e) => setCustomDirection(e.target.value)}
                     placeholder="例如: 重点分析中文比例, 或 TTT 时间..."
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-200"
+                    className="w-full px-4 py-2 bg-navy-50 border border-navy-200 rounded-lg text-sm text-navy-800 outline-none focus:border-navy-500 focus:ring-1 focus:ring-navy-200 transition-all duration-300"
                  />
             </div>
         </div>
@@ -340,20 +340,20 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         {/* Row 2: Class Type & Size */}
         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-               <label className="block text-xs font-bold text-slate-500 mb-2 uppercase flex items-center gap-1"><Presentation size={14}/> 授课性质 (Class Type)</label>
+               <label className="block text-xs font-bold text-navy-500 mb-2 uppercase flex items-center gap-1"><Presentation size={14}/> 授课性质 (Class Type)</label>
                <div className="flex gap-2">
                   {CLASS_TYPES.map(t => (
-                     <button key={t} onClick={() => setClassType(t)} className={`flex-1 px-2 py-2 rounded-lg text-xs font-bold border transition-all ${classType === t ? 'bg-teal-100 text-teal-700 border-teal-300' : 'bg-white text-slate-600 border-slate-200'}`}>
+                     <button key={t} onClick={() => setClassType(t)} className={`flex-1 px-2 py-2 rounded-lg text-xs font-bold border transition-all duration-300 ${classType === t ? 'bg-navy-100 text-navy-700 border-navy-300' : 'bg-white text-navy-600 border-navy-200'}`}>
                        {t}
                      </button>
                   ))}
                </div>
             </div>
             <div>
-               <label className="block text-xs font-bold text-slate-500 mb-2 uppercase flex items-center gap-1"><Users size={14}/> 班级人数 (Class Size)</label>
+               <label className="block text-xs font-bold text-navy-500 mb-2 uppercase flex items-center gap-1"><Users size={14}/> 班级人数 (Class Size)</label>
                <div className="flex gap-2">
                   {CLASS_SIZES.map(s => (
-                     <button key={s} onClick={() => setClassSize(s)} className={`flex-1 px-2 py-2 rounded-lg text-xs font-bold border transition-all ${classSize === s ? 'bg-indigo-100 text-indigo-700 border-indigo-300' : 'bg-white text-slate-600 border-slate-200'}`}>
+                     <button key={s} onClick={() => setClassSize(s)} className={`flex-1 px-2 py-2 rounded-lg text-xs font-bold border transition-all duration-300 ${classSize === s ? 'bg-gold-100 text-gold-700 border-gold-300' : 'bg-white text-navy-600 border-navy-200'}`}>
                        {s}
                      </button>
                   ))}
@@ -362,31 +362,31 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div onClick={() => fileInputRef.current?.click()} className="group border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-teal-50 hover:border-teal-300 transition-all h-32 relative overflow-hidden">
-            <div className="absolute inset-0 bg-teal-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div onClick={() => fileInputRef.current?.click()} className="group border-2 border-dashed border-navy-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-navy-50 hover:border-navy-300 transition-all duration-300 h-32 relative overflow-hidden">
+            <div className="absolute inset-0 bg-navy-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative z-10 flex flex-col items-center">
-                <div className="flex gap-2 mb-2 text-slate-400 group-hover:text-teal-500 transition-colors">
+                <div className="flex gap-2 mb-2 text-navy-400 group-hover:text-navy-500 transition-colors">
                    <ImageIcon /> <FileText />
                 </div>
-                <span className="text-sm font-bold text-slate-600 group-hover:text-teal-600">上传课件/板书</span>
-                <span className="text-xs text-slate-400 mt-1">支持 Images, PDF, Doc, Excel</span>
+                <span className="text-sm font-bold text-navy-600 group-hover:text-navy-600">上传课件/板书</span>
+                <span className="text-xs text-navy-400 mt-1">支持 Images, PDF, Doc, Excel</span>
             </div>
             <input ref={fileInputRef} type="file" accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" multiple className="hidden" onChange={handleImageUpload} />
           </div>
           
-          <div onClick={() => audioInputRef.current?.click()} className="group border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition-all h-32 relative overflow-hidden">
-            <div className="absolute inset-0 bg-purple-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div onClick={() => audioInputRef.current?.click()} className="group border-2 border-dashed border-navy-200 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gold-50 hover:border-gold-300 transition-all duration-300 h-32 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gold-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative z-10 flex flex-col items-center">
-                <FileAudio className="text-slate-400 group-hover:text-purple-500 mb-2 transition-colors" />
-                <span className="text-sm font-bold text-slate-600 group-hover:text-purple-600">上传课程录音</span>
-                <span className="text-xs text-slate-400 mt-1">{audioName ? audioName : "支持 mp3, wav, m4a"}</span>
+                <FileAudio className="text-navy-400 group-hover:text-gold-500 mb-2 transition-colors" />
+                <span className="text-sm font-bold text-navy-600 group-hover:text-gold-600">上传课程录音</span>
+                <span className="text-xs text-navy-400 mt-1">{audioName ? audioName : "支持 mp3, wav, m4a"}</span>
             </div>
             <input ref={audioInputRef} type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} />
           </div>
         </div>
 
         {(images.length > 0 || audio) && (
-          <div className="bg-slate-50 p-3 rounded-lg mb-4 flex justify-between items-center border border-slate-100">
+          <div className="bg-navy-50 p-3 rounded-lg mb-4 flex justify-between items-center border border-navy-100">
              <div className="flex gap-3 overflow-x-auto">
                 {images.length > 0 && (
                   <div className="flex gap-1 items-center">
@@ -396,20 +396,20 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                   </div>
                 )}
                 {(audio || audioUrl) && (
-                  <div className="flex items-center gap-2 bg-purple-100 px-3 py-1 rounded-lg border border-purple-200">
-                    <FileAudio size={16} className="text-purple-600"/>
-                    <span className="text-xs font-bold text-purple-700">
+                  <div className="flex items-center gap-2 bg-gold-100 px-3 py-1 rounded-lg border border-gold-200">
+                    <FileAudio size={16} className="text-gold-600"/>
+                    <span className="text-xs font-bold text-gold-700">
                       {audioUrl ? 'Audio Ready (Large File)' : 'Audio Ready'}
                     </span>
                   </div>
                 )}
              </div>
-             <button onClick={reset} className="text-xs text-slate-400 hover:text-red-500 font-bold px-2 whitespace-nowrap">Clear All</button>
+             <button onClick={reset} className="text-xs text-navy-400 hover:text-gold-600 font-bold px-2 whitespace-nowrap">Clear All</button>
           </div>
         )}
 
         <button onClick={handleAnalysis} disabled={isAnalyzing || isUploading || (images.length === 0 && !audio && !audioUrl)}
-          className="w-full py-4 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-teal-200 hover:shadow-teal-300 transform active:scale-[0.99] transition-all">
+          className="w-full py-4 bg-navy-600 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-navy-200 hover:shadow-navy-300 transform active:scale-[0.99] hover:bg-navy-700 transition-all duration-300">
           {isAnalyzing ? (
               <>
                 <Loader2 className="animate-spin" /> 教学总监正在听课中...
@@ -426,17 +426,17 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
       {result && (
         <div className="relative animate-in slide-in-from-bottom-4 fade-in duration-500">
             <div className="absolute top-4 right-4 z-10 flex gap-2">
-                <button onClick={() => handleDownload('image')} className="bg-white/90 hover:bg-white backdrop-blur border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-2 transition-all">
+                <button onClick={() => handleDownload('image')} className="bg-white/90 hover:bg-white backdrop-blur border border-navy-200 text-navy-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-2 transition-all">
                     <FileImage size={14}/> 导出长图
                 </button>
-                <button onClick={() => handleDownload('pdf')} className="bg-white/90 hover:bg-white backdrop-blur border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-2 transition-all">
+                <button onClick={() => handleDownload('pdf')} className="bg-white/90 hover:bg-white backdrop-blur border border-navy-200 text-navy-700 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-2 transition-all">
                     <Download size={14}/> 导出 PDF
                 </button>
             </div>
-            <div ref={resultRef} className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 min-h-[500px] text-slate-800">
+            <div ref={resultRef} className="bg-white rounded-2xl shadow-xl border border-navy-200 p-8 min-h-[500px] text-navy-800">
                 {/* Watermark */}
                 <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.02] select-none overflow-hidden">
-                    <div className="transform -rotate-12 text-6xl font-black text-slate-900 whitespace-nowrap">
+                    <div className="transform -rotate-12 text-6xl font-black text-navy-900 whitespace-nowrap">
                         ME Quality Control
                     </div>
                 </div>

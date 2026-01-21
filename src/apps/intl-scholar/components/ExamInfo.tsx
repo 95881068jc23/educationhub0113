@@ -207,7 +207,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                     <p className="text-slate-500 mb-4 text-sm">Generate a 1-minute key information card for consultants.</p>
                     <button
                         onClick={handleGenerateBrief}
-                        className="px-6 py-2 bg-indigo-100 text-indigo-700 rounded-lg font-bold hover:bg-indigo-200 transition-colors flex items-center gap-2"
+                        className="px-6 py-2 bg-navy-100 text-navy-700 rounded-lg font-bold hover:bg-navy-200 transition-colors flex items-center gap-2"
                     >
                         <Sparkles size={16} /> Generate Brief
                     </button>
@@ -224,10 +224,10 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                     remarkPlugins={[remarkGfm]}
                     components={{
                         p: ({node, ...props}) => <p className="mb-4 text-slate-600 leading-relaxed" {...props} />,
-                        strong: ({node, ...props}) => <strong className="text-indigo-900 font-bold" {...props} />,
+                        strong: ({node, ...props}) => <strong className="text-navy-900 font-bold" {...props} />,
                         // Block styling for list items
                         li: ({node, ...props}) => (
-                            <li className="bg-slate-50 border-l-4 border-indigo-400 p-3 my-2 rounded-r-md text-sm text-slate-700" {...props} />
+                            <li className="bg-slate-50 border-l-4 border-navy-400 p-3 my-2 rounded-r-md text-sm text-slate-700" {...props} />
                         ),
                         ul: ({node, ...props}) => <ul className="list-none pl-0" {...props} />,
                     }}
@@ -243,7 +243,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
       <div className="flex flex-col items-center justify-center p-8 bg-white border border-slate-200 rounded-2xl shadow-sm transition-all duration-300">
         {!guide ? (
            <div className="w-full max-w-md text-center">
-             <div className="mb-4 flex justify-center text-indigo-600">
+             <div className="mb-4 flex justify-center text-navy-600">
                 <BookOpen size={48} strokeWidth={1.5} />
              </div>
              <h3 className="text-xl font-bold text-slate-900 mb-2">{t.detailedGuide}</h3>
@@ -259,7 +259,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                     <select 
                         value={selectedCity}
                         onChange={(e) => setSelectedCity(e.target.value)}
-                        className="w-full p-2 bg-black border border-slate-700 rounded-lg text-white text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                        className="w-full p-2 bg-black border border-slate-700 rounded-lg text-white text-sm focus:ring-2 focus:ring-navy-500 outline-none"
                     >
                         {CITIES.map(c => <option key={c} value={c} className="bg-black text-white">{c}</option>)}
                     </select>
@@ -270,7 +270,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
              <button
                 onClick={handleGenerateGuide}
                 disabled={loadingGuide}
-                className="w-full px-8 py-3 bg-indigo-900 text-white rounded-xl font-bold hover:bg-indigo-800 transition-colors flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transform duration-200"
+                className="w-full px-8 py-3 bg-navy-900 text-white rounded-xl font-bold hover:bg-navy-800 transition-colors flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transform duration-200"
              >
                 {loadingGuide ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
                 {t.generateGuide}
@@ -281,11 +281,11 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
               <div className="flex justify-between items-center mb-6 no-print border-b border-slate-100 pb-4">
                  <div className="flex items-center gap-3">
                     <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-                        <BookOpen className="text-indigo-600"/> {t.detailedGuide}
+                        <BookOpen className="text-navy-600"/> {t.detailedGuide}
                     </h2>
                     <button 
                         onClick={() => setIsGuideOpen(!isGuideOpen)}
-                        className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-indigo-600 transition-colors"
+                        className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-navy-600 transition-colors"
                         title={isGuideOpen ? "Collapse" : "Expand"}
                     >
                         {isGuideOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
@@ -293,13 +293,13 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                  </div>
 
                  <div className="flex gap-2">
-                    <button onClick={handleExportWord} className="p-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100" title="Word">
+                    <button onClick={handleExportWord} className="p-2 bg-navy-50 text-navy-700 rounded-lg hover:bg-navy-100 transition-colors border border-navy-100" title="Word">
                         <FileText size={18} />
                     </button>
-                    <button onClick={handleExportPDF} className="p-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors border border-red-100" title="PDF">
+                    <button onClick={handleExportPDF} className="p-2 bg-navy-50 text-navy-700 rounded-lg hover:bg-navy-100 transition-colors border border-navy-100" title="PDF">
                         <Download size={18} />
                     </button>
-                    <button onClick={handleExportImage} className="p-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors border border-green-100" title="Image">
+                    <button onClick={handleExportImage} className="p-2 bg-navy-50 text-navy-700 rounded-lg hover:bg-navy-100 transition-colors border border-navy-100" title="Image">
                         <ImageIcon size={18} />
                     </button>
                  </div>
@@ -314,7 +314,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
 
                      <div className="hidden print:block mb-8 text-center border-b pb-6 relative z-10">
                         <h1 className="text-3xl font-extrabold text-slate-900 mb-2">{exam} Official Guide</h1>
-                        {isDomestic && selectedCity && <p className="text-lg text-indigo-800 font-bold">{selectedCity} Region</p>}
+                        {isDomestic && selectedCity && <p className="text-lg text-navy-800 font-bold">{selectedCity} Region</p>}
                         <p className="text-slate-500 font-medium mt-2">Generated by Marvel Intl. Scholar AI</p>
                      </div>
                      <div className="prose prose-slate max-w-none relative z-10">
@@ -323,28 +323,28 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                             components={{
                                 // Main Header Block
                                 h1: ({node, ...props}) => (
-                                    <div className="bg-indigo-900 text-white p-6 rounded-xl shadow-md mb-8">
+                                    <div className="bg-navy-900 text-white p-6 rounded-xl shadow-md mb-8">
                                         <h1 className="text-3xl font-bold m-0 border-none text-white" {...props} />
                                     </div>
                                 ),
                                 // Section Header Block
                                 h2: ({node, ...props}) => (
-                                    <div className="flex items-center mt-10 mb-6 pb-2 border-b-2 border-indigo-100">
-                                        <div className="w-2 h-8 bg-indigo-600 mr-3 rounded-full"></div>
+                                    <div className="flex items-center mt-10 mb-6 pb-2 border-b-2 border-navy-100">
+                                        <div className="w-2 h-8 bg-navy-600 mr-3 rounded-full"></div>
                                         <h2 className="text-2xl font-bold text-slate-800 m-0" {...props} />
                                     </div>
                                 ),
                                 // Sub-header
-                                h3: ({node, ...props}) => <h3 className="text-lg font-bold text-indigo-800 mt-6 mb-3" {...props} />,
+                                h3: ({node, ...props}) => <h3 className="text-lg font-bold text-navy-800 mt-6 mb-3" {...props} />,
                                 // Standard Paragraph
                                 p: ({node, ...props}) => <p className="text-slate-700 leading-relaxed mb-4" {...props} />,
                                 // Highlighted strong text
-                                strong: ({node, ...props}) => <strong className="text-indigo-900 font-bold bg-indigo-50 px-1 rounded" {...props} />,
+                                strong: ({node, ...props}) => <strong className="text-navy-900 font-bold bg-navy-50 px-1 rounded" {...props} />,
                                 // Info/Warning Block for Blockquotes
                                 blockquote: ({node, ...props}) => (
-                                    <blockquote className="bg-amber-50 border-l-4 border-amber-400 p-4 my-6 rounded-r-lg shadow-sm">
+                                    <blockquote className="bg-gold-50 border-l-4 border-gold-400 p-4 my-6 rounded-r-lg shadow-sm">
                                         <div className="flex gap-2">
-                                            <div className="text-amber-600 font-bold italic" {...props} />
+                                            <div className="text-gold-600 font-bold italic" {...props} />
                                         </div>
                                     </blockquote>
                                 ),
@@ -356,14 +356,14 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                                 ),
                                 thead: ({node, ...props}) => <thead className="bg-slate-100" {...props} />,
                                 tbody: ({node, ...props}) => <tbody className="bg-white divide-y divide-slate-100" {...props} />,
-                                tr: ({node, ...props}) => <tr className="hover:bg-indigo-50 transition-colors even:bg-slate-50" {...props} />,
+                                tr: ({node, ...props}) => <tr className="hover:bg-navy-50 transition-colors even:bg-slate-50" {...props} />,
                                 th: ({node, ...props}) => <th className="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider" {...props} />,
                                 td: ({node, ...props}) => <td className="px-6 py-4 text-sm text-slate-700 leading-relaxed border-t border-slate-100" {...props} />,
                                 // List Styling
                                 ul: ({node, ...props}) => <ul className="space-y-2 mb-6" {...props} />,
                                 li: ({node, ...props}) => (
                                     <li className="flex items-start gap-2 text-slate-700">
-                                        <span className="mt-1.5 w-1.5 h-1.5 bg-indigo-500 rounded-full flex-shrink-0"></span>
+                                        <span className="mt-1.5 w-1.5 h-1.5 bg-navy-500 rounded-full flex-shrink-0"></span>
                                         <span {...props}></span>
                                     </li>
                                 ),
@@ -381,7 +381,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
       {/* 3. Chat Section - Clean White Theme, Moved to Bottom */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden flex flex-col h-[600px]">
         <div className="p-4 border-b border-slate-100 bg-white flex items-center gap-3">
-          <div className="p-2 bg-indigo-600 rounded-full shadow-md">
+          <div className="p-2 bg-navy-600 rounded-full shadow-md">
             <MessageCircle className="text-white" size={20} />
           </div>
           <div>
@@ -396,7 +396,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
               <div 
                 className={`max-w-[85%] p-5 rounded-2xl text-sm leading-relaxed shadow-sm ${
                   msg.role === 'user' 
-                    ? 'bg-indigo-600 text-white rounded-br-none' 
+                    ? 'bg-navy-600 text-white rounded-br-none' 
                     : 'bg-white text-slate-800 rounded-bl-none border border-slate-200'
                 }`}
               >
@@ -409,7 +409,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
           {chatLoading && (
             <div className="flex justify-start">
                <div className="bg-white p-4 rounded-2xl rounded-bl-none border border-slate-200 shadow-sm">
-                  <Loader2 className="animate-spin text-indigo-500" size={18} />
+                  <Loader2 className="animate-spin text-navy-500" size={18} />
                </div>
             </div>
           )}
@@ -424,7 +424,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                onChange={(e) => setInput(e.target.value)}
                onKeyDown={handleKeyPress}
                placeholder={t.chatPlaceholder}
-               className="w-full bg-slate-100 text-slate-800 placeholder-slate-400 border border-slate-200 rounded-xl py-4 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
+               className="w-full bg-slate-100 text-slate-800 placeholder-slate-400 border border-slate-200 rounded-xl py-4 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:bg-white transition-colors"
              />
              <button 
                onClick={handleSendMessage}

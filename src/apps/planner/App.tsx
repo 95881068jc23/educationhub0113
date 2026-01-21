@@ -91,17 +91,17 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isPreviewMode ? 'bg-white' : 'bg-gray-100'} font-sans text-gray-900 pb-24 print:bg-white print:pb-0`}>
+    <div className={`min-h-screen ${isPreviewMode ? 'bg-white' : 'bg-navy-50'} font-sans text-navy-900 pb-24 print:bg-white print:pb-0`}>
       {/* Header - Hidden in Preview */}
       <header className={`${!isPreviewMode ? 'block' : 'hidden'} bg-white shadow-sm sticky top-0 z-30 print:hidden`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-4">
              <MarvellousLogo className="h-10" />
-             <div className="hidden md:block h-6 w-px bg-gray-300"></div>
-             <span className="hidden md:block text-gray-500 text-sm font-medium tracking-wide">学员课程规划系统</span>
+             <div className="hidden md:block h-6 w-px bg-navy-200"></div>
+             <span className="hidden md:block text-navy-400 text-sm font-medium tracking-wide">学员课程规划系统</span>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="text-xs text-gray-500 hidden sm:block">v5.8.4</div>
+            <div className="text-xs text-navy-400 hidden sm:block">v5.8.4</div>
             {hasGeneratedPlan && (
                <button 
                 onClick={() => setIsPreviewMode(true)}
@@ -115,7 +115,7 @@ const App: React.FC = () => {
       </header>
 
       {/* Preview Toolbar - Visible Only in Preview */}
-      <div className={`${isPreviewMode ? 'block' : 'hidden'} sticky top-0 z-50 bg-gray-800 text-white p-4 flex justify-between items-center print:hidden`}>
+      <div className={`${isPreviewMode ? 'block' : 'hidden'} sticky top-0 z-50 bg-navy-900 text-white p-4 flex justify-between items-center print:hidden`}>
          <div className="font-bold text-xl">Print Preview / 打印预览</div>
          <div className="flex space-x-4">
            <button onClick={handleDownloadPDF} className="bg-navy-600 hover:bg-navy-700 px-4 py-2 rounded font-bold shadow-lg flex items-center text-sm">
@@ -126,7 +126,7 @@ const App: React.FC = () => {
              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
              Save Image / 保存图片
            </button>
-           <button onClick={() => setIsPreviewMode(false)} className="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded text-sm">
+           <button onClick={() => setIsPreviewMode(false)} className="bg-navy-400 hover:bg-navy-500 px-6 py-2 rounded text-sm">
              Close / 关闭
            </button>
          </div>
@@ -141,21 +141,21 @@ const App: React.FC = () => {
            
            <div className="flex justify-between items-end mb-6 relative z-10">
               <MarvellousLogo className="h-16" />
-              <div className="text-right text-gray-500 text-sm">
+              <div className="text-right text-navy-400 text-sm">
                 <div>Intelligent Course Planning System</div>
                 <div className="font-semibold text-navy-700">https://www.marvelenglish.com.cn/</div>
               </div>
            </div>
            
            <h1 className="text-4xl font-bold text-navy-900 mt-4 relative z-10">Course Proposal / 课程规划书</h1>
-           <div className="grid grid-cols-2 gap-4 mt-6 text-gray-700 bg-gray-50 p-6 rounded-lg border border-gray-100 relative z-10">
+           <div className="grid grid-cols-2 gap-4 mt-6 text-navy-700 bg-navy-50 p-6 rounded-lg border border-navy-100 relative z-10">
              <div><strong>Student:</strong> {profile.name}</div>
              <div><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
              <div><strong>Target:</strong> {profile.currentLevel} → {profile.targetLevel}</div>
              <div><strong>Focus:</strong> {profile.learningDirections.join(', ')}</div>
              <div><strong>Frequency:</strong> {profile.weeklyFrequency}x / week</div>
              {profile.jobDescription && (
-                <div className="col-span-2 mt-2 pt-2 border-t border-gray-200 text-sm">
+                <div className="col-span-2 mt-2 pt-2 border-t border-navy-200 text-sm">
                    <strong>Job Context:</strong> {profile.jobDescription}
                 </div>
              )}
@@ -190,13 +190,13 @@ const App: React.FC = () => {
                     <div className="px-6 py-4 bg-navy-50 border-b border-navy-100 flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             <span className="bg-gold-500 w-1.5 h-6 rounded-full"></span>
-                            <h2 className="text-lg font-bold text-gray-800">{profile.name}'s Profile</h2>
+                            <h2 className="text-lg font-bold text-navy-800">{profile.name}'s Profile</h2>
                         </div>
                         <div className="flex items-center gap-3">
                             <button onClick={() => setShowEditModal(true)} className="flex items-center px-3 py-1.5 text-sm font-medium text-navy-700 bg-white border border-navy-200 rounded hover:bg-navy-50 transition-colors">
                                 <span className="mr-1">✏️</span> Modify Info / 修改信息
                             </button>
-                            <button onClick={() => setHasGeneratedPlan(false)} className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-red-600 transition-colors" title="This will reset current plan">
+                            <button onClick={() => setHasGeneratedPlan(false)} className="flex items-center px-3 py-1.5 text-sm font-medium text-navy-400 hover:text-red-600 transition-colors" title="This will reset current plan">
                                 <span className="mr-1">🔄</span> Reset / 重置 <span className="text-[10px] ml-1 opacity-70">(⚠️ Will Reset Plan)</span>
                             </button>
                         </div>
@@ -204,48 +204,48 @@ const App: React.FC = () => {
                     
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div>
-                            <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Industry & Role / 行业与职位</div>
-                            <div className="text-sm font-medium text-gray-900">{profile.industry || 'N/A'}</div>
-                            <div className="text-sm text-gray-600">{profile.role || 'N/A'}</div>
+                            <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Industry & Role / 行业与职位</div>
+                            <div className="text-sm font-medium text-navy-900">{profile.industry || 'N/A'}</div>
+                            <div className="text-sm text-navy-600">{profile.role || 'N/A'}</div>
                         </div>
                         
                         <div>
-                            <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Mode & Frequency / 模式与频率</div>
-                            <div className="text-sm font-medium text-gray-900">{profile.mode} Course</div>
-                            <div className="text-sm text-gray-600">{profile.weeklyFrequency} Sessions / Week</div>
+                            <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Mode & Frequency / 模式与频率</div>
+                            <div className="text-sm font-medium text-navy-900">{profile.mode} Course</div>
+                            <div className="text-sm text-navy-600">{profile.weeklyFrequency} Sessions / Week</div>
                         </div>
 
                         <div>
-                            <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Learning Direction / 学习方向</div>
+                            <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Learning Direction / 学习方向</div>
                             <div className="flex flex-wrap gap-1">
                                 {profile.learningDirections.map(d => (
-                                    <span key={d} className="px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded border border-blue-100">{d}</span>
+                                    <span key={d} className="px-2 py-0.5 bg-navy-50 text-navy-800 text-xs rounded border border-navy-100">{d}</span>
                                 ))}
                             </div>
                         </div>
 
                         <div>
-                            <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Core Goals / 核心目标</div>
+                            <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Core Goals / 核心目标</div>
                             <div className="flex flex-wrap gap-1">
                                 {profile.goals.length > 0 ? profile.goals.map(g => (
-                                    <span key={g} className="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded border border-green-100">{g}</span>
-                                )) : <span className="text-gray-400 text-xs">None specified</span>}
+                                    <span key={g} className="px-2 py-0.5 bg-navy-50 text-navy-700 text-xs rounded border border-navy-100">{g}</span>
+                                )) : <span className="text-navy-300 text-xs">None specified</span>}
                             </div>
                         </div>
 
                         <div className="col-span-1 md:col-span-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Interests / 兴趣爱好</div>
+                            <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Interests / 兴趣爱好</div>
                             <div className="flex flex-wrap gap-1">
                                 {profile.interests.length > 0 ? profile.interests.map(i => (
-                                    <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs rounded border border-purple-100">{i}</span>
-                                )) : <span className="text-gray-400 text-xs">None specified</span>}
+                                    <span key={i} className="px-2 py-0.5 bg-gold-50 text-gold-700 text-xs rounded border border-gold-100">{i}</span>
+                                )) : <span className="text-navy-300 text-xs">None specified</span>}
                             </div>
                         </div>
 
                         {profile.jobDescription && (
                             <div className="col-span-1 md:col-span-2">
-                                <div className="text-xs text-gray-500 uppercase tracking-wide font-bold mb-1">Job Description / 工作内容</div>
-                                <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-100 italic">
+                                <div className="text-xs text-navy-400 uppercase tracking-wide font-bold mb-1">Job Description / 工作内容</div>
+                                <p className="text-sm text-navy-600 bg-navy-50 p-2 rounded border border-navy-100 italic">
                                     "{profile.jobDescription}"
                                 </p>
                             </div>
@@ -262,9 +262,9 @@ const App: React.FC = () => {
            <div className={`${!isPreviewMode ? 'animate-fade-in-up' : ''} relative z-10`}>
              {!isPreviewMode && (
                <div className="flex items-center justify-between mb-4 print:mt-8">
-                 <h2 className="text-xl font-bold text-gray-800">Course Roadmap / 课程路线图</h2>
-                 <div className="text-sm font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
-                   {profile.currentLevel} <span className="text-emerald-500 mx-1">➜</span> {profile.targetLevel}
+                 <h2 className="text-xl font-bold text-navy-800">Course Roadmap / 课程路线图</h2>
+                 <div className="text-sm font-bold bg-gold-100 text-gold-800 px-3 py-1 rounded-full">
+                   {profile.currentLevel} <span className="text-gold-600 mx-1">➜</span> {profile.targetLevel}
                  </div>
                </div>
              )}

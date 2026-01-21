@@ -209,7 +209,7 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                 {/* Reading Context Block */}
                 {q.context && (
                     <div className="mb-4 bg-white p-4 rounded-lg border border-slate-200 text-sm text-slate-600 leading-relaxed font-serif">
-                        <div className="flex items-center gap-2 text-indigo-800 font-bold text-xs uppercase mb-2">
+                        <div className="flex items-center gap-2 text-navy-800 font-bold text-xs uppercase mb-2">
                              <BookOpen size={14} /> Reading Passage
                         </div>
                         {q.context}
@@ -217,7 +217,7 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                 )}
 
                 <p className="font-bold text-slate-800 mb-4 text-lg">
-                    <span className="text-indigo-500 mr-2 font-mono">Q{idx + 1}.</span>
+                    <span className="text-navy-500 mr-2 font-mono">Q{idx + 1}.</span>
                     {q.question}
                 </p>
                 <div className="space-y-2.5">
@@ -226,8 +226,8 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
                             key={optIdx}
                             className={`flex items-center gap-3 p-3.5 rounded-lg cursor-pointer border transition-all duration-200 ${
                                 answers[q.id] === optIdx 
-                                ? 'bg-indigo-600 border-indigo-600 text-white shadow-md' 
-                                : 'bg-white border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50'
+                                ? 'bg-navy-600 border-navy-600 text-white shadow-md' 
+                                : 'bg-white border-slate-200 hover:border-navy-300 hover:bg-navy-50/50'
                             }`}
                         >
                             <input 
@@ -253,12 +253,12 @@ const MockExam: React.FC<Props> = ({ exam, onScoreComplete, onScoreClear, existi
       <div className="mt-6 pt-4 border-t border-slate-100">
          <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-slate-500">
-                Answered: <span className="text-indigo-600 font-bold">{Object.keys(answers).length}</span> / 20
+                Answered: <span className="text-navy-600 font-bold">{Object.keys(answers).length}</span> / 20
             </span>
             <button 
                 onClick={handleSubmit}
                 disabled={Object.keys(answers).length === 0}
-                className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 disabled:opacity-50 shadow-lg transition-transform active:scale-[0.98]"
+                className="px-8 py-3 bg-navy-600 text-white rounded-xl font-bold hover:bg-navy-700 disabled:opacity-50 shadow-lg transition-transform active:scale-[0.98]"
             >
                 Submit Exam
             </button>

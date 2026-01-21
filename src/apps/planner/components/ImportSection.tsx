@@ -38,7 +38,7 @@ const ImportSection: React.FC<ImportSectionProps> = ({ onImport, onReset, isImpo
   }
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gray-50 hover:bg-white hover:border-navy-500 transition-colors cursor-pointer group relative">
+    <div className="border-2 border-dashed border-navy-200 rounded-xl p-8 text-center bg-navy-50 hover:bg-white hover:border-navy-500 transition-colors cursor-pointer group relative">
       <input 
         type="file" 
         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -58,8 +58,8 @@ const ImportSection: React.FC<ImportSectionProps> = ({ onImport, onReset, isImpo
           <div className="bg-navy-100 p-4 rounded-full group-hover:bg-navy-200 transition-colors">
             <svg className="w-8 h-8 text-navy-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-700">Import Official Curriculum / 导入官方课程体系</h3>
-          <p className="text-gray-500 text-sm max-w-sm mx-auto">Supported: PDF, Excel, Image (支持PDF, Excel, 图片)</p>
+          <h3 className="text-lg font-semibold text-navy-700">Import Official Curriculum / 导入官方课程体系</h3>
+          <p className="text-navy-400 text-sm max-w-sm mx-auto">Supported: PDF, Excel, Image (支持PDF, Excel, 图片)</p>
         </div>
       )}
     </div>

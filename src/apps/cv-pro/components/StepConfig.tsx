@@ -130,7 +130,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
         {/* Language Selection */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <Globe2 size={18} className="text-blue-600" />
+            <Globe2 size={18} className="text-gold-600" />
             目标语言 (Target Language)
           </label>
           <select
@@ -142,7 +142,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
                 onChange({ targetLanguage: e.target.value as Language });
               }
             }}
-            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-navy-500 bg-white"
           >
             {Object.values(Language).map((lang) => (
               <option key={lang} value={lang}>{getLanguageLabel(lang)}</option>
@@ -163,7 +163,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
         {/* Style Selection */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <Target size={18} className="text-blue-600" />
+            <Target size={18} className="text-gold-600" />
             履历风格 (Style)
           </label>
           <select
@@ -175,7 +175,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
                  onChange({ targetStyle: e.target.value as ResumeStyle });
                }
             }}
-            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-navy-500 bg-white"
           >
             {Object.values(ResumeStyle).map((style) => (
               <option key={style} value={style}>{getStyleLabel(style)}</option>
@@ -198,7 +198,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
       <div className="space-y-6 mb-8">
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <Building2 size={18} className="text-blue-600" />
+            <Building2 size={18} className="text-gold-600" />
             目标公司 / 官网 (Target Company)
           </label>
           <input
@@ -206,7 +206,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
             value={config.targetCompany || ''}
             onChange={(e) => onChange({ targetCompany: e.target.value })}
             placeholder="例如: Google, TikTok, McKinsey..."
-            className="w-full p-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 bg-slate-800 text-white placeholder-gray-400"
+            className="w-full p-3 border border-navy-600 rounded-lg focus:ring-2 focus:ring-gold-500 bg-navy-900 text-white placeholder-slate-400"
           />
         </div>
         
@@ -214,13 +214,13 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
           {/* Interview Mode Selection */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <Users size={18} className="text-blue-600" />
+              <Users size={18} className="text-gold-600" />
               面试场景 (Context)
             </label>
             <select
               value={config.interviewMode || InterviewMode.NEW_JOB}
               onChange={(e) => onChange({ interviewMode: e.target.value as InterviewMode })}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-navy-500 bg-white"
             >
               {Object.values(InterviewMode).map((mode) => (
                 <option key={mode} value={mode}>{getInterviewModeLabel(mode)}</option>
@@ -231,13 +231,13 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
           {/* Interview Difficulty Selection */}
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <Gauge size={18} className="text-blue-600" />
+              <Gauge size={18} className="text-gold-600" />
               面试难度 (Difficulty)
             </label>
             <select
               value={config.interviewDifficulty || InterviewDifficulty.ADVANCED}
               onChange={(e) => onChange({ interviewDifficulty: e.target.value as InterviewDifficulty })}
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-navy-500 bg-white"
             >
               {Object.values(InterviewDifficulty).map((diff) => (
                 <option key={diff} value={diff}>{getDifficultyLabel(diff)}</option>
@@ -249,19 +249,19 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <Briefcase size={18} className="text-blue-600" />
+              <Briefcase size={18} className="text-gold-600" />
               目标职位 JD (Job Description)
             </label>
             <div className="flex bg-gray-100 rounded-lg p-0.5">
                <button 
                  onClick={() => setJdTab('text')}
-                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${jdTab === 'text' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
+                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${jdTab === 'text' ? 'bg-white shadow text-navy-600' : 'text-gray-500'}`}
                >
                  文本粘贴
                </button>
                <button 
                  onClick={() => setJdTab('file')}
-                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${jdTab === 'file' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}
+                 className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${jdTab === 'file' ? 'bg-white shadow text-navy-600' : 'text-gray-500'}`}
                >
                  上传文件
                </button>
@@ -273,12 +273,12 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
               value={config.jobDescription || ''}
               onChange={(e) => onChange({ jobDescription: e.target.value, jdFile: undefined })}
               placeholder="粘贴职位的 Job Description，我们将提取关键词优化您的履历..."
-              className="w-full h-32 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+              className="w-full h-32 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-navy-500 resize-none text-sm"
             />
           ) : (
             <div 
               className={`h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center transition-colors relative
-                ${isDragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}
+                ${isDragOver ? 'border-navy-500 bg-navy-50' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}
               `}
               onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
               onDragLeave={() => setIsDragOver(false)}
@@ -337,7 +337,7 @@ export const StepConfig: React.FC<Props> = ({ config, onChange, onGenerate, isPr
           onClick={onGenerate}
           disabled={isProcessing}
           className={`
-            bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 
+            bg-navy-900 hover:bg-navy-800 
             text-white px-10 py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all
             flex items-center gap-2
             ${isProcessing ? 'opacity-75 cursor-wait' : ''}

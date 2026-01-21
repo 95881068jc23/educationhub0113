@@ -165,7 +165,7 @@ const InterviewCard: React.FC<{
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex gap-4">
-          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isReverse ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700'}`}>
+          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${isReverse ? 'bg-gold-100 text-gold-700' : 'bg-navy-100 text-navy-700'}`}>
             Q{index + 1}
           </div>
           <div>
@@ -184,7 +184,7 @@ const InterviewCard: React.FC<{
              <div className="flex justify-end mb-4">
                 <button 
                   onClick={(e) => { e.stopPropagation(); onStartVoice(question); }}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-navy-600 text-white rounded-full text-sm font-semibold hover:bg-navy-700 transition-colors shadow-sm"
                 >
                   <Mic2 size={16} /> 语音模拟练习 (Voice Practice)
                 </button>
@@ -194,17 +194,17 @@ const InterviewCard: React.FC<{
            <div className="grid md:grid-cols-2 gap-4">
              <div className="mb-4">
                <div className="flex items-center gap-2 mb-2">
-                 <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Intent (意图)</span>
+                 <span className="bg-gold-100 text-gold-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Intent (意图)</span>
                </div>
-               <p className="text-sm text-gray-700 bg-yellow-50/50 p-3 rounded-lg border border-yellow-100 h-full">
+               <p className="text-sm text-gray-700 bg-gold-50/50 p-3 rounded-lg border border-gold-100 h-full">
                  {question.intentCn}
                </p>
              </div>
              <div className="mb-4">
                <div className="flex items-center gap-2 mb-2">
-                 <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Key Points (要点)</span>
+                 <span className="bg-navy-100 text-navy-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Key Points (要点)</span>
                </div>
-               <ul className="list-disc pl-5 space-y-1 bg-blue-50/50 p-3 rounded-lg border border-blue-100 h-full">
+               <ul className="list-disc pl-5 space-y-1 bg-navy-50/50 p-3 rounded-lg border border-navy-100 h-full">
                  {question.keyPointsCn.map((point, i) => (
                    <li key={i} className="text-sm text-gray-700">{point}</li>
                  ))}
@@ -213,9 +213,9 @@ const InterviewCard: React.FC<{
            </div>
            <div>
              <div className="flex items-center gap-2 mb-2">
-               <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Sample Answer (示范回答)</span>
+               <span className="bg-gold-100 text-gold-800 text-xs font-bold px-2 py-0.5 rounded uppercase">Sample Answer (示范回答)</span>
              </div>
-             <div className="bg-green-50 p-4 rounded-lg border border-green-100 italic text-gray-800 text-sm leading-relaxed">
+             <div className="bg-gold-50 p-4 rounded-lg border border-gold-100 italic text-gray-800 text-sm leading-relaxed">
                "{question.sampleAnswerEn}"
              </div>
            </div>
@@ -228,7 +228,7 @@ const InterviewCard: React.FC<{
 const InterviewSection: React.FC<{ title: string, subtitle: string, icon: React.ReactNode, questions: InterviewQuestion[], onStartVoice: (q: InterviewQuestion) => void, isReverse?: boolean }> = ({ title, subtitle, icon, questions, onStartVoice, isReverse }) => (
   <div className="mb-8">
     <div className="flex items-center gap-3 mb-4 pb-2 border-b border-gray-200">
-      <div className={`p-2 rounded-lg ${isReverse ? 'bg-green-100 text-green-700' : 'bg-indigo-100 text-indigo-700'}`}>
+      <div className={`p-2 rounded-lg ${isReverse ? 'bg-gold-100 text-gold-700' : 'bg-navy-100 text-navy-700'}`}>
         {icon}
       </div>
       <div>
@@ -390,8 +390,8 @@ export const StepResult: React.FC<Props> = ({
   };
 
   const scoreColor = (score: number = 0) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
+    if (score >= 80) return 'text-gold-600';
+    if (score >= 60) return 'text-navy-600';
     return 'text-red-600';
   };
 
@@ -405,10 +405,10 @@ export const StepResult: React.FC<Props> = ({
                 <div><h3 className="text-xl font-bold">模拟面试</h3><p className="text-sm text-gray-500">AI Interviewer</p></div>
                 <button onClick={() => { setActiveQuestion(null); stopRecording(); window.speechSynthesis.cancel(); }} className="p-1 hover:bg-gray-100 rounded-full"><X size={24} className="text-gray-500" /></button>
               </div>
-              <div className="mb-6 bg-indigo-50 p-4 rounded-xl border border-indigo-100"><p className="font-medium text-indigo-900 text-lg">"{activeQuestion.questionEn}"</p></div>
+              <div className="mb-6 bg-navy-50 p-4 rounded-xl border border-navy-100"><p className="font-medium text-navy-900 text-lg">"{activeQuestion.questionEn}"</p></div>
               <div className="flex flex-col items-center justify-center py-4">
-                 {isAiResponding ? <Loader2 className="animate-spin text-indigo-600 w-12 h-12" /> : (
-                    <button onClick={isRecording ? stopRecording : startRecording} className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-indigo-600'}`}>
+                 {isAiResponding ? <Loader2 className="animate-spin text-navy-600 w-12 h-12" /> : (
+                    <button onClick={isRecording ? stopRecording : startRecording} className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg ${isRecording ? 'bg-red-500 animate-pulse' : 'bg-navy-600'}`}>
                       {isRecording ? <StopCircle size={32} className="text-white" /> : <Mic2 size={32} className="text-white" />}
                     </button>
                  )}

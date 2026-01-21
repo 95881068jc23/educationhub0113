@@ -79,8 +79,8 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
   };
 
   const cefrOptions = Object.values(CEFRLevel);
-  const inputClass = "w-full bg-gray-800 text-white border-gray-600 rounded-md shadow-sm focus:ring-gold-500 focus:border-gold-500 p-2 border placeholder-gray-400";
-  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+  const inputClass = "w-full bg-navy-800 text-white border-navy-600 rounded-md shadow-sm focus:ring-gold-500 focus:border-gold-500 p-2 border placeholder-navy-300";
+  const labelClass = "block text-sm font-medium text-navy-700 mb-1";
   
   // Single Select Component with Custom Support
   const SingleSelectSmart = (
@@ -132,16 +132,16 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
             autoFocus
           />
           <button onClick={() => addCustomItem(inputValue, setCustomOptions, setIsAdding, (v) => handleChange(field, v))} className="bg-gold-500 hover:bg-gold-600 px-3 rounded text-white font-bold">OK</button>
-          <button onClick={() => setIsAdding(false)} className="bg-gray-600 px-3 rounded text-white">X</button>
+          <button onClick={() => setIsAdding(false)} className="bg-navy-600 px-3 rounded text-white">X</button>
         </div>
       )}
       {/* List of Custom Items to Delete */}
       {customOptions.length > 0 && !isAdding && (
          <div className="mt-1 flex flex-wrap gap-2">
            {customOptions.map(opt => (
-             <span key={opt} className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded flex items-center">
+             <span key={opt} className="text-xs bg-navy-100 text-navy-700 px-2 py-0.5 rounded flex items-center">
                {opt}
-               <button onClick={() => deleteCustomItem(opt, setCustomOptions)} className="ml-1 text-red-500 hover:text-red-700 font-bold">×</button>
+               <button onClick={() => deleteCustomItem(opt, setCustomOptions)} className="ml-1 text-navy-400 hover:text-navy-600 font-bold">×</button>
              </span>
            ))}
          </div>
@@ -168,7 +168,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
           {selected.map(item => (
             <span key={item} className="bg-gold-100 text-gold-800 px-3 py-1 rounded-full text-sm flex items-center">
               {item}
-              <button onClick={() => toggleItem(field, item)} className="ml-2 hover:text-red-500">×</button>
+              <button onClick={() => toggleItem(field, item)} className="ml-2 hover:text-navy-600">×</button>
             </span>
           ))}
        </div>
@@ -212,21 +212,21 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
             />
             <button 
               onClick={() => addCustomItem(inputValue, setCustomOptions, setIsAdding, (v) => toggleItem(field, v))} 
-              className="bg-emerald-600 px-4 rounded text-white font-bold"
+              className="bg-navy-600 px-4 rounded text-white font-bold"
             >
               Add
             </button>
-            <button onClick={() => setIsAdding(false)} className="bg-gray-600 px-4 rounded text-white">Cancel</button>
+            <button onClick={() => setIsAdding(false)} className="bg-navy-600 px-4 rounded text-white">Cancel</button>
           </div>
        )}
 
        {customOptions.length > 0 && (
          <div className="mt-1 flex flex-wrap gap-2">
-            <span className="text-xs text-gray-400 self-center">Custom Tags:</span>
+            <span className="text-xs text-navy-400 self-center">Custom Tags:</span>
             {customOptions.map(opt => (
-              <span key={opt} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded flex items-center border border-gray-200">
+              <span key={opt} className="text-xs bg-navy-50 text-navy-500 px-2 py-0.5 rounded flex items-center border border-navy-100">
                 {opt}
-                <button onClick={() => deleteCustomItem(opt, setCustomOptions)} className="ml-1 text-red-400 hover:text-red-600">×</button>
+                <button onClick={() => deleteCustomItem(opt, setCustomOptions)} className="ml-1 text-navy-400 hover:text-navy-600">×</button>
               </span>
             ))}
          </div>
@@ -235,9 +235,9 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
   );
 
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 print:border-none print:shadow-none ${isEditingMode ? '' : 'animate-fade-in-up'}`}>
-      <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center border-b border-gray-100 pb-4">
-        <span className="bg-emerald-600 w-2 h-6 mr-3 rounded-sm"></span>
+    <div className={`bg-white rounded-xl shadow-sm border border-navy-100 p-6 print:border-none print:shadow-none ${isEditingMode ? '' : 'animate-fade-in-up'}`}>
+      <h2 className="text-xl font-bold text-navy-800 mb-6 flex items-center border-b border-navy-100 pb-4">
+        <span className="bg-gold-500 w-2 h-6 mr-3 rounded-sm"></span>
         {isEditingMode ? 'Edit Profile / 编辑档案' : '学员档案 / Student Profile'}
       </h2>
       
@@ -252,8 +252,8 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
               onClick={() => toggleDirection(dir)}
               className={`px-4 py-2 rounded-full border transition-all ${
                 profile.learningDirections.includes(dir)
-                ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-500'
+                ? 'bg-navy-600 text-white border-navy-600 shadow-md'
+                : 'bg-white text-navy-600 border-navy-200 hover:border-navy-500'
               }`}
             >
               {dir === LearningDirection.Life && "General/Life (生活)"}
@@ -332,7 +332,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
           customInterestInput, setCustomInterestInput, isAddingInterest, setIsAddingInterest, 'interests'
         )}
 
-        <div className="md:col-span-3 border-t border-gray-100 pt-6 mt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-3 border-t border-navy-100 pt-6 mt-2 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Course Mode */}
           <div>
             <label className={labelClass}>上课模式 / Course Mode</label>
@@ -364,8 +364,8 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
 
         {/* Custom Content Strategy (Only for Private) - Hide in Editing Mode to avoid confusion */}
         {profile.mode === CourseMode.Private && !isEditingMode && (
-          <div className="md:col-span-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
-             <label className="block text-sm font-bold text-gray-800 mb-2">
+          <div className="md:col-span-3 bg-navy-50 p-4 rounded-lg border border-navy-200">
+             <label className="block text-sm font-bold text-navy-800 mb-2">
                初始内容策略 / Content Initialization Strategy
              </label>
              <div className="flex flex-col sm:flex-row gap-4">
@@ -375,9 +375,9 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
                     name="contentStrategy"
                     checked={profile.customContentStrategy === CustomContentStrategy.HighFrequency}
                     onChange={() => handleChange('customContentStrategy', CustomContentStrategy.HighFrequency)}
-                    className="text-emerald-600 focus:ring-emerald-500"
+                    className="text-navy-600 focus:ring-navy-500"
                   />
-                  <span className="text-gray-700 text-sm">高频话题 (预设标化) / High Frequency</span>
+                  <span className="text-navy-700 text-sm">高频话题 (预设标化) / High Frequency</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input 
@@ -385,9 +385,9 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
                     name="contentStrategy"
                     checked={profile.customContentStrategy === CustomContentStrategy.PureCustom}
                     onChange={() => handleChange('customContentStrategy', CustomContentStrategy.PureCustom)}
-                    className="text-emerald-600 focus:ring-emerald-500"
+                    className="text-navy-600 focus:ring-navy-500"
                   />
-                  <span className="text-gray-700 text-sm">纯定制 (空白) / Pure Custom</span>
+                  <span className="text-navy-700 text-sm">纯定制 (空白) / Pure Custom</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input 
@@ -395,12 +395,12 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
                     name="contentStrategy"
                     checked={profile.customContentStrategy === CustomContentStrategy.Hybrid}
                     onChange={() => handleChange('customContentStrategy', CustomContentStrategy.Hybrid)}
-                    className="text-emerald-600 focus:ring-emerald-500"
+                    className="text-navy-600 focus:ring-navy-500"
                   />
-                  <span className="text-gray-700 text-sm">混合 (标化+定制) / Hybrid</span>
+                  <span className="text-navy-700 text-sm">混合 (标化+定制) / Hybrid</span>
                 </label>
              </div>
-             <p className="text-xs text-gray-500 mt-2">
+             <p className="text-xs text-navy-400 mt-2">
                * Choose how to populate the initial plan. You can always add/remove topics later.
              </p>
           </div>
@@ -408,16 +408,16 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
       </div>
 
       {isEditingMode ? (
-        <div className="mt-8 flex justify-end gap-4 border-t border-gray-100 pt-6">
+        <div className="mt-8 flex justify-end gap-4 border-t border-navy-100 pt-6">
            <button
              onClick={onCancel}
-             className="bg-white hover:bg-gray-100 text-gray-600 font-bold py-3 px-6 rounded-lg border border-gray-300 transition-colors"
+             className="bg-white hover:bg-navy-50 text-navy-600 font-bold py-3 px-6 rounded-lg border border-navy-200 transition-colors"
            >
              Cancel / 取消
            </button>
            <button
              onClick={onGenerate}
-             className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105"
+             className="bg-navy-600 hover:bg-navy-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105"
            >
              Save Changes / 保存修改
            </button>
@@ -426,7 +426,7 @@ const StudentProfileForm: React.FC<Props> = ({ profile, onChange, onGenerate, is
         <div className="mt-8 flex justify-end">
           <button
             onClick={onGenerate}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105 flex items-center"
+            className="bg-navy-600 hover:bg-navy-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105 flex items-center"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
             Generate Roadmap / 生成课程规划

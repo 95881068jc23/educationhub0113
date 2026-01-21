@@ -53,48 +53,48 @@ const EXPECTATIONS = [
 
 const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-2xl font-bold text-slate-900 mb-4 mt-2" {...props} />
+    <h1 className="text-2xl font-bold text-navy-900 mb-4 mt-2" {...props} />
   ),
   h2: ({ node, ...props }) => (
-    <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2 border-b border-purple-100 pb-2" {...props} />
+    <h2 className="text-xl font-bold text-navy-800 mt-8 mb-4 flex items-center gap-2 border-b border-navy-100 pb-2" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-purple-900 bg-purple-50 px-3 py-1.5 rounded-lg inline-block mt-6 mb-3" {...props} />
+    <h3 className="text-lg font-bold text-navy-900 bg-navy-50 px-3 py-1.5 rounded-lg inline-block mt-6 mb-3" {...props} />
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-purple-700" {...props} />
+    <span className="font-bold text-navy-700" {...props} />
   ),
   ul: ({ node, ...props }) => (
-    <ul className="list-disc list-outside ml-6 space-y-4 text-slate-700 mb-6" {...props} />
+    <ul className="list-disc list-outside ml-6 space-y-4 text-navy-700 mb-6" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="pl-1 leading-relaxed marker:text-purple-400 whitespace-pre-wrap" {...props} />
+    <li className="pl-1 leading-relaxed marker:text-gold-400 whitespace-pre-wrap" {...props} />
   ),
   p: ({ node, ...props }) => (
-    <p className="mb-4 leading-relaxed text-slate-700" {...props} />
+    <p className="mb-4 leading-relaxed text-navy-700" {...props} />
   ),
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-6 rounded-xl border border-purple-100 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-purple-100" {...props} />
+    <div className="overflow-x-auto my-6 rounded-xl border border-navy-100 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-100" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-purple-600 text-white" {...props} />
+    <thead className="bg-navy-600 text-white" {...props} />
   ),
   tbody: ({ node, ...props }) => (
-    <tbody className="bg-white divide-y divide-purple-50" {...props} />
+    <tbody className="bg-white divide-y divide-navy-50" {...props} />
   ),
   tr: ({ node, ...props }) => (
-    <tr className="hover:bg-purple-50 transition-colors" {...props} />
+    <tr className="hover:bg-navy-50 transition-colors" {...props} />
   ),
   th: ({ node, ...props }) => (
-    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white border-r border-purple-500 last:border-r-0" {...props} />
+    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white border-r border-navy-500 last:border-r-0" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap border-r border-purple-50 last:border-r-0" {...props} />
+    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap border-r border-navy-50 last:border-r-0" {...props} />
   ),
   blockquote: ({ node, ...props }) => (
-     <div className="bg-purple-50 border-l-4 border-purple-500 p-4 my-6 italic text-slate-700 rounded-r-lg shadow-sm">
+     <div className="bg-navy-50 border-l-4 border-navy-500 p-4 my-6 italic text-navy-800 rounded-r-lg shadow-sm">
        <span {...props} />
      </div>
   )
@@ -258,13 +258,13 @@ export const ValueGenerator: React.FC = () => {
       
       {/* LEFT COLUMN: Configuration Panel */}
       <div className="w-full md:w-[360px] flex-shrink-0 flex flex-col gap-4 overflow-y-auto scrollbar-hide">
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-6">
           <header className="mb-6">
-            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-              <Gift className="text-purple-600" />
+            <h2 className="text-xl font-bold text-navy-800 flex items-center gap-2">
+              <Gift className="text-navy-600" />
               价值赋能配置
             </h2>
-            <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+            <p className="text-xs text-navy-500 mt-2 leading-relaxed">
               定制高价值学习资料，维护客情，建立专家形象。
             </p>
           </header>
@@ -272,13 +272,13 @@ export const ValueGenerator: React.FC = () => {
           <div className="space-y-5">
             {/* Industry / Background */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                <Building2 size={16} className="text-purple-600" /> 客户行业 / 背景
+              <label className="flex items-center gap-2 text-sm font-bold text-navy-800">
+                <Building2 size={16} className="text-navy-600" /> 客户行业 / 背景
               </label>
               <select 
                 value={formData.industry} 
                 onChange={(e) => updateField('industry', e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-navy-800 font-medium focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all duration-300"
               >
                 {INDUSTRIES.map(i => <option key={i} value={i} className="text-black">{i}</option>)}
               </select>
@@ -288,7 +288,7 @@ export const ValueGenerator: React.FC = () => {
                   placeholder="请输入具体行业 (如: 宠物医疗)" 
                   value={formData.customIndustry}
                   onChange={(e) => updateField('customIndustry', e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-purple-500 animate-in fade-in"
+                  className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-navy-500 animate-in fade-in transition-all duration-300"
                 />
               )}
               <input 
@@ -296,19 +296,19 @@ export const ValueGenerator: React.FC = () => {
                 placeholder="客户公司信息 (可选, 如: Tesla Shanghai)" 
                 value={formData.companyInfo}
                 onChange={(e) => updateField('companyInfo', e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all duration-300"
               />
             </div>
 
             {/* Level */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                <GraduationCap size={16} className="text-purple-600" /> 英语程度
+              <label className="flex items-center gap-2 text-sm font-bold text-navy-800">
+                <GraduationCap size={16} className="text-navy-600" /> 英语程度
               </label>
               <select 
                 value={formData.level} 
                 onChange={(e) => updateField('level', e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-navy-800 font-medium focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all duration-300"
               >
                 {LEVELS.map(l => <option key={l} value={l} className="text-black">{l}</option>)}
               </select>
@@ -316,13 +316,13 @@ export const ValueGenerator: React.FC = () => {
 
             {/* Goals & Preferences */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                <Target size={16} className="text-purple-600" /> 期望内容 & 偏好
+              <label className="flex items-center gap-2 text-sm font-bold text-navy-800">
+                <Target size={16} className="text-navy-600" /> 期望内容 & 偏好
               </label>
               <select 
                 value={formData.expectations} 
                 onChange={(e) => updateField('expectations', e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 mb-2"
+                className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-navy-800 font-medium focus:outline-none focus:ring-2 focus:ring-navy-500 mb-2 transition-all duration-300"
               >
                 {EXPECTATIONS.map(e => <option key={e} value={e} className="text-black">{e}</option>)}
               </select>
@@ -331,17 +331,17 @@ export const ValueGenerator: React.FC = () => {
                 <select 
                   value={formData.preferences} 
                   onChange={(e) => updateField('preferences', e.target.value)}
-                  className="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="flex-1 p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-navy-800 font-medium focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all duration-300"
                 >
                   {PREFERENCES.map(p => <option key={p} value={p} className="text-black">{p}</option>)}
                 </select>
                 
-                <div className="w-20 relative flex items-center bg-slate-50 border border-slate-200 rounded-xl px-2">
-                    <Layers size={14} className="text-purple-600 mr-1 flex-shrink-0"/>
+                <div className="w-20 relative flex items-center bg-navy-50 border border-navy-200 rounded-xl px-2">
+                    <Layers size={14} className="text-navy-600 mr-1 flex-shrink-0"/>
                     <select
                       value={generationCount}
                       onChange={(e) => setGenerationCount(Number(e.target.value))}
-                      className="w-full h-full bg-transparent focus:outline-none text-sm font-bold text-slate-900 appearance-none"
+                      className="w-full h-full bg-transparent focus:outline-none text-sm font-bold text-navy-900 appearance-none transition-all duration-300"
                     >
                       {[1,2,3,4,5].map(n => (
                         <option key={n} value={n} className="text-black">{n}</option>
@@ -354,7 +354,7 @@ export const ValueGenerator: React.FC = () => {
                 placeholder="其他具体需求 (可选)" 
                 value={formData.customExpectation}
                 onChange={(e) => updateField('customExpectation', e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-purple-500 mt-2"
+                className="w-full p-2.5 bg-navy-50 border border-navy-200 rounded-xl text-sm text-black focus:outline-none focus:ring-2 focus:ring-navy-500 mt-2 transition-all duration-300"
               />
             </div>
           </div>
@@ -362,7 +362,7 @@ export const ValueGenerator: React.FC = () => {
           <button
             onClick={() => handleGenerate()}
             disabled={isLoading}
-            className="w-full mt-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold shadow-md hover:shadow-lg disabled:opacity-70 transition-all flex items-center justify-center gap-2 active:scale-[0.99]"
+            className="w-full mt-8 py-3 bg-gradient-to-r from-navy-600 to-navy-800 text-white rounded-xl font-bold shadow-md hover:shadow-lg disabled:opacity-70 transition-all duration-300 flex items-center justify-center gap-2 active:scale-[0.99]"
           >
             {isLoading ? (
               <>
@@ -379,29 +379,29 @@ export const ValueGenerator: React.FC = () => {
       </div>
 
       {/* RIGHT COLUMN: Results / Preview */}
-      <div className="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-[calc(100vh-140px)] md:h-auto min-h-[500px]">
+      <div className="flex-1 flex flex-col bg-white rounded-2xl shadow-sm border border-navy-100 overflow-hidden h-[calc(100vh-140px)] md:h-auto min-h-[500px]">
         {results.length > 0 ? (
           <>
             {/* Action Bar */}
-            <div className="bg-purple-50 px-4 py-3 border-b border-purple-100 flex justify-between items-center flex-wrap gap-2 flex-shrink-0">
+            <div className="bg-navy-50 px-4 py-3 border-b border-navy-100 flex justify-between items-center flex-wrap gap-2 flex-shrink-0">
               <div className="flex items-center gap-3">
-                 <div className="flex items-center gap-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-purple-100">
+                 <div className="flex items-center gap-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-navy-100">
                     <button 
                       onClick={() => setCurrentResultIndex(prev => Math.max(0, prev - 1))}
                       disabled={currentResultIndex === 0}
-                      className="p-1 hover:bg-purple-100 rounded disabled:opacity-30 transition-colors"
+                      className="p-1 hover:bg-navy-100 rounded disabled:opacity-30 transition-all duration-300"
                     >
-                      <ChevronLeft size={16} className="text-purple-700"/>
+                      <ChevronLeft size={16} className="text-navy-700"/>
                     </button>
-                    <span className="text-xs font-bold text-purple-700 min-w-[50px] text-center">
+                    <span className="text-xs font-bold text-navy-700 min-w-[50px] text-center">
                       {currentResultIndex + 1} / {results.length}
                     </span>
                     <button 
                       onClick={() => setCurrentResultIndex(prev => Math.min(results.length - 1, prev + 1))}
                       disabled={currentResultIndex === results.length - 1}
-                      className="p-1 hover:bg-purple-100 rounded disabled:opacity-30 transition-colors"
+                      className="p-1 hover:bg-navy-100 rounded disabled:opacity-30 transition-all duration-300"
                     >
-                      <ChevronRight size={16} className="text-purple-700"/>
+                      <ChevronRight size={16} className="text-navy-700"/>
                     </button>
                  </div>
               </div>
@@ -409,8 +409,8 @@ export const ValueGenerator: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setIsEditing(!isEditing)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    isEditing ? 'bg-purple-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                    isEditing ? 'bg-navy-600 text-white' : 'bg-white text-navy-600 border border-navy-200 hover:bg-navy-50'
                   }`}
                 >
                    {isEditing ? <><Check size={14}/> 完成</> : <><Edit2 size={14}/> 编辑</>}
@@ -418,25 +418,25 @@ export const ValueGenerator: React.FC = () => {
                 
                 <button 
                   onClick={copyToClipboard}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    copied ? 'bg-green-100 text-green-700' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                    copied ? 'bg-gold-100 text-gold-700' : 'bg-white text-navy-600 border border-navy-200 hover:bg-navy-50'
                   }`}
                 >
                   {copied ? <CheckCircle size={14} /> : <Copy size={14} />}
                   {copied ? '已复制' : '复制'}
                 </button>
 
-                 <div className="h-4 w-px bg-slate-300 mx-1"></div>
+                 <div className="h-4 w-px bg-navy-300 mx-1"></div>
 
                 <button 
                    onClick={() => handleDownload('image')}
-                   className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-navy-50 text-navy-700 border border-navy-200 rounded-lg text-xs font-bold hover:bg-navy-100 transition-all duration-300"
                 >
                    <Download size={14} /> 图片
                 </button>
                  <button 
                    onClick={() => handleDownload('pdf')}
-                   className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition-all"
+                   className="flex items-center gap-1.5 px-3 py-1.5 bg-gold-50 text-gold-700 border border-gold-200 rounded-lg text-xs font-bold hover:bg-gold-100 transition-all duration-300"
                 >
                    <Download size={14} /> PDF
                 </button>
@@ -444,13 +444,13 @@ export const ValueGenerator: React.FC = () => {
             </div>
 
             {/* Regeneration Bar */}
-            <div className="bg-white px-4 py-3 border-b border-slate-100 flex items-center gap-2 flex-shrink-0">
+            <div className="bg-white px-4 py-3 border-b border-navy-100 flex items-center gap-2 flex-shrink-0">
               <input 
                 type="text" 
                 value={refineInput}
                 onChange={(e) => setRefineInput(e.target.value)}
                 placeholder={`调整当前版本 (如: 换一批单词, 语气更专业)`}
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex-1 bg-navy-50 border border-navy-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 transition-all duration-300"
                 onKeyDown={(e) => {
                   if(e.key === 'Enter' && !isLoading) handleGenerate(refineInput);
                 }}
@@ -458,7 +458,7 @@ export const ValueGenerator: React.FC = () => {
               <button 
                 onClick={() => handleGenerate(refineInput)}
                 disabled={isLoading || !refineInput.trim()}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-bold hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2 transition-all"
+                className="px-4 py-2 bg-navy-600 text-white rounded-lg text-sm font-bold hover:bg-navy-700 disabled:opacity-50 flex items-center gap-2 transition-all duration-300"
               >
                  {isLoading ? <Loader2 size={16} className="animate-spin"/> : <RefreshCw size={16}/>}
                  重写
@@ -471,19 +471,19 @@ export const ValueGenerator: React.FC = () => {
                  <textarea 
                    value={currentResult || ''}
                    onChange={handleResultChange}
-                   className="w-full h-full p-6 text-sm font-mono text-slate-800 focus:outline-none resize-none bg-slate-50"
+                   className="w-full h-full p-6 text-sm font-mono text-navy-800 focus:outline-none resize-none bg-navy-50"
                  />
                ) : (
                  <div ref={contentRef} className="p-8 bg-white relative min-h-full">
                     {/* Watermark */}
                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] select-none overflow-hidden">
-                       <div className="transform -rotate-12 text-6xl font-black text-slate-900 whitespace-nowrap">
+                       <div className="transform -rotate-12 text-6xl font-black text-navy-900 whitespace-nowrap">
                          Marvellous Education (ME)
                        </div>
                     </div>
                      <div className="absolute inset-0 pointer-events-none opacity-[0.02] select-none overflow-hidden flex flex-wrap content-center justify-center gap-32">
                         {[...Array(6)].map((_, i) => (
-                           <div key={i} className="transform -rotate-12 text-2xl font-bold text-slate-900">ME Sales Genius</div>
+                           <div key={i} className="transform -rotate-12 text-2xl font-bold text-navy-900">ME Sales Genius</div>
                         ))}
                      </div>
 
@@ -497,10 +497,10 @@ export const ValueGenerator: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-10 text-center">
-            <LayoutTemplate size={64} className="mb-6 text-slate-200" strokeWidth={1} />
-            <h3 className="text-xl font-bold text-slate-300 mb-2">准备生成</h3>
-            <p className="max-w-xs mx-auto text-sm text-slate-300">
+          <div className="flex-1 flex flex-col items-center justify-center text-navy-400 p-10 text-center">
+            <LayoutTemplate size={64} className="mb-6 text-navy-200" strokeWidth={1} />
+            <h3 className="text-xl font-bold text-navy-300 mb-2">准备生成</h3>
+            <p className="max-w-xs mx-auto text-sm text-navy-300">
               请在左侧配置客户背景与需求，点击生成按钮获取定制化的赋能资料。
             </p>
           </div>

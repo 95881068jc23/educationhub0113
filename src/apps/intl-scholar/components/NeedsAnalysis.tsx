@@ -403,15 +403,15 @@ const NeedsAnalysis: React.FC<Props> = ({ exam, language, onAnalysisComplete, on
         </button>
         <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200">
           <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-100 pb-4">
-            <FileText className="text-indigo-600" size={28} />
+            <FileText className="text-navy-600" size={28} />
             {t.needsAnalysis}
           </h2>
 
           {/* Alert if Mock Score detected */}
           {importedScore && !profile.currentScore && (
-            <div className="bg-indigo-50 p-4 rounded-lg mb-6 border border-indigo-200 flex items-center gap-3 animate-fade-in">
-                <Sparkles className="text-indigo-600" size={24} />
-                <div className="text-sm text-indigo-900">
+            <div className="bg-navy-50 p-4 rounded-lg mb-6 border border-navy-200 flex items-center gap-3 animate-fade-in">
+                <Sparkles className="text-navy-600" size={24} />
+                <div className="text-sm text-navy-900">
                     <strong>Mock Exam Score Detected:</strong> We found a recent mock exam score of <strong>{importedScore}</strong>. 
                     It has been automatically applied to the current score field.
                 </div>
@@ -446,27 +446,27 @@ const NeedsAnalysis: React.FC<Props> = ({ exam, language, onAnalysisComplete, on
             {/* SPECIAL IELTS SELECTOR */}
             {exam === ExamType.IELTS && (
                 <div className="bg-black text-white p-4 rounded-lg shadow-md border border-slate-700">
-                    <label className="block text-sm font-bold mb-3 text-indigo-300">Select IELTS Module (雅思类别)</label>
+                    <label className="block text-sm font-bold mb-3 text-gold-300">Select IELTS Module (雅思类别)</label>
                     <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-indigo-500 has-[:checked]:bg-slate-700">
+                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-gold-500 has-[:checked]:bg-slate-700">
                             <input 
                                 type="radio" 
                                 name="ieltsType" 
                                 value="Academic (A类)" 
                                 checked={profile.examVariant === "Academic (A类)"}
                                 onChange={(e) => updateField('examVariant', e.target.value)}
-                                className="accent-indigo-500"
+                                className="accent-gold-500"
                             />
                             <span className="font-medium">Academic (A类)</span>
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-indigo-500 has-[:checked]:bg-slate-700">
+                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-gold-500 has-[:checked]:bg-slate-700">
                             <input 
                                 type="radio" 
                                 name="ieltsType" 
                                 value="General Training (G类)" 
                                 checked={profile.examVariant === "General Training (G类)"}
                                 onChange={(e) => updateField('examVariant', e.target.value)}
-                                className="accent-indigo-500"
+                                className="accent-gold-500"
                             />
                             <span className="font-medium">General Training (G类)</span>
                         </label>
@@ -477,9 +477,9 @@ const NeedsAnalysis: React.FC<Props> = ({ exam, language, onAnalysisComplete, on
             {/* SPECIAL DOMESTIC EXAM SELECTOR (Shanghai vs National) */}
             {showDomesticVariant && (
                 <div className="bg-black text-white p-4 rounded-lg shadow-md border border-slate-700">
-                    <label className="block text-sm font-bold mb-3 text-indigo-300">Select Paper Type (试卷类型)</label>
+                    <label className="block text-sm font-bold mb-3 text-gold-300">Select Paper Type (试卷类型)</label>
                     <div className="flex gap-4">
-                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-indigo-500 has-[:checked]:bg-slate-700">
+                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-gold-500 has-[:checked]:bg-slate-700">
                             <input 
                                 type="radio" 
                                 name="paperType" 
@@ -490,11 +490,11 @@ const NeedsAnalysis: React.FC<Props> = ({ exam, language, onAnalysisComplete, on
                                    updateField('currentScore', ''); // Reset score to force re-selection with new options
                                    updateField('targetScore', '');
                                 }}
-                                className="accent-indigo-500"
+                                className="accent-gold-500"
                             />
                             <span className="font-medium">Shanghai Paper (上海卷)</span>
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-indigo-500 has-[:checked]:bg-slate-700">
+                        <label className="flex items-center gap-2 cursor-pointer bg-slate-800 px-4 py-2 rounded-md hover:bg-slate-700 transition-colors border border-slate-600 has-[:checked]:border-gold-500 has-[:checked]:bg-slate-700">
                             <input 
                                 type="radio" 
                                 name="paperType" 

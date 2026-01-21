@@ -58,18 +58,18 @@ const App: React.FC = () => {
   const NavButton = ({ tab, icon: Icon, label, subLabel }: { tab: Tab, icon: any, label: string, subLabel: string }) => (
     <button 
       onClick={() => handleTabChange(tab)} 
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab ? 'bg-navy-800 text-white shadow-lg border-l-4 border-gold-500' : 'text-slate-300 hover:bg-slate-800'}`}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab ? 'bg-navy-800 text-white shadow-lg border-l-4 border-gold-500' : 'text-navy-200 hover:bg-navy-800'}`}
     >
       <Icon size={20} className={activeTab === tab ? 'text-gold-400' : ''} />
       <div className="text-left">
         <div className="font-medium text-sm md:text-base">{label}</div>
-        <div className={`text-[10px] ${activeTab === tab ? 'text-gold-200/80' : 'text-slate-500'}`}>{subLabel}</div>
+        <div className={`text-[10px] ${activeTab === tab ? 'text-gold-200/80' : 'text-navy-400'}`}>{subLabel}</div>
       </div>
     </button>
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
+    <div className="flex h-screen overflow-hidden bg-navy-50 text-navy-900 font-sans">
       
       {/* Mobile Top Header (Fixed) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-navy-950 text-white z-50 flex items-center justify-between px-4 shadow-md">
@@ -77,7 +77,7 @@ const App: React.FC = () => {
             <GraduationCap className="w-6 h-6 text-gold-400" />
             <span className="font-bold text-lg tracking-tight">ME Genius</span>
          </div>
-         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-300 hover:text-white focus:outline-none">
+         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-navy-200 hover:text-white focus:outline-none">
             {isMobileMenuOpen ? <X size={24}/> : <Menu size={24}/>}
          </button>
       </div>

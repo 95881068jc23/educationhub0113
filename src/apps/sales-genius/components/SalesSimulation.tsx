@@ -39,16 +39,16 @@ interface SimMessage extends ChatMessage {
 // --- Markdown Components ---
 const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-2xl font-black text-slate-900 border-b-2 border-navy-100 pb-3 mb-6" {...props} />
+    <h1 className="text-2xl font-black text-navy-900 border-b-2 border-navy-100 pb-3 mb-6" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2" {...props} />
+    <h3 className="text-lg font-bold text-navy-800 mt-6 mb-3 flex items-center gap-2" {...props} />
   ),
   ul: ({ node, ...props }) => (
     <ul className="space-y-2 mb-4" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="flex items-start gap-2 text-slate-700 text-sm leading-relaxed" {...props}>
+    <li className="flex items-start gap-2 text-navy-700 text-sm leading-relaxed" {...props}>
        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-navy-500 flex-shrink-0"></span>
        <span>{props.children}</span>
     </li>
@@ -57,21 +57,21 @@ const ReportMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['comp
     <span className="font-bold text-navy-700 bg-navy-50 px-1 rounded" {...props} />
   ),
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-6 rounded-lg border border-slate-200 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-slate-100" {...props} />
+    <div className="overflow-x-auto my-6 rounded-lg border border-navy-200 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-100" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
     <thead className="bg-navy-50 text-navy-900" {...props} />
   ),
   tbody: ({ node, ...props }) => (
-    <tbody className="bg-white divide-y divide-slate-50" {...props} />
+    <tbody className="bg-white divide-y divide-navy-50" {...props} />
   ),
   th: ({ node, ...props }) => (
     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap" {...props} />
+    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap" {...props} />
   ),
 };
 
@@ -370,19 +370,19 @@ ${fullTranscript}
   if (gameState === 'setup') {
     return (
       <div className="h-full flex flex-col items-center justify-center p-6 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 max-w-2xl w-full">
+        <div className="bg-white rounded-2xl shadow-xl border border-navy-200 p-8 max-w-2xl w-full">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Bot size={32} className="text-indigo-600" />
+            <div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Bot size={32} className="text-navy-700" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-800">AI 模拟谈单训练</h2>
-            <p className="text-slate-500 mt-2">选择客户人设，开启 1对1 实战演练</p>
+            <h2 className="text-2xl font-bold text-navy-800">AI 模拟谈单训练</h2>
+            <p className="text-navy-500 mt-2">选择客户人设，开启 1对1 实战演练</p>
           </div>
 
           <div className="space-y-6">
             {/* Persona Selection */}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-3">1. 选择客户类型</label>
+              <label className="block text-sm font-bold text-navy-700 mb-3">1. 选择客户类型</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {SIMULATION_PERSONAS.map(p => (
                   <button
@@ -390,12 +390,12 @@ ${fullTranscript}
                     onClick={() => setSelectedPersonaId(p.id)}
                     className={`p-4 rounded-xl border text-left transition-all ${
                       selectedPersonaId === p.id 
-                        ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600' 
-                        : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
+                        ? 'border-navy-600 bg-navy-50 ring-1 ring-navy-600' 
+                        : 'border-navy-200 hover:border-navy-300 hover:bg-navy-50'
                     }`}
                   >
-                    <div className="font-bold text-sm text-slate-800">{p.label}</div>
-                    <div className="text-xs text-slate-500 mt-1">{p.desc}</div>
+                    <div className="font-bold text-sm text-navy-800">{p.label}</div>
+                    <div className="text-xs text-navy-500 mt-1">{p.desc}</div>
                   </button>
                 ))}
                 
@@ -404,14 +404,14 @@ ${fullTranscript}
                   onClick={() => setSelectedPersonaId('custom')}
                   className={`p-4 rounded-xl border text-left transition-all relative overflow-hidden ${
                     selectedPersonaId === 'custom' 
-                      ? 'border-pink-500 bg-pink-50 ring-1 ring-pink-500' 
-                      : 'border-slate-200 hover:border-pink-300 hover:bg-slate-50'
+                      ? 'border-gold-500 bg-gold-50 ring-1 ring-gold-500' 
+                      : 'border-navy-200 hover:border-gold-300 hover:bg-navy-50'
                   }`}
                 >
-                  <div className="font-bold text-sm text-pink-600 flex items-center gap-2">
+                  <div className="font-bold text-sm text-gold-700 flex items-center gap-2">
                     <Settings2 size={16} /> 自定义客户人设
                   </div>
-                  <div className="text-xs text-pink-400 mt-1">输入特定背景或刁钻性格</div>
+                  <div className="text-xs text-gold-600/80 mt-1">输入特定背景或刁钻性格</div>
                 </button>
               </div>
 
@@ -422,7 +422,7 @@ ${fullTranscript}
                     value={customPersona}
                     onChange={(e) => setCustomPersona(e.target.value)}
                     placeholder="例如: 某大厂技术总监，预算充足但极度挑剔，只关心是否能3个月内流利沟通..."
-                    className="w-full p-3 border-2 border-pink-200 rounded-lg text-sm focus:border-pink-500 focus:outline-none text-pink-700 font-medium placeholder:text-pink-300/70"
+                    className="w-full p-3 border-2 border-gold-200 rounded-lg text-sm focus:border-gold-500 focus:outline-none text-navy-800 font-medium placeholder:text-navy-400"
                   />
                 </div>
               )}
@@ -430,12 +430,12 @@ ${fullTranscript}
 
             {/* Difficulty Selection */}
             <div>
-               <label className="block text-sm font-bold text-slate-700 mb-3">2. 选择训练难度</label>
+               <label className="block text-sm font-bold text-navy-700 mb-3">2. 选择训练难度</label>
                <div className="flex gap-4">
                  <button 
                    onClick={() => setDifficulty('standard')}
                    className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                     difficulty === 'standard' ? 'bg-green-50 border-green-500 text-green-700' : 'bg-white border-slate-200 text-slate-500'
+                     difficulty === 'standard' ? 'bg-navy-50 border-navy-500 text-navy-700' : 'bg-white border-navy-200 text-navy-500'
                    }`}
                  >
                    <Shield size={24} />
@@ -446,7 +446,7 @@ ${fullTranscript}
                  <button 
                    onClick={() => setDifficulty('challenge')}
                    className={`flex-1 p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
-                     difficulty === 'challenge' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-white border-slate-200 text-slate-500'
+                     difficulty === 'challenge' ? 'bg-navy-50 border-navy-500 text-navy-700' : 'bg-white border-navy-200 text-navy-500'
                    }`}
                  >
                    <Sword size={24} />
@@ -459,7 +459,7 @@ ${fullTranscript}
             <button 
               onClick={startGame}
               disabled={selectedPersonaId === 'custom' && !customPersona.trim()}
-              className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-transform active:scale-[0.99] flex items-center justify-center gap-2"
+              className="w-full py-4 bg-navy-900 text-white rounded-xl font-bold text-lg hover:bg-navy-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transition-transform active:scale-[0.99] flex items-center justify-center gap-2"
             >
               <Play fill="currentColor" /> 开始模拟
             </button>
@@ -472,19 +472,19 @@ ${fullTranscript}
   // --- Render: Chat Screen ---
   if (gameState === 'playing') {
     return (
-      <div className="h-full flex flex-col bg-slate-50 rounded-xl overflow-hidden shadow-sm border border-slate-200">
+      <div className="h-full flex flex-col bg-navy-50 rounded-xl overflow-hidden shadow-sm border border-navy-200">
         {/* Header */}
-        <div className="bg-white p-4 border-b border-slate-200 flex justify-between items-center shadow-sm z-10">
+        <div className="bg-white p-4 border-b border-navy-200 flex justify-between items-center shadow-sm z-10">
           <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-               <User className="text-indigo-600" size={20} />
+             <div className="w-10 h-10 rounded-full bg-navy-50 flex items-center justify-center">
+               <User className="text-navy-700" size={20} />
              </div>
              <div>
-               <h3 className="font-bold text-slate-800 text-sm">
+               <h3 className="font-bold text-navy-800 text-sm">
                  {selectedPersonaId === 'custom' ? '自定义客户' : SIMULATION_PERSONAS.find(p => p.id === selectedPersonaId)?.label.split('(')[0]}
                </h3>
-               <div className="flex items-center gap-2 text-xs text-slate-500">
-                 <span className={`px-1.5 py-0.5 rounded ${difficulty === 'challenge' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+               <div className="flex items-center gap-2 text-xs text-navy-500">
+                 <span className={`px-1.5 py-0.5 rounded ${difficulty === 'challenge' ? 'bg-navy-100 text-navy-700' : 'bg-navy-50 text-navy-600'}`}>
                     {difficulty === 'challenge' ? '挑战模式' : '标准模式'}
                  </span>
                  <span>• 第 {turnCount} 轮</span>
@@ -493,7 +493,7 @@ ${fullTranscript}
           </div>
           <button 
             onClick={generateReport}
-            className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 flex items-center gap-2 transition-colors"
+            className="px-4 py-2 bg-navy-800 text-white text-xs font-bold rounded-lg hover:bg-navy-700 flex items-center gap-2 transition-colors"
           >
             <FileCheck size={14} /> 结束并生成报告
           </button>
@@ -504,13 +504,13 @@ ${fullTranscript}
           {messages.map((msg) => (
             <div key={msg.id} className={`flex flex-col gap-1 w-full`}>
                 <div className={`flex gap-3 ${msg.role === MessageRole.USER ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-blue-600' : 'bg-white border border-slate-200'}`}>
-                        {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-indigo-600"/>}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-navy-700' : 'bg-white border border-navy-200'}`}>
+                        {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-navy-700"/>}
                     </div>
                     <div className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed shadow-sm ${
                         msg.role === MessageRole.USER 
-                        ? 'bg-blue-600 text-white rounded-tr-none' 
-                        : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none'
+                        ? 'bg-navy-700 text-white rounded-tr-none' 
+                        : 'bg-white text-navy-800 border border-navy-200 rounded-tl-none'
                     }`}>
                         {/* Render Message Text */}
                         {msg.role === MessageRole.MODEL ? (
@@ -627,7 +627,7 @@ ${fullTranscript}
                   <div className="flex gap-4 text-sm text-slate-500">
                      <span className="flex items-center gap-1"><User size={14}/> 对象: {selectedPersonaId === 'custom' ? '自定义' : SIMULATION_PERSONAS.find(p => p.id === selectedPersonaId)?.label.split('(')[0]}</span>
                      <span className="flex items-center gap-1"><Clock size={14}/> 轮次: {turnCount}</span>
-                     <span className={`flex items-center gap-1 font-bold ${difficulty === 'challenge' ? 'text-red-500' : 'text-green-500'}`}>
+                     <span className={`flex items-center gap-1 font-bold ${difficulty === 'challenge' ? 'text-gold-600' : 'text-navy-600'}`}>
                         {difficulty === 'challenge' ? <Sword size={14}/> : <Shield size={14}/>} {difficulty === 'challenge' ? '挑战模式' : '标准模式'}
                      </span>
                   </div>

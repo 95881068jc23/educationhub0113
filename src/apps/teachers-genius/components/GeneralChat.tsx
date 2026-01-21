@@ -14,30 +14,31 @@ const cleanText = (text: string) => text.replace(/\*\*/g, '');
 // Enhanced Markdown Components for the Chat
 const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h3: ({ node, ...props }) => (
-    <h3 className="text-lg font-bold text-slate-800 mt-2 mb-3 flex items-center gap-2" {...props} />
+    <h3 className="text-lg font-bold text-navy-800 mt-2 mb-3 flex items-center gap-2" {...props} />
   ),
   p: ({ node, ...props }) => (
-    <p className="mb-3 text-sm leading-relaxed text-slate-700" {...props} />
+    <p className="mb-3 text-sm leading-relaxed text-navy-700" {...props} />
   ),
   ul: ({ node, ...props }) => (
-    <ul className="list-disc ml-4 space-y-2 text-slate-700 mb-2 mt-2" {...props} />
+    <ul className="list-disc ml-4 space-y-2 text-navy-700 mb-2 mt-2" {...props} />
   ),
   li: ({ node, ...props }) => (
     <li className="pl-1 text-sm" {...props} />
   ),
   // Use Blockquote for the "Color Block" effect requested
   blockquote: ({ node, ...props }) => (
-    <div className="bg-teal-50 border-l-4 border-teal-500 p-4 my-4 rounded-r-xl shadow-sm text-slate-700">
-       <div className="flex items-center gap-2 mb-2 text-teal-800 font-bold text-xs uppercase tracking-wider">
-          <Lightbulb size={14}/> Try Asking (你可以这样问)
+    <div className="bg-navy-50 border-l-4 border-navy-500 p-4 my-4 rounded-r-xl shadow-sm text-navy-700">
+       <div className="flex items-center gap-2 mb-2 text-navy-800 font-bold text-xs uppercase tracking-wider">
+         💡 Smart Note
        </div>
-       <div className="italic text-sm space-y-1">
-         {props.children}
-       </div>
+       <span className="italic" {...props} />
     </div>
   ),
+  a: ({ node, ...props }) => (
+    <a className="text-navy-600 underline hover:text-navy-800 transition-colors" {...props} />
+  ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-teal-700" {...props} />
+    <span className="font-bold text-navy-700" {...props} />
   ),
 };
 
@@ -169,21 +170,21 @@ I can generate creative activities, warm-up games, vocabulary lists, or recommen
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-navy-200 overflow-hidden">
       {/* Config Header */}
-      <div className="bg-white border-b border-slate-200 z-10 shadow-sm flex-shrink-0">
-        <div className="flex border-b border-slate-100 overflow-x-auto scrollbar-hide">
+      <div className="bg-white border-b border-navy-200 z-10 shadow-sm flex-shrink-0">
+        <div className="flex border-b border-navy-100 overflow-x-auto scrollbar-hide">
           {Object.values(TeachingModule).map((mod) => (
              <button key={mod} onClick={() => setSelectedModule(mod)}
-              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 whitespace-nowrap px-4 transition-colors min-w-fit ${selectedModule === mod ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50/50' : 'text-slate-500 hover:text-teal-500 hover:bg-slate-50'}`}>
+              className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 whitespace-nowrap px-4 transition-all duration-300 min-w-fit ${selectedModule === mod ? 'text-navy-600 border-b-2 border-navy-600 bg-navy-50/50' : 'text-navy-500 hover:text-navy-600 hover:bg-navy-50'}`}>
                <Layers size={16}/> {mod.split('(')[0]}
              </button>
           ))}
         </div>
-        <div className="p-3 md:p-4 bg-slate-50 space-y-3">
+        <div className="p-3 md:p-4 bg-navy-50 space-y-3">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
              {Object.values(ProductType).map(t => (
-               <button key={t} onClick={() => setSelectedProduct(t)} className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all whitespace-nowrap ${selectedProduct === t ? 'bg-teal-600 text-white border-teal-600 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-teal-300'}`}>{t}</button>
+               <button key={t} onClick={() => setSelectedProduct(t)} className={`px-4 py-1.5 text-xs font-bold rounded-full border transition-all duration-300 whitespace-nowrap ${selectedProduct === t ? 'bg-navy-600 text-white border-navy-600 shadow-md' : 'bg-white text-navy-600 border-navy-200 hover:border-navy-300'}`}>{t}</button>
              ))}
           </div>
           {/* Sub-categories removed from UI */}
@@ -192,13 +193,13 @@ I can generate creative activities, warm-up games, vocabulary lists, or recommen
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-6 bg-slate-50/30">
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-6 bg-navy-50/30">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 ${msg.role === MessageRole.USER ? 'flex-row-reverse' : 'flex-row'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-teal-600' : 'bg-white border border-slate-200 shadow-sm'}`}>
-              {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-teal-600"/>}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-navy-600' : 'bg-white border border-navy-200 shadow-sm'}`}>
+              {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-navy-600"/>}
             </div>
-            <div className={`max-w-[85%] rounded-2xl p-4 md:p-5 text-sm shadow-sm ${msg.role === MessageRole.USER ? 'bg-teal-600 text-white rounded-tr-none' : 'bg-white border border-slate-100 rounded-tl-none text-slate-800'} ${msg.isError ? 'bg-red-50 border-red-200 text-red-600' : ''}`}>
+            <div className={`max-w-[85%] rounded-2xl p-4 md:p-5 text-sm shadow-sm transition-all duration-300 ${msg.role === MessageRole.USER ? 'bg-navy-600 text-white rounded-tr-none' : 'bg-white border border-navy-100 rounded-tl-none text-navy-800'} ${msg.isError ? 'bg-gold-50 border-gold-200 text-gold-700' : ''}`}>
                <ReactMarkdown 
                  remarkPlugins={[remarkGfm]} 
                  components={msg.role === MessageRole.MODEL ? MarkdownComponents : undefined}
@@ -208,24 +209,24 @@ I can generate creative activities, warm-up games, vocabulary lists, or recommen
             </div>
           </div>
         ))}
-        {isLoading && <Loader2 className="animate-spin text-slate-400 ml-12" size={16}/>}
+        {isLoading && <Loader2 className="animate-spin text-navy-400 ml-12" size={16}/>}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
       <div className="p-3 md:p-4 bg-white border-t flex gap-2 items-center flex-shrink-0">
         <button 
-          onClick={handleClearHistory}
-          className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-          title="Clear History"
-        >
+            onClick={handleClearHistory}
+            className="p-3 text-navy-400 hover:text-gold-600 hover:bg-gold-50 rounded-xl transition-all duration-300"
+            title="Clear History"
+          >
           <Trash2 size={20}/>
         </button>
         <textarea value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
           placeholder={`Ask about ${selectedModule.split('(')[0]}...`}
-          className="flex-1 border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none h-12 shadow-inner"
+          className="flex-1 border border-navy-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 resize-none h-12 shadow-inner transition-all duration-300"
         />
-        <button onClick={handleSend} disabled={!input.trim() || isLoading} className="p-3 bg-teal-600 text-white rounded-xl disabled:opacity-50 hover:bg-teal-700 transition-colors shadow-md transform active:scale-95"><Send size={20}/></button>
+        <button onClick={handleSend} disabled={!input.trim() || isLoading} className="p-3 bg-navy-600 text-white rounded-xl disabled:opacity-50 hover:bg-navy-700 transition-all duration-300 shadow-md transform active:scale-95"><Send size={20}/></button>
       </div>
     </div>
   );

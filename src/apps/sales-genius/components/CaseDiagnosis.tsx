@@ -22,111 +22,111 @@ interface CaseDiagnosisProps {
 // 🎨 1. Diagnosis Report Markdown Styles
 const DiagnosisMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <div className="border-b-2 border-slate-100 pb-4 mb-6 mt-2">
-       <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2" {...props} />
+    <div className="border-b-2 border-navy-100 pb-4 mb-6 mt-2">
+       <h1 className="text-2xl font-black text-navy-900 flex items-center gap-2" {...props} />
     </div>
   ),
   h2: ({ node, ...props }) => (
-    <h2 className="text-xl font-bold text-slate-800 mt-8 mb-4 flex items-center gap-2" {...props} />
+    <h2 className="text-xl font-bold text-navy-800 mt-8 mb-4 flex items-center gap-2" {...props} />
   ),
   h3: ({ node, ...props }) => (
     <h3 
-      className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border-l-4 border-indigo-600" 
+      className="text-lg font-bold text-navy-800 mt-6 mb-3 flex items-center gap-2 bg-navy-50 px-3 py-2 rounded-lg border-l-4 border-navy-600" 
       {...props} 
     />
   ),
   blockquote: ({ node, ...props }) => (
     <div className="relative group my-4">
-       <div className="diagnosis-blockquote bg-indigo-50/50 border-l-4 border-indigo-500 rounded-r-lg p-4 shadow-sm">
-          <blockquote className="text-slate-800 italic leading-relaxed m-0" {...props} />
+       <div className="diagnosis-blockquote bg-navy-50/50 border-l-4 border-navy-500 rounded-r-lg p-4 shadow-sm">
+          <blockquote className="text-navy-800 italic leading-relaxed m-0" {...props} />
        </div>
     </div>
   ),
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-6 rounded-xl border border-slate-200 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-slate-100" {...props} />
+    <div className="overflow-x-auto my-6 rounded-xl border border-navy-200 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-100" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-slate-100 text-slate-700" {...props} />
+    <thead className="bg-navy-100 text-navy-700" {...props} />
   ),
   tbody: ({ node, ...props }) => (
-    <tbody className="bg-white divide-y divide-slate-50" {...props} />
+    <tbody className="bg-white divide-y divide-navy-50" {...props} />
   ),
   tr: ({ node, ...props }) => (
-    <tr className="hover:bg-slate-50 transition-colors" {...props} />
+    <tr className="hover:bg-navy-50 transition-colors" {...props} />
   ),
   th: ({ node, ...props }) => (
-    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600" {...props} />
+    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-navy-600" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap" {...props} />
+    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap" {...props} />
   ),
   ul: ({ node, ...props }) => (
     <ul className="space-y-2 mb-4" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="flex items-start gap-2 text-slate-700 leading-relaxed text-sm" {...props}>
-       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0"></span>
+    <li className="flex items-start gap-2 text-navy-700 leading-relaxed text-sm" {...props}>
+       <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-500 flex-shrink-0"></span>
        <span>{props.children}</span>
     </li>
   ),
   p: ({ node, ...props }) => (
-    <p className="mb-3 leading-relaxed text-slate-700 text-sm" {...props} />
+    <p className="mb-3 leading-relaxed text-navy-700 text-sm" {...props} />
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-indigo-800" {...props} />
+    <span className="font-bold text-navy-800" {...props} />
   ),
   hr: ({ node, ...props }) => (
-    <hr className="my-8 border-slate-100" {...props} />
+    <hr className="my-8 border-navy-100" {...props} />
   )
 };
 
 // 🎨 2. Deep Dive Interaction Markdown Styles (Rich, distinct blocks)
 const DeepDiveMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
-  h1: ({node, ...props}) => <h3 className="text-lg font-bold text-indigo-800 mt-4 mb-2 border-b border-indigo-100 pb-2" {...props}/>,
-  h2: ({node, ...props}) => <h3 className="text-base font-bold text-indigo-700 mt-3 mb-2" {...props}/>,
-  h3: ({node, ...props}) => <h3 className="text-sm font-bold text-slate-700 mt-3 mb-1 uppercase tracking-wider" {...props}/>,
+  h1: ({node, ...props}) => <h3 className="text-lg font-bold text-navy-800 mt-4 mb-2 border-b border-navy-100 pb-2" {...props}/>,
+  h2: ({node, ...props}) => <h3 className="text-base font-bold text-navy-700 mt-3 mb-2" {...props}/>,
+  h3: ({node, ...props}) => <h3 className="text-sm font-bold text-navy-700 mt-3 mb-1 uppercase tracking-wider" {...props}/>,
   
   // Strong emphasis - Color block effect for key terms
-  strong: ({node, ...props}) => <span className="font-bold text-indigo-700 bg-indigo-50 px-1 rounded mx-0.5 border border-indigo-100/50" {...props}/>,
+  strong: ({node, ...props}) => <span className="font-bold text-navy-700 bg-navy-50 px-1 rounded mx-0.5 border border-navy-100/50" {...props}/>,
   
   // Paragraphs
-  p: ({node, ...props}) => <p className="mb-3 leading-relaxed text-slate-700 last:mb-0 text-sm" {...props}/>,
+  p: ({node, ...props}) => <p className="mb-3 leading-relaxed text-navy-700 last:mb-0 text-sm" {...props}/>,
   
   // Lists
   ul: ({node, ...props}) => <ul className="space-y-2 mb-3 ml-1 list-none" {...props}/>,
   li: ({node, ...props}) => (
-    <li className="flex items-start gap-2 text-sm text-slate-700" {...props}>
-      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0"></span>
+    <li className="flex items-start gap-2 text-sm text-navy-700" {...props}>
+      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gold-400 flex-shrink-0"></span>
       <span>{props.children}</span>
     </li>
   ),
 
   // Blockquotes - Used for Scripts or Important Insights (Color Block)
   blockquote: ({node, ...props}) => (
-    <div className="my-3 border-l-4 border-indigo-500 bg-indigo-50/60 p-3 rounded-r-lg shadow-sm">
-      <blockquote className="text-slate-800 text-sm italic m-0" {...props} />
+    <div className="my-3 border-l-4 border-navy-500 bg-navy-50/60 p-3 rounded-r-lg shadow-sm">
+      <blockquote className="text-navy-800 text-sm italic m-0" {...props} />
     </div>
   ),
 
   // Tables - distinct styling for "Microscope Analysis"
   table: ({node, ...props}) => (
-    <div className="overflow-x-auto my-3 rounded-lg border border-slate-200 shadow-sm bg-white">
-      <table className="min-w-full divide-y divide-slate-100" {...props} />
+    <div className="overflow-x-auto my-3 rounded-lg border border-navy-200 shadow-sm bg-white">
+      <table className="min-w-full divide-y divide-navy-100" {...props} />
     </div>
   ),
-  thead: ({node, ...props}) => <thead className="bg-slate-50" {...props}/>,
-  th: ({node, ...props}) => <th className="px-3 py-2 text-left text-xs font-bold text-slate-500 uppercase tracking-wider" {...props}/>,
-  tbody: ({node, ...props}) => <tbody className="bg-white divide-y divide-slate-50" {...props}/>,
-  tr: ({node, ...props}) => <tr className="hover:bg-indigo-50/30 transition-colors" {...props}/>,
-  td: ({node, ...props}) => <td className="px-3 py-2 text-sm text-slate-600 whitespace-pre-wrap align-top" {...props}/>,
+  thead: ({node, ...props}) => <thead className="bg-navy-50" {...props}/>,
+  th: ({node, ...props}) => <th className="px-3 py-2 text-left text-xs font-bold text-navy-500 uppercase tracking-wider" {...props}/>,
+  tbody: ({node, ...props}) => <tbody className="bg-white divide-y divide-navy-50" {...props}/>,
+  tr: ({node, ...props}) => <tr className="hover:bg-navy-50/30 transition-colors" {...props}/>,
+  td: ({node, ...props}) => <td className="px-3 py-2 text-sm text-navy-600 whitespace-pre-wrap align-top" {...props}/>,
   
   // Horizontal Rule
-  hr: ({node, ...props}) => <hr className="my-4 border-slate-100" {...props}/>,
+  hr: ({node, ...props}) => <hr className="my-4 border-navy-100" {...props}/>,
   
   // Code (sometimes used for emphasis)
-  code: ({node, ...props}) => <code className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-xs font-mono" {...props}/>
+  code: ({node, ...props}) => <code className="bg-navy-100 text-navy-600 px-1.5 py-0.5 rounded text-xs font-mono" {...props}/>
 };
 
 export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onClearImport }) => {
@@ -321,7 +321,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                const errorMessage = chunkError?.message || JSON.stringify(chunkError);
                
                // Check for Rate Limit (429) or Quota Exceeded
-               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted')) {
+               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限')) {
                    retryCount++;
                    if (retryCount <= maxRetries) {
                        // Exponential Backoff: 2s, 4s, 8s
@@ -652,7 +652,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         <button
           onClick={handleAnalysis}
           disabled={isAnalyzing || (images.length === 0 && !audio)}
-          className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+          className="w-full py-3 bg-navy-900 text-white rounded-xl font-bold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.99] flex items-center justify-center gap-2"
         >
           {isAnalyzing ? (
             <>
@@ -677,7 +677,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                  <ArrowLeft size={20}/>
                </button>
                <h2 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                 <Wand2 className="text-indigo-600" size={20}/> 智能诊断报告
+                 <Wand2 className="text-navy-600" size={20}/> 智能诊断报告
                </h2>
              </div>
              <div className="flex gap-2">
@@ -711,7 +711,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           {/* 3. INTERACTIVE DEEP DIVE SECTION */}
           <div className="bg-slate-100 rounded-2xl p-6 border border-slate-200 shadow-inner">
              <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <Sparkles className="text-indigo-600"/> 深度交互与复盘
+                <Sparkles className="text-navy-600"/> 深度交互与复盘
              </h3>
              
              {/* Quick Actions */}
@@ -724,7 +724,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                       key={`deep-${phase}`}
                       onClick={() => handleDeepDive(phase)}
                       disabled={isFollowUpLoading}
-                      className="px-3 py-1.5 bg-white border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 text-slate-600 rounded-lg text-xs font-bold shadow-sm transition-all active:scale-95 disabled:opacity-50"
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:border-gold-400 hover:text-navy-900 text-slate-600 rounded-lg text-xs font-bold shadow-sm transition-all active:scale-95 disabled:opacity-50"
                    >
                       {phase}
                    </button>
@@ -749,7 +749,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                 <button 
                    onClick={handleStrategy}
                    disabled={isFollowUpLoading}
-                   className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-md hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1"
+                   className="px-3 py-1.5 bg-navy-800 text-white rounded-lg text-xs font-bold shadow-md hover:bg-navy-900 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1"
                 >
                    <CheckCircle2 size={12}/> 生成挽单策略
                 </button>
@@ -767,12 +767,12 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                    {followUpMessages.map((msg) => (
                       <div key={msg.id} className={`flex ${msg.role === MessageRole.USER ? 'justify-end' : 'justify-start'}`}>
                          <div className={`flex gap-3 max-w-[95%] md:max-w-[85%] ${msg.role === MessageRole.USER ? 'flex-row-reverse' : 'flex-row'}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-indigo-600' : 'bg-white border border-slate-200'}`}>
-                               {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-indigo-600"/>}
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === MessageRole.USER ? 'bg-navy-800' : 'bg-white border border-slate-200'}`}>
+                               {msg.role === MessageRole.USER ? <User size={16} className="text-white"/> : <Bot size={16} className="text-navy-800"/>}
                             </div>
                             <div className={`p-4 rounded-2xl text-sm shadow-sm leading-relaxed ${
                                msg.role === MessageRole.USER 
-                               ? 'bg-indigo-600 text-white rounded-tr-none' 
+                               ? 'bg-navy-800 text-white rounded-tr-none' 
                                : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none'
                             }`}>
                                {/* Use distinct markdown components based on role */}
@@ -811,7 +811,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                    <button 
                       onClick={() => sendFollowUp(followUpInput)}
                       disabled={!followUpInput.trim() || isFollowUpLoading}
-                      className="p-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-sm"
+                      className="p-2.5 bg-navy-800 text-white rounded-lg hover:bg-navy-900 disabled:opacity-50 transition-all shadow-sm"
                    >
                       <Send size={18}/>
                    </button>

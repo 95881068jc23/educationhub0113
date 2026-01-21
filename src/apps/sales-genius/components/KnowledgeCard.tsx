@@ -12,9 +12,9 @@ export const KnowledgeCard: React.FC<Props> = ({ item }) => {
   const getIcon = (cat: KnowledgeCategory) => {
     switch (cat) {
       case KnowledgeCategory.OBJECTION: return <ShieldAlert className="w-5 h-5 text-red-500" />;
-      case KnowledgeCategory.PRODUCT: return <BookOpen className="w-5 h-5 text-blue-500" />;
-      case KnowledgeCategory.SALES_SKILL: return <Target className="w-5 h-5 text-green-500" />;
-      case KnowledgeCategory.COMPETITOR: return <Award className="w-5 h-5 text-orange-500" />;
+      case KnowledgeCategory.PRODUCT: return <BookOpen className="w-5 h-5 text-navy-600" />;
+      case KnowledgeCategory.SALES_SKILL: return <Target className="w-5 h-5 text-gold-500" />;
+      case KnowledgeCategory.COMPETITOR: return <Award className="w-5 h-5 text-slate-600" />;
       default: return <BookOpen className="w-5 h-5" />;
     }
   };
@@ -22,9 +22,9 @@ export const KnowledgeCard: React.FC<Props> = ({ item }) => {
   const getBgColor = (cat: KnowledgeCategory) => {
     switch (cat) {
       case KnowledgeCategory.OBJECTION: return 'bg-red-50 border-red-100';
-      case KnowledgeCategory.PRODUCT: return 'bg-blue-50 border-blue-100';
-      case KnowledgeCategory.SALES_SKILL: return 'bg-green-50 border-green-100';
-      case KnowledgeCategory.COMPETITOR: return 'bg-orange-50 border-orange-100';
+      case KnowledgeCategory.PRODUCT: return 'bg-navy-50 border-navy-100';
+      case KnowledgeCategory.SALES_SKILL: return 'bg-gold-50 border-gold-100';
+      case KnowledgeCategory.COMPETITOR: return 'bg-slate-50 border-slate-100';
       default: return 'bg-white border-slate-200';
     }
   };

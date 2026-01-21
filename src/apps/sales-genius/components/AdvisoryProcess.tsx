@@ -450,82 +450,82 @@ export const AdvisoryProcess: React.FC = () => {
   return (
     <div className="h-full flex flex-col md:flex-row max-w-7xl mx-auto p-0 md:p-0 gap-6 relative overflow-hidden">
       <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${activeQuestion ? 'md:mr-[400px]' : 'w-full'}`}>
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 mb-4 md:mb-6 flex-shrink-0">
+        <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-4 md:p-6 mb-4 md:mb-6 flex-shrink-0">
           <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <ClipboardList className="text-blue-600" /> ME 金牌顾问 SOP
+              <h2 className="text-xl font-bold text-navy-900 flex items-center gap-2">
+                <ClipboardList className="text-navy-600" /> ME 金牌顾问 SOP
               </h2>
-              <p className="text-sm text-slate-500 mt-1">深度挖掘需求，精准打击异议，逻辑锁定成交。</p>
+              <p className="text-sm text-navy-400 mt-1">深度挖掘需求，精准打击异议，逻辑锁定成交。</p>
             </div>
-            <div className="flex bg-slate-100 p-1 rounded-lg self-start md:self-auto overflow-x-auto max-w-full scrollbar-hide">
+            <div className="flex bg-navy-50 p-1 rounded-lg self-start md:self-auto overflow-x-auto max-w-full scrollbar-hide">
                {Object.values(ProductType).map((type) => (
                   <button key={type} onClick={() => { setSelectedProduct(type); setStage('first_half'); }}
-                    className={`px-4 py-2 text-xs font-bold rounded-md transition-all whitespace-nowrap ${selectedProduct === type ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    className={`px-4 py-2 text-xs font-bold rounded-md transition-all whitespace-nowrap ${selectedProduct === type ? 'bg-white text-navy-600 shadow-sm' : 'text-navy-400 hover:text-navy-700'}`}>
                     {type}
                   </button>
                ))}
             </div>
           </header>
 
-          <div className="flex w-full bg-slate-100 rounded-xl p-1 relative overflow-hidden">
+          <div className="flex w-full bg-navy-50 rounded-xl p-1 relative overflow-hidden">
              <div className="absolute top-1 bottom-1 w-[calc(33.33%-4px)] bg-white rounded-lg shadow-sm transition-all duration-300 z-0"
                style={{ left: stage === 'first_half' ? '4px' : stage === 'second_half' ? 'calc(33.33% + 4px)' : 'calc(66.66% + 4px)' }}></div>
-             <button onClick={() => setStage('first_half')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'first_half' ? 'text-blue-700' : 'text-slate-500'}`}>
+             <button onClick={() => setStage('first_half')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'first_half' ? 'text-navy-700' : 'text-navy-400'}`}>
                <BrainCircuit size={16} /> <span>上半场<span className="hidden md:inline">:诊断挖需</span></span>
              </button>
-             <button onClick={() => setStage('second_half')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'second_half' ? 'text-green-700' : 'text-slate-500'}`}>
+             <button onClick={() => setStage('second_half')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'second_half' ? 'text-gold-600' : 'text-navy-400'}`}>
                <Flag size={16} /> <span>下半场<span className="hidden md:inline">:逻辑成交</span></span>
              </button>
-             <button onClick={() => setStage('contract_guarantee')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'contract_guarantee' ? 'text-purple-700' : 'text-slate-500'}`}>
+             <button onClick={() => setStage('contract_guarantee')} className={`flex-1 relative z-10 py-3 text-xs md:text-sm font-bold flex items-center justify-center gap-2 ${stage === 'contract_guarantee' ? 'text-navy-900' : 'text-navy-400'}`}>
                <ShieldCheck size={16} /> <span>保障<span className="hidden md:inline">内容</span></span>
              </button>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-4 pb-20 pr-1 md:pr-2">
-           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 pl-1 flex justify-between items-center">
+           <div className="text-xs font-bold text-navy-300 uppercase tracking-wider mb-2 pl-1 flex justify-between items-center">
              <span>{stage === 'contract_guarantee' ? 'ME 独家契约保障' : (selectedProduct === ProductType.CORPORATE && stage === 'second_half' ? 'B2B 采购与提案流程' : '专家诊断与话术标准')}</span>
              {stage !== 'contract_guarantee' && (
                 <div className="hidden md:flex gap-4">
-                  <span className="flex items-center gap-1 text-red-600"><Star size={12} fill="currentColor"/> 核心必问</span>
-                  <span className="flex items-center gap-1 text-blue-600"><Search size={12}/> 深度选问</span>
+                  <span className="flex items-center gap-1 text-navy-900"><Star size={12} fill="currentColor"/> 核心必问</span>
+                  <span className="flex items-center gap-1 text-gold-600"><Search size={12}/> 深度选问</span>
                 </div>
              )}
            </div>
 
            {currentItems.map((item) => (
-              <div key={item.id} className={`bg-white rounded-xl shadow-sm border transition-all duration-200 group relative overflow-hidden ${activeQuestion?.id === item.id ? (stage === 'contract_guarantee' ? 'border-purple-400 ring-2 ring-purple-100' : 'border-blue-400 ring-2 ring-blue-100') : 'border-slate-200 hover:shadow-md'}`}>
-                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${stage === 'contract_guarantee' ? 'bg-purple-500' : (item.isOptional ? 'bg-blue-400' : 'bg-red-500')}`}></div>
-                 <div className="p-3 md:p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center pl-4 md:pl-5">
+              <div key={item.id} className={`bg-white rounded-xl shadow-sm border transition-all duration-200 group relative overflow-hidden ${activeQuestion?.id === item.id ? (stage === 'contract_guarantee' ? 'border-navy-900 ring-2 ring-navy-100' : 'border-gold-500 ring-2 ring-gold-100') : 'border-navy-100 hover:shadow-md'}`}>
+                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${stage === 'contract_guarantee' ? 'bg-navy-900' : (item.isOptional ? 'bg-gold-500' : 'bg-navy-700')}`}></div>
+                 <div className="p-3 md:p-4 border-b border-navy-100 bg-navy-50/50 flex justify-between items-center pl-4 md:pl-5">
                     <div className="flex items-center gap-3">
-                       <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wide whitespace-nowrap ${stage === 'contract_guarantee' ? 'bg-purple-100 text-purple-700' : (item.isOptional ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700')}`}>
+                       <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wide whitespace-nowrap ${stage === 'contract_guarantee' ? 'bg-navy-100 text-navy-900' : (item.isOptional ? 'bg-gold-100 text-gold-700' : 'bg-navy-100 text-navy-700')}`}>
                          {stage === 'contract_guarantee' ? '权益条款' : (item.isOptional ? '选问' : '必问')}
                        </span>
-                       <span className="font-bold text-slate-700 text-sm truncate max-w-[150px] md:max-w-none">{item.category}</span>
+                       <span className="font-bold text-navy-700 text-sm truncate max-w-[150px] md:max-w-none">{item.category}</span>
                     </div>
-                    <button onClick={() => handleOpenChat(item)} className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-all ${activeQuestion?.id === item.id ? (stage === 'contract_guarantee' ? 'bg-purple-600 text-white' : 'bg-blue-600 text-white') : (stage === 'contract_guarantee' ? 'bg-white text-purple-600 border border-purple-200 hover:bg-purple-50' : 'bg-white text-blue-600 border border-blue-200 hover:bg-blue-50')}`}>
+                    <button onClick={() => handleOpenChat(item)} className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full transition-all ${activeQuestion?.id === item.id ? (stage === 'contract_guarantee' ? 'bg-navy-900 text-white' : 'bg-gold-500 text-white') : (stage === 'contract_guarantee' ? 'bg-white text-navy-900 border border-navy-200 hover:bg-navy-50' : 'bg-white text-gold-600 border border-gold-200 hover:bg-gold-50')}`}>
                       {activeQuestion?.id === item.id ? <Bot size={14}/> : <Sparkles size={14}/>} <span className="hidden md:inline">AI 话术锦囊</span>
                     </button>
                  </div>
                  <div className="p-4 md:p-5 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 pl-4 md:pl-5">
                     <div className="md:col-span-5">
-                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 block flex items-center gap-1">
+                       <label className="text-[10px] font-bold text-navy-300 uppercase tracking-wider mb-2 block flex items-center gap-1">
                           {stage === 'contract_guarantee' ? <Scale size={12}/> : <Target size={12}/>} {stage === 'contract_guarantee' ? '保障内容' : '标准话术'}
                        </label>
-                       <p className="text-sm md:text-base font-medium text-slate-800 leading-relaxed">{item.question}</p>
+                       <p className="text-sm md:text-base font-medium text-navy-900 leading-relaxed">{item.question}</p>
                     </div>
-                    <div className={`md:col-span-4 p-3 rounded-lg border ${stage === 'contract_guarantee' ? 'bg-purple-50 border-purple-100' : 'bg-blue-50 border-blue-100'}`}>
-                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-1 block flex items-center gap-1 ${stage === 'contract_guarantee' ? 'text-purple-600' : 'text-blue-600'}`}>
+                    <div className={`md:col-span-4 p-3 rounded-lg border ${stage === 'contract_guarantee' ? 'bg-navy-50 border-navy-100' : 'bg-gold-50/50 border-gold-100'}`}>
+                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-1 block flex items-center gap-1 ${stage === 'contract_guarantee' ? 'text-navy-600' : 'text-gold-600'}`}>
                           <Lightbulb size={12}/> 核心目的
                        </label>
-                       <p className="text-xs text-slate-600 leading-relaxed">{item.purpose}</p>
+                       <p className="text-xs text-navy-600 leading-relaxed">{item.purpose}</p>
                     </div>
-                    <div className="md:col-span-3 bg-red-50 p-3 rounded-lg border border-red-100">
-                       <label className="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1 block flex items-center gap-1">
+                    <div className="md:col-span-3 bg-white p-3 rounded-lg border border-navy-100">
+                       <label className="text-[10px] font-bold text-navy-400 uppercase tracking-wider mb-1 block flex items-center gap-1">
                           <AlertTriangle size={12}/> 专家避坑
                        </label>
-                       <p className="text-xs text-slate-600 leading-relaxed">{item.pitfall}</p>
+                       <p className="text-xs text-navy-400 leading-relaxed">{item.pitfall}</p>
                     </div>
                  </div>
               </div>
@@ -533,15 +533,15 @@ export const AdvisoryProcess: React.FC = () => {
 
            <div className="mt-8 flex justify-center gap-4 pb-10">
               {stage === 'first_half' ? (
-                <button onClick={() => setStage('second_half')} className="bg-slate-900 text-white px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-slate-800 shadow-xl transition-all text-sm md:text-base">
+                <button onClick={() => setStage('second_half')} className="bg-navy-900 text-white px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-navy-800 shadow-xl transition-all text-sm md:text-base">
                    进入逻辑成交 <ArrowRight size={18}/>
                 </button>
               ) : stage === 'second_half' ? (
-                <button onClick={() => setStage('contract_guarantee')} className="bg-purple-600 text-white px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-purple-700 shadow-xl transition-all text-sm md:text-base">
+                <button onClick={() => setStage('contract_guarantee')} className="bg-gold-500 text-white px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-gold-600 shadow-xl transition-all text-sm md:text-base">
                    <ShieldCheck size={18}/> 合同对赌保障
                 </button>
               ) : (
-                <button onClick={() => setStage('first_half')} className="bg-white text-slate-600 border border-slate-200 px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-slate-50 transition-all text-sm md:text-base">
+                <button onClick={() => setStage('first_half')} className="bg-white text-navy-600 border border-navy-200 px-6 md:px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-navy-50 transition-all text-sm md:text-base">
                    <RefreshCw size={18}/> 返回第一阶段
                 </button>
               )}
@@ -554,10 +554,10 @@ export const AdvisoryProcess: React.FC = () => {
         <>
             {/* Backdrop for mobile */}
             <div className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setActiveQuestion(null)}></div>
-            <div className="fixed inset-y-0 right-0 w-[90%] md:w-[400px] bg-white shadow-2xl z-50 flex flex-col border-l border-slate-200 transition-all duration-300 transform translate-x-0">
-            <div className={`p-4 flex justify-between items-center text-white ${stage === 'contract_guarantee' ? 'bg-purple-600' : 'bg-blue-600'}`}>
+            <div className="fixed inset-y-0 right-0 w-[90%] md:w-[400px] bg-white shadow-2xl z-50 flex flex-col border-l border-navy-200 transition-all duration-300 transform translate-x-0">
+            <div className={`p-4 flex justify-between items-center text-white ${stage === 'contract_guarantee' ? 'bg-navy-900' : 'bg-gold-500'}`}>
                 <div className="flex items-center gap-2">
-                    <Bot size={20} className="text-yellow-300"/>
+                    <Bot size={20} className="text-white"/>
                     <div className="text-xs">
                     <p className="font-bold opacity-80 uppercase tracking-widest">AI Expert Advisor</p>
                     <p className="font-medium truncate max-w-[200px]">{activeQuestion.category}</p>
@@ -566,36 +566,38 @@ export const AdvisoryProcess: React.FC = () => {
                 <button onClick={() => setActiveQuestion(null)} className="p-1 hover:bg-white/20 rounded-full transition-colors"><X size={20}/></button>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-navy-50">
                 {chatMessages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.role === MessageRole.USER ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[90%] md:max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${msg.role === MessageRole.USER ? (stage === 'contract_guarantee' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-blue-600 text-white rounded-br-none') : 'bg-white border border-slate-200 rounded-bl-none text-slate-800'}`}>
-                        <ReactMarkdown className="prose prose-sm max-w-none prose-p:my-1 prose-strong:text-blue-700">{msg.text}</ReactMarkdown>
+                    <div className={`max-w-[90%] md:max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${msg.role === MessageRole.USER ? (stage === 'contract_guarantee' ? 'bg-navy-900 text-white rounded-br-none' : 'bg-gold-500 text-white rounded-br-none') : 'bg-white border border-navy-200 rounded-bl-none text-navy-900'}`}>
+                        <div className="prose prose-sm max-w-none prose-p:my-1 prose-strong:text-navy-700">
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
                     </div>
                     </div>
                 ))}
-                {isChatLoading && <div className="text-xs text-slate-400 flex items-center gap-2 ml-2"><Loader2 className="animate-spin w-3 h-3"/> 导师分析建议中...</div>}
+                {isChatLoading && <div className="text-xs text-navy-400 flex items-center gap-2 ml-2"><Loader2 className="animate-spin w-3 h-3"/> 导师分析建议中...</div>}
                 <div ref={chatEndRef}/>
             </div>
 
-            <div className="p-4 bg-white border-t border-slate-200">
+            <div className="p-4 bg-white border-t border-navy-200">
                 <div className="relative">
                     <textarea 
                     value={chatInput} 
                     onChange={(e) => setChatInput(e.target.value)} 
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChat()}
                     placeholder="输入客户真实的反馈..." 
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-12 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none h-24 resize-none shadow-inner"
+                    className="w-full bg-navy-50 border border-navy-200 rounded-xl p-3 pr-12 text-sm focus:ring-2 focus:ring-navy-500 focus:outline-none h-24 resize-none shadow-inner"
                     />
                     <button 
                     onClick={handleSendChat} 
                     disabled={!chatInput.trim() || isChatLoading} 
-                    className={`absolute right-2 bottom-2 p-2 rounded-lg text-white transition-all active:scale-95 ${stage === 'contract_guarantee' ? 'bg-purple-600' : 'bg-blue-600'} disabled:opacity-50`}
+                    className={`absolute right-2 bottom-2 p-2 rounded-lg text-white transition-all active:scale-95 ${stage === 'contract_guarantee' ? 'bg-navy-900' : 'bg-gold-500'} disabled:opacity-50`}
                     >
                     <Send size={18}/>
                     </button>
                 </div>
-                <p className="text-[10px] text-slate-400 mt-2 text-center">输入越详细，AI 给出的针对性话术越精准</p>
+                <p className="text-[10px] text-navy-400 mt-2 text-center">输入越详细，AI 给出的针对性话术越精准</p>
             </div>
             </div>
         </>

@@ -38,36 +38,36 @@ interface ToolboxItem {
 // Custom Markdown Components for the Assistant
 const ToolboxMarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components'] = {
   h1: ({ node, ...props }) => (
-    <h1 className="text-xl font-black text-slate-900 mt-4 mb-3 border-b border-slate-200 pb-2" {...props} />
+    <h1 className="text-xl font-black text-navy-900 mt-4 mb-3 border-b border-navy-200 pb-2" {...props} />
   ),
   h2: ({ node, ...props }) => (
-    <h2 className="text-lg font-bold text-teal-800 mt-4 mb-2 flex items-center gap-2" {...props} />
+    <h2 className="text-lg font-bold text-navy-800 mt-4 mb-2 flex items-center gap-2" {...props} />
   ),
   h3: ({ node, ...props }) => (
-    <h3 className="text-sm font-bold text-slate-900 mt-4 mb-2 uppercase tracking-wider flex items-center gap-2" {...props} />
+    <h3 className="text-sm font-bold text-navy-900 mt-4 mb-2 uppercase tracking-wider flex items-center gap-2" {...props} />
   ),
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-teal-700 bg-teal-50 px-1 rounded mx-0.5" {...props} />
+    <span className="font-bold text-navy-700 bg-navy-50 px-1 rounded mx-0.5" {...props} />
   ),
   ul: ({ node, ...props }) => (
-    <ul className="list-disc ml-4 space-y-2 text-slate-700 mb-3 text-sm" {...props} />
+    <ul className="list-disc ml-4 space-y-2 text-navy-700 mb-3 text-sm" {...props} />
   ),
   ol: ({ node, ...props }) => (
-    <ol className="list-decimal ml-4 space-y-2 text-slate-700 mb-3 text-sm" {...props} />
+    <ol className="list-decimal ml-4 space-y-2 text-navy-700 mb-3 text-sm" {...props} />
   ),
   li: ({ node, ...props }) => (
-    <li className="pl-1 leading-relaxed marker:text-slate-400" {...props} />
+    <li className="pl-1 leading-relaxed marker:text-navy-400" {...props} />
   ),
   p: ({ node, ...props }) => (
-    <p className="mb-2 leading-relaxed text-slate-700 text-sm" {...props} />
+    <p className="mb-2 leading-relaxed text-navy-700 text-sm" {...props} />
   ),
   blockquote: ({ node, ...props }) => (
-    <div className="border-l-4 border-teal-500 pl-3 py-2 my-3 italic text-slate-600 bg-slate-50 rounded-r text-sm">
+    <div className="border-l-4 border-navy-500 pl-3 py-2 my-3 italic text-navy-600 bg-navy-50 rounded-r text-sm">
       {props.children}
     </div>
   ),
   code: ({ node, ...props }) => (
-    <code className="bg-slate-100 text-pink-600 px-1 py-0.5 rounded text-xs font-mono" {...props} />
+    <code className="bg-navy-100 text-gold-600 px-1 py-0.5 rounded text-xs font-mono" {...props} />
   )
 };
 
@@ -715,28 +715,28 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
       <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${activeItem ? 'md:mr-[400px]' : 'w-full'}`}>
         
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-navy-100 p-6 mb-6">
           <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <BookOpen className="text-teal-600" /> 教师百宝箱 (Methodology Hub)
+              <h2 className="text-xl font-bold text-navy-900 flex items-center gap-2">
+                <BookOpen className="text-gold-500" /> 教师百宝箱 (Methodology Hub)
               </h2>
-              <p className="text-sm text-slate-500 mt-1">ME 权威教学标准库：中英文双语对照，含实战案例详解。</p>
+              <p className="text-sm text-navy-500 mt-1">ME 权威教学标准库：中英文双语对照，含实战案例详解。</p>
             </div>
             
             {/* Stage Switcher (Methodology vs Problems) */}
-            <div className="flex bg-slate-100 p-1 rounded-lg">
-               <button onClick={() => setActiveStage('methodology')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${activeStage === 'methodology' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+            <div className="flex bg-navy-50 p-1 rounded-lg">
+               <button onClick={() => setActiveStage('methodology')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all duration-300 flex items-center gap-2 ${activeStage === 'methodology' ? 'bg-white text-navy-700 shadow-sm' : 'text-navy-500 hover:text-navy-700'}`}>
                   <BrainCircuit size={14}/> 核心教学法 (Core Logic)
                </button>
-               <button onClick={() => setActiveStage('problems')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all flex items-center gap-2 ${activeStage === 'problems' ? 'bg-white text-amber-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+               <button onClick={() => setActiveStage('problems')} className={`px-4 py-2 text-xs font-bold rounded-md transition-all duration-300 flex items-center gap-2 ${activeStage === 'problems' ? 'bg-white text-gold-700 shadow-sm' : 'text-navy-500 hover:text-navy-700'}`}>
                   <Stethoscope size={14}/> 学员疑难杂症 (Troubleshooting)
                </button>
             </div>
           </header>
 
           {/* Product Tabs */}
-          <div className="flex w-full bg-slate-100 rounded-xl p-1 relative overflow-hidden">
+          <div className="flex w-full bg-navy-50 rounded-xl p-1 relative overflow-hidden">
              {/* Animated Background Pill */}
              <div className="absolute top-1 bottom-1 w-[calc(25%-4px)] bg-white rounded-lg shadow-sm transition-all duration-300 z-0"
                style={{ 
@@ -745,16 +745,16 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
                        activeTab === 'TOEFL' ? 'calc(50% + 4px)' : 'calc(75% + 4px)' 
                }}></div>
              
-             <button onClick={() => setActiveTab('ADULT')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 ${activeTab === 'ADULT' ? 'text-teal-700' : 'text-slate-500'}`}>
+             <button onClick={() => setActiveTab('ADULT')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors duration-300 ${activeTab === 'ADULT' ? 'text-navy-700' : 'text-navy-500'}`}>
                <Users size={18} /> 成人英语
              </button>
-             <button onClick={() => setActiveTab('KIDS')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 ${activeTab === 'KIDS' ? 'text-teal-700' : 'text-slate-500'}`}>
+             <button onClick={() => setActiveTab('KIDS')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors duration-300 ${activeTab === 'KIDS' ? 'text-navy-700' : 'text-navy-500'}`}>
                <Baby size={18} /> 少儿英语
              </button>
-             <button onClick={() => setActiveTab('TOEFL')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 ${activeTab === 'TOEFL' ? 'text-teal-700' : 'text-slate-500'}`}>
+             <button onClick={() => setActiveTab('TOEFL')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors duration-300 ${activeTab === 'TOEFL' ? 'text-navy-700' : 'text-navy-500'}`}>
                <GraduationCap size={18} /> TOEFL 托福
              </button>
-             <button onClick={() => setActiveTab('IELTS')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 ${activeTab === 'IELTS' ? 'text-teal-700' : 'text-slate-500'}`}>
+             <button onClick={() => setActiveTab('IELTS')} className={`flex-1 relative z-10 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors duration-300 ${activeTab === 'IELTS' ? 'text-navy-700' : 'text-navy-500'}`}>
                <Plane size={18} /> IELTS 雅思
              </button>
           </div>
@@ -762,23 +762,23 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
 
         {/* Knowledge Cards */}
         <div className="flex-1 overflow-y-auto space-y-4 pb-20 pr-2">
-           <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 pl-1 flex items-center gap-2">
+           <div className="text-xs font-bold text-navy-400 uppercase tracking-wider mb-2 pl-1 flex items-center gap-2">
               {activeStage === 'methodology' ? <Target size={14}/> : <HelpCircle size={14}/>}
               {activeStage === 'methodology' ? 'ME Standard Teaching Principles (双语标准)' : 'Common Student Issues & Solutions (双语诊断)'}
            </div>
 
            {getCurrentData().map((item) => (
-              <div key={item.id} className={`bg-white rounded-xl shadow-sm border transition-all duration-200 group relative overflow-hidden ${activeStage === 'methodology' ? 'border-slate-200 hover:border-teal-300' : 'border-slate-200 hover:border-amber-300'}`}>
-                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${activeStage === 'methodology' ? 'bg-gradient-to-b from-teal-400 to-emerald-500' : 'bg-gradient-to-b from-amber-400 to-orange-500'}`}></div>
+              <div key={item.id} className={`bg-white rounded-xl shadow-sm border transition-all duration-300 group relative overflow-hidden ${activeStage === 'methodology' ? 'border-navy-200 hover:border-navy-300 hover:shadow-md' : 'border-navy-200 hover:border-gold-300 hover:shadow-md'}`}>
+                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${activeStage === 'methodology' ? 'bg-gradient-to-b from-navy-400 to-navy-600' : 'bg-gradient-to-b from-gold-400 to-gold-600'}`}></div>
                  
-                 <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center pl-5">
+                 <div className="p-4 border-b border-navy-100 bg-navy-50/50 flex justify-between items-center pl-5">
                     <div className="flex items-center gap-3">
-                       <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wide ${activeStage === 'methodology' ? 'bg-teal-100 text-teal-700' : 'bg-amber-100 text-amber-700'}`}>
+                       <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] uppercase tracking-wide ${activeStage === 'methodology' ? 'bg-navy-100 text-navy-700' : 'bg-gold-100 text-gold-700'}`}>
                          {activeStage === 'methodology' ? 'Core Logic' : 'Diagnosis'}
                        </span>
-                       <span className="font-bold text-slate-700 text-sm">{item.category}</span>
+                       <span className="font-bold text-navy-700 text-sm">{item.category}</span>
                     </div>
-                    <button onClick={() => handleOpenChat(item)} className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${activeStage === 'methodology' ? 'bg-white text-teal-600 border-teal-200 hover:bg-teal-600 hover:text-white' : 'bg-white text-amber-600 border-amber-200 hover:bg-amber-600 hover:text-white'}`}>
+                    <button onClick={() => handleOpenChat(item)} className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-300 ${activeStage === 'methodology' ? 'bg-white text-navy-600 border-navy-200 hover:bg-navy-600 hover:text-white' : 'bg-white text-gold-600 border-gold-200 hover:bg-gold-600 hover:text-white'}`}>
                       {activeStage === 'methodology' ? <Sparkles size={14}/> : <Stethoscope size={14}/>} 
                       {activeStage === 'methodology' ? '应用助手 (Assistant)' : '解决方案 (Solver)'}
                     </button>
@@ -787,27 +787,27 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
                  <div className="p-5 grid grid-cols-1 md:grid-cols-12 gap-6 pl-5">
                     {/* Content Section */}
                     <div className="md:col-span-4 flex flex-col">
-                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                       <label className="text-[10px] font-bold text-navy-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                           <BrainCircuit size={12}/> {activeStage === 'methodology' ? 'Concept (理念)' : 'Symptoms (症状)'}
                        </label>
-                       <h3 className="text-lg font-bold text-slate-800 mb-2">{item.title}</h3>
-                       <div className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap flex-1">{item.content}</div>
+                       <h3 className="text-lg font-bold text-navy-800 mb-2">{item.title}</h3>
+                       <div className="text-sm text-navy-600 leading-relaxed whitespace-pre-wrap flex-1">{item.content}</div>
                     </div>
                     
                     {/* Purpose Section */}
-                    <div className={`md:col-span-4 p-4 rounded-lg border flex flex-col ${activeStage === 'methodology' ? 'bg-teal-50 border-teal-100' : 'bg-red-50 border-red-100'}`}>
-                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 ${activeStage === 'methodology' ? 'text-teal-600' : 'text-red-600'}`}>
+                    <div className={`md:col-span-4 p-4 rounded-lg border flex flex-col ${activeStage === 'methodology' ? 'bg-navy-50 border-navy-100' : 'bg-gold-50 border-gold-100'}`}>
+                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 ${activeStage === 'methodology' ? 'text-navy-600' : 'text-gold-600'}`}>
                           <Target size={12}/> {activeStage === 'methodology' ? 'Why this matters? (设计意图)' : 'Root Cause (核心病灶)'}
                        </label>
-                       <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap font-medium flex-1">{item.purpose}</div>
+                       <div className="text-sm text-navy-700 leading-relaxed whitespace-pre-wrap font-medium flex-1">{item.purpose}</div>
                     </div>
                     
                     {/* Example Section */}
-                    <div className={`md:col-span-4 p-4 rounded-lg border flex flex-col ${activeStage === 'methodology' ? 'bg-indigo-50 border-indigo-100' : 'bg-green-50 border-green-100'}`}>
-                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 ${activeStage === 'methodology' ? 'text-indigo-600' : 'text-green-600'}`}>
+                    <div className={`md:col-span-4 p-4 rounded-lg border flex flex-col ${activeStage === 'methodology' ? 'bg-navy-50 border-navy-100' : 'bg-navy-50 border-navy-100'}`}>
+                       <label className={`text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 ${activeStage === 'methodology' ? 'text-navy-600' : 'text-navy-600'}`}>
                           <Lightbulb size={12}/> {activeStage === 'methodology' ? 'Classroom Example (案例)' : 'Solution Strategy (方案)'}
                        </label>
-                       <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap flex-1">{item.example}</div>
+                       <div className="text-sm text-navy-700 leading-relaxed whitespace-pre-wrap flex-1">{item.example}</div>
                     </div>
                  </div>
               </div>
@@ -817,8 +817,8 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
 
       {/* Side Chat Panel (Assistant) */}
       {activeItem && (
-        <div className="fixed inset-y-0 right-0 w-full md:w-[450px] bg-white shadow-2xl z-50 flex flex-col border-l border-slate-200 transition-all duration-300 transform translate-x-0">
-          <div className={`p-4 flex justify-between items-center text-white ${activeStage === 'methodology' ? 'bg-teal-600' : 'bg-amber-600'}`}>
+        <div className="fixed inset-y-0 right-0 w-full md:w-[450px] bg-white shadow-2xl z-50 flex flex-col border-l border-navy-200 transition-all duration-300 transform translate-x-0">
+          <div className={`p-4 flex justify-between items-center text-white ${activeStage === 'methodology' ? 'bg-navy-900' : 'bg-gold-500'}`}>
              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
                    <Bot size={20} className="text-white"/>
@@ -831,10 +831,10 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
              <button onClick={() => setActiveItem(null)} className="p-2 hover:bg-white/20 rounded-full transition-colors"><X size={20}/></button>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-navy-50">
              {chatMessages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === MessageRole.USER ? 'justify-end' : 'justify-start'}`}>
-                   <div className={`max-w-[90%] rounded-2xl p-4 text-sm shadow-sm leading-relaxed ${msg.role === MessageRole.USER ? (activeStage === 'methodology' ? 'bg-teal-600 text-white rounded-br-none' : 'bg-amber-600 text-white rounded-br-none') : 'bg-white border border-slate-200 rounded-bl-none text-slate-800'}`}>
+                   <div className={`max-w-[90%] rounded-2xl p-4 text-sm shadow-sm leading-relaxed ${msg.role === MessageRole.USER ? (activeStage === 'methodology' ? 'bg-navy-700 text-white rounded-br-none' : 'bg-gold-500 text-white rounded-br-none') : 'bg-white border border-navy-200 rounded-bl-none text-navy-800'}`}>
                       {msg.role === MessageRole.USER ? (
                          <div className="whitespace-pre-wrap">{msg.text}</div>
                       ) : (
@@ -848,7 +848,7 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
                 </div>
              ))}
              {isChatLoading && (
-                <div className="flex items-center gap-2 text-slate-500 text-xs ml-4 animate-pulse">
+                <div className="flex items-center gap-2 text-navy-500 text-xs ml-4 animate-pulse">
                    <Loader2 className="animate-spin w-4 h-4"/> 
                    <span>Teaching Director is analyzing... (教学总监分析中...)</span>
                 </div>
@@ -856,24 +856,24 @@ The output **MUST BE BILINGUAL (English & Chinese)** for all sections.
              <div ref={chatEndRef}/>
           </div>
 
-          <div className="p-4 bg-white border-t border-slate-200">
+          <div className="p-4 bg-white border-t border-navy-200">
              <div className="relative">
                 <textarea 
                   value={chatInput} 
                   onChange={(e) => setChatInput(e.target.value)} 
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendChat()}
                   placeholder={activeStage === 'methodology' ? "Example: Explain how to use TBLT for beginners..." : "Example: My student is shy, give me a script..."}
-                  className={`w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-12 text-sm text-slate-900 focus:ring-2 focus:outline-none h-24 resize-none shadow-inner ${activeStage === 'methodology' ? 'focus:ring-teal-500' : 'focus:ring-amber-500'}`}
+                  className={`w-full bg-navy-50 border border-navy-200 rounded-xl p-3 pr-12 text-sm text-navy-900 focus:ring-2 focus:outline-none h-24 resize-none shadow-inner transition-all ${activeStage === 'methodology' ? 'focus:ring-navy-500' : 'focus:ring-gold-500'}`}
                 />
                 <button 
                   onClick={handleSendChat} 
                   disabled={!chatInput.trim() || isChatLoading} 
-                  className={`absolute right-2 bottom-2 p-2 rounded-lg text-white transition-all active:scale-95 disabled:opacity-50 ${activeStage === 'methodology' ? 'bg-teal-600' : 'bg-amber-600'}`}
+                  className={`absolute right-2 bottom-2 p-2 rounded-lg text-white transition-all active:scale-95 disabled:opacity-50 ${activeStage === 'methodology' ? 'bg-navy-600 hover:bg-navy-700' : 'bg-gold-500 hover:bg-gold-600'}`}
                 >
                    <Send size={18}/>
                 </button>
              </div>
-             <p className="text-[10px] text-center text-slate-400 mt-2">
+             <p className="text-[10px] text-center text-navy-400 mt-2">
                 Type "Explain" for a full deep-dive. | 输入 "Explain" 获取全案详解。
              </p>
           </div>

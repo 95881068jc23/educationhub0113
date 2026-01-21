@@ -150,14 +150,14 @@ export const StepInput: React.FC<Props> = ({ value, fileInput, onChange, onNext 
              ) : (
                <div className="flex flex-col items-center animate-in fade-in zoom-in duration-300">
                   {isLoading ? (
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-navy-600 mb-4"></div>
                   ) : (
-                    <div className="bg-blue-100 p-4 rounded-full mb-4">
-                      <FileText size={40} className="text-blue-600" />
+                    <div className="bg-navy-100 p-4 rounded-full mb-4">
+                      <FileText size={40} className="text-navy-600" />
                     </div>
                   )}
                   <p className="text-lg font-medium text-gray-800">{fileName}</p>
-                  <p className="text-sm text-green-600 mt-1 font-medium">
+                  <p className="text-sm text-gold-600 mt-1 font-medium">
                     {isLoading ? '正在解析...' : '上传成功'}
                   </p>
                   
