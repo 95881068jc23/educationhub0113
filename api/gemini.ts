@@ -34,12 +34,21 @@ export default async function handler(req: Request) {
     // Get Model
     // Use the model requested by client, or fallback
     const modelId = model || 'gemini-2.0-flash-exp';
-    const aiModel = genAI.getGenerativeModel({ model: modelId });
+
+    // Extract systemInstruction and tools from config, as they belong to model initialization
+    // generationConfig should only contain generation parameters (temperature, topP, etc.)
+    const { systemInstruction, tools, ...generationConfig } = config || {};
+
+    const aiModel = genAI.getGenerativeModel({ 
+      model: modelId,
+      systemInstruction,
+      tools
+    });
 
     // Generate Content
     const result = await aiModel.generateContent({
       contents,
-      generationConfig: config,
+      generationConfig,
     });
 
     const response = result.response;
