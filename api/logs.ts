@@ -68,19 +68,25 @@ export default async function handler(
 
     if (request.method === 'GET') {
       // 查询操作日志
-      const { userId, actionType, limit = 100, offset = 0 } = request.query as {
+      // Fix: Safely parse limit and offset from query parameters
+      const { userId, actionType } = request.query as {
         userId?: string;
         actionType?: string;
-        limit?: string;
-        offset?: string;
       };
+
+      // Get limit and offset as strings (or undefined) and default safely
+      const limitParam = request.query.limit;
+      const offsetParam = request.query.offset;
+      
+      const limitVal = parseInt(Array.isArray(limitParam) ? limitParam[0] : (limitParam || '100'), 10);
+      const offsetVal = parseInt(Array.isArray(offsetParam) ? offsetParam[0] : (offsetParam || '0'), 10);
 
       let query = supabase
         .from('user_logs')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(parseInt(limit) || 100)
-        .range(parseInt(offset) || 0, parseInt(offset) + parseInt(limit) - 1);
+        .limit(limitVal)
+        .range(offsetVal, offsetVal + limitVal - 1);
 
       if (userId) {
         query = query.eq('user_id', userId);
