@@ -194,10 +194,20 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     }
   };
 
-  const blobToBase64 = (blob: Blob): Promise<string> => {
+  const blobToBase64 = (blob: Blob, mimeType?: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        // 如果提供了mimeType，确保使用正确的MIME类型
+        if (mimeType && result.startsWith('data:application/octet-stream')) {
+          // 替换错误的MIME类型
+          const base64Data = result.split(',')[1];
+          resolve(`data:${mimeType};base64,${base64Data}`);
+        } else {
+          resolve(result);
+        }
+      };
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
@@ -284,7 +294,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
-          const chunkBase64 = await blobToBase64(chunk);
+          const chunkBase64 = await blobToBase64(chunk, audioFile.type || 'audio/wav');
           
           let retryCount = 0;
           const maxRetries = 3;
