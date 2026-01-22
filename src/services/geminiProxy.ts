@@ -67,19 +67,21 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
       // 尝试解析错误响应
       let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
       try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorMessage;
-      } catch (e) {
-        // 如果无法解析 JSON，尝试读取文本
+        // 先读取文本，避免 "body stream already read" 错误
+        const errorText = await response.text();
+        
         try {
-          const errorText = await response.text();
+          // 尝试解析 JSON
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch (jsonError) {
+          // 如果不是 JSON，直接使用文本
           if (errorText) {
             errorMessage = errorText;
           }
-        } catch (textError) {
-          // 如果都失败了，使用默认错误信息
-          console.error('无法解析错误响应:', textError);
         }
+      } catch (readError) {
+        console.error('无法读取错误响应:', readError);
       }
       
       throw new Error(errorMessage);

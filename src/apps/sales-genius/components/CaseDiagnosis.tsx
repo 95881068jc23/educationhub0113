@@ -329,8 +329,8 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                
                const errorMessage = chunkError?.message || JSON.stringify(chunkError);
                
-               // Check for Rate Limit (429) or Quota Exceeded
-               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限')) {
+               // Check for Rate Limit (429), Quota Exceeded, or Server Error (500/503)
+               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限') || errorMessage.includes('500') || errorMessage.includes('503') || errorMessage.includes('Internal Server Error')) {
                    retryCount++;
                    if (retryCount <= maxRetries) {
                        // Exponential Backoff: 2s, 4s, 8s

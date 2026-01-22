@@ -1,101 +1,76 @@
-import { GenerateContentResponse } from "@google/genai";
-import { SYSTEM_INSTRUCTION } from "../constants";
-import { callGeminiAPI } from "../../../services/geminiProxy";
 
-interface GeminiMessageOptions {
-  message: string;
-  images?: string[]; // Array of Base64 strings
-  audio?: string; // Base64 string
-  temperature?: number; // Control randomness (0.0 to 2.0)
-  systemInstruction?: string; // Optional override
-}
+import { GoogleGenerativeAI } from "@google/genai";
 
-export const sendMessageToGemini = async (
-  options: GeminiMessageOptions
-): Promise<GenerateContentResponse> => {
-  const { message, images = [], audio, temperature, systemInstruction } = options;
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function handler(req: Request) {
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
 
   try {
-    const modelId = "gemini-2.0-flash-exp";
-
-    const parts: any[] = [];
+    const body = await req.json();
+    const { model, contents, config } = body;
     
-    // Process Images
-    if (images && images.length > 0) {
-      images.forEach(img => {
-        // Dynamic MIME type detection
-        const mimeMatch = img.match(/data:([^;]+);/);
-        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-        // Strip prefix
-        const cleanBase64 = img.split(',')[1] || img;
-        
-        parts.push({
-            inlineData: {
-                mimeType: mimeType,
-                data: cleanBase64
-            }
-        });
+    // Get API Key from environment variables
+    // Support multiple env var names for compatibility
+    const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.VITE_API_KEY;
+
+    if (!apiKey) {
+      console.error('Missing API Key configuration');
+      return new Response(JSON.stringify({ 
+        error: 'Server Configuration Error: Missing API Key' 
+      }), { 
+        status: 500, 
+        headers: { 'Content-Type': 'application/json' } 
       });
     }
 
-    // Process Audio
-    if (audio) {
-      // Extract MIME type dynamically
-      const mimeMatch = audio.match(/data:([^;]+);/);
-      let mimeType = mimeMatch ? mimeMatch[1] : 'audio/wav';
-      
-      // Gemini API支持的音频格式列表
-      const supportedAudioTypes = [
-        'audio/wav',
-        'audio/mp3',
-        'audio/mpeg',
-        'audio/aac',
-        'audio/ogg',
-        'audio/flac'
-      ];
-      
-      // 如果检测到不支持的MIME类型，尝试映射到支持的类型
-      if (!supportedAudioTypes.includes(mimeType)) {
-        console.warn(`不支持的音频MIME类型: ${mimeType}，尝试使用 audio/wav`);
-        mimeType = 'audio/wav';
-      }
-      
-      const cleanAudioBase64 = audio.split(',')[1] || audio;
+    // Initialize Gemini Client
+    const genAI = new GoogleGenerativeAI(apiKey);
+    
+    // Get Model
+    // Use the model requested by client, or fallback
+    const modelId = model || 'gemini-2.0-flash-exp';
+    const aiModel = genAI.getGenerativeModel({ model: modelId });
 
-      parts.push({
-        inlineData: {
-          mimeType: mimeType, 
-          data: cleanAudioBase64
-        }
-      });
-    }
-
-    // Add text prompt
-    parts.push({ text: message });
-
-    // CRITICAL FIX: Explicitly set tools to undefined if ANY media is present.
-    // Sending an empty array or tools with media often triggers "Invalid Argument".
-    const hasMedia = images.length > 0 || !!audio;
-    const tools = hasMedia ? undefined : [{ googleSearch: {} }];
-
-    // 通过边缘函数调用 Gemini API
-    const response = await callGeminiAPI({
-      model: modelId,
-      contents: [{
-        role: 'user',
-        parts: parts
-      }],
-      config: {
-        systemInstruction: systemInstruction !== undefined ? systemInstruction : SYSTEM_INSTRUCTION,
-        tools: tools,
-        temperature: temperature ?? 0.7,
-      }
+    // Generate Content
+    const result = await aiModel.generateContent({
+      contents,
+      generationConfig: config,
     });
 
-    return response as GenerateContentResponse;
+    const response = result.response;
+    
+    // Return the response as JSON
+    return new Response(JSON.stringify(response), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store' 
+      },
+    });
 
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw error;
+  } catch (error: any) {
+    console.error('Gemini API Error:', error);
+    
+    // Determine status code
+    let status = 500;
+    let message = error.message || 'Internal Server Error';
+
+    if (message.includes('429') || message.includes('quota')) {
+      status = 429;
+    } else if (message.includes('400') || message.includes('INVALID_ARGUMENT')) {
+      status = 400;
+    }
+
+    return new Response(JSON.stringify({ 
+      error: message,
+      details: error 
+    }), { 
+      status, 
+      headers: { 'Content-Type': 'application/json' } 
+    });
   }
-};
+}
