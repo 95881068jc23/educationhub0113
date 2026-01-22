@@ -35,9 +35,9 @@ export async function uploadFile({
     if (typeof fileData === 'string') {
       // 如果已经是 Base64 字符串
       base64Data = fileData;
-    } else if (fileData instanceof Blob || fileData instanceof File) {
+    } else if (fileData instanceof Blob || (typeof File !== 'undefined' && (fileData as any) instanceof File)) {
       // 如果是 Blob 或 File 对象，转换为 Base64
-      base64Data = await blobToBase64(fileData);
+      base64Data = await blobToBase64(fileData as Blob);
     } else {
       throw new Error('不支持的文件数据类型');
     }

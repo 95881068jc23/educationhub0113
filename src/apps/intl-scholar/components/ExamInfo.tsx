@@ -344,7 +344,7 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                                 blockquote: ({node, ...props}) => (
                                     <blockquote className="bg-gold-50 border-l-4 border-gold-400 p-4 my-6 rounded-r-lg shadow-sm">
                                         <div className="flex gap-2">
-                                            <div className="text-gold-600 font-bold italic" {...props} />
+                                            <div className="text-gold-600 font-bold italic">{props.children}</div>
                                         </div>
                                     </blockquote>
                                 ),
@@ -400,9 +400,11 @@ const ExamInfo: React.FC<Props> = ({ exam, language }) => {
                     : 'bg-white text-slate-800 rounded-bl-none border border-slate-200'
                 }`}
               >
-                <ReactMarkdown remarkPlugins={[remarkGfm]} className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-invert">
-                   {msg.text}
-                </ReactMarkdown>
+                <div className="prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-invert">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                     {msg.text}
+                  </ReactMarkdown>
+                </div>
               </div>
             </div>
           ))}

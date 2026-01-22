@@ -11,6 +11,7 @@ interface GeminiMessageOptions {
   audioUrl?: string; // Supabase Storage URL (for large files >= 4MB)
   temperature?: number; // Control randomness (0.0 to 2.0)
   history?: Content[]; // Add history support
+  systemInstruction?: string; // Add system instruction support
 }
 
 // Helper to convert File to Base64 for inlineData
@@ -30,7 +31,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 export const sendMessageToGemini = async (
   options: GeminiMessageOptions
 ): Promise<GenerateContentResponse> => {
-  const { message, images = [], files = [], audio, audioUrl, temperature, history = [] } = options;
+  const { message, images = [], files = [], audio, audioUrl, temperature, history = [], systemInstruction } = options;
 
   try {
     const modelId = "gemini-3-flash-preview";
@@ -119,7 +120,7 @@ export const sendMessageToGemini = async (
       model: modelId,
       contents: contents,
       config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+        systemInstruction: systemInstruction || SYSTEM_INSTRUCTION,
         tools: tools,
         temperature: temperature ?? 0.7,
       }

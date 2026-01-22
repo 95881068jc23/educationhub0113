@@ -154,7 +154,7 @@ const App: React.FC = () => {
                 </button>
              )}
              <h1 className="text-xl font-bold text-navy-900">
-               {selectedExam ? t[mode] || mode : t.title}
+               {selectedExam ? (t[mode as keyof typeof t] || mode) : t.title}
              </h1>
           </div>
           

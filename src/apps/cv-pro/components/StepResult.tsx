@@ -13,7 +13,7 @@ import { processVoiceInterview, evaluateWritingExercise } from '../services/gemi
 
 interface Props {
   result: OptimizationResult;
-  config: OptimizationResult;
+  config: OptimizationConfig;
   onReset: () => void;
   onRegenerateFromNative: (text: string) => void;
   onRefine: (instruction: string) => void;
