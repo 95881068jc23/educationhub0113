@@ -93,6 +93,7 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
       const decoder = new TextDecoder();
       let fullText = '';
       let candidates: any[] = [];
+      let buffer = '';
 
       if (!reader) {
         throw new Error('Response body is not readable');
@@ -102,8 +103,14 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        // 将新数据追加到缓冲区
+        buffer += decoder.decode(value, { stream: true });
+        
+        // 按换行符分割
+        const lines = buffer.split('\n');
+        
+        // 保留最后一行（可能是不完整的），等待下一次数据拼接
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
           if (line.startsWith('data: ')) {
