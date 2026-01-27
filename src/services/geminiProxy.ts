@@ -87,6 +87,74 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
       throw new Error(errorMessage);
     }
 
+    // Handle SSE Streaming Response
+    if (response.headers.get('Content-Type')?.includes('text/event-stream')) {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let candidates: any[] = [];
+
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const jsonStr = line.substring(6).trim();
+            if (jsonStr === '[DONE]') continue;
+            
+            try {
+              const data = JSON.parse(jsonStr);
+              // Extract text from candidates
+              const textChunk = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              fullText += textChunk;
+              
+              // Keep track of candidates for metadata (e.g. citations)
+              if (data.candidates) {
+                // Merge candidates or keep the latest one
+                candidates = data.candidates; 
+              }
+            } catch (e) {
+              console.warn('Error parsing SSE chunk:', e);
+            }
+          }
+        }
+      }
+
+      // Log success after streaming completes
+      try {
+        const storedUser = localStorage.getItem(CURRENT_USER_KEY);
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (user && user.id) {
+            const contentSummary = JSON.stringify(request.contents).substring(0, 200);
+            logUserAction(user.id, 'ai_service_usage', {
+              service: 'gemini',
+              model: request.model || 'gemini-3-flash-preview',
+              input_summary: contentSummary,
+              output_length: fullText.length,
+              status: 'success'
+            });
+          }
+        }
+      } catch (logError) {
+        console.error('Failed to log AI usage:', logError);
+      }
+
+      return {
+        text: fullText,
+        candidates: candidates
+      };
+    }
+
+    // Fallback for non-streaming responses (legacy behavior)
     const data = await response.json();
     
     // 转换响应格式以匹配 @google/genai 的响应格式

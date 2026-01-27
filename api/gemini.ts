@@ -51,9 +51,9 @@ export default async function handler(req: Request) {
     }
 
     // Use custom base URL: https://api.n1n.ai
-    // User requested to change version to /v1
+    // Use streamGenerateContent with SSE (Server-Sent Events) to avoid Vercel timeouts
     const modelId = model || 'gemini-2.0-flash-exp';
-    const endpoint = `https://api.n1n.ai/v1/models/${modelId}:generateContent?key=${apiKey}`;
+    const endpoint = `https://api.n1n.ai/v1/models/${modelId}:streamGenerateContent?alt=sse&key=${apiKey}`;
 
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -68,12 +68,13 @@ export default async function handler(req: Request) {
       throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
     }
 
-    const data = await response.json();
-    
-    return new Response(JSON.stringify(data), {
+    // Directly pipe the stream to the client
+    // This allows Vercel Edge Function to start sending data immediately, preventing timeouts
+    return new Response(response.body, {
       headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store' 
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        'Connection': 'keep-alive'
       },
     });
 
