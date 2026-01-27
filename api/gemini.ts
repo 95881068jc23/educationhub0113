@@ -36,7 +36,14 @@ export default async function handler(req: Request) {
     };
 
     if (systemInstruction) {
-      requestBody.systemInstruction = systemInstruction;
+      if (typeof systemInstruction === 'string') {
+        requestBody.systemInstruction = {
+          role: "system",
+          parts: [{ text: systemInstruction }]
+        };
+      } else {
+        requestBody.systemInstruction = systemInstruction;
+      }
     }
     
     if (tools) {
