@@ -16,6 +16,57 @@ const ai = new GoogleGenAI({ apiKey });
 
 // --- WAV Encoding Helpers ---
 
+const floatTo16BitPCM = (output: DataView, offset: number, input: Float32Array) => {
+  for (let i = 0; i < input.length; i++, offset += 2) {
+    const s = Math.max(-1, Math.min(1, input[i]));
+    output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+  }
+};
+
+const writeString = (view: DataView, offset: number, string: string) => {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+};
+
+const encodeWAV = (samples: Float32Array, sampleRate: number) => {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+
+  /* RIFF identifier */
+  writeString(view, 0, 'RIFF');
+  /* RIFF chunk length */
+  view.setUint32(4, 36 + samples.length * 2, true);
+  /* RIFF type */
+  writeString(view, 8, 'WAVE');
+  /* format chunk identifier */
+  writeString(view, 12, 'fmt ');
+  /* format chunk length */
+  view.setUint32(16, 16, true);
+  /* sample format (raw) */
+  view.setUint16(20, 1, true);
+  /* channel count */
+  view.setUint16(22, 1, true);
+  /* sample rate */
+  view.setUint32(24, sampleRate, true);
+  /* byte rate (sample rate * block align) */
+  view.setUint32(28, sampleRate * 2, true);
+  /* block align (channel count * bytes per sample) */
+  view.setUint16(32, 2, true);
+  /* bits per sample */
+  view.setUint16(34, 16, true);
+  /* data chunk identifier */
+  writeString(view, 36, 'data');
+  /* data chunk length */
+  view.setUint32(40, samples.length * 2, true);
+
+  /* Write PCM samples */
+  floatTo16BitPCM(view, 44, samples);
+
+  return new Blob([view], { type: 'audio/wav' });
+};
+
+// Helper for Gemini Input (Base64)
 const createBase64PCM = (data: Float32Array): string => {
   const l = data.length;
   const int16 = new Int16Array(l);
@@ -69,9 +120,6 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
   const [error, setError] = useState<string | null>(null);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState<string | null>(null);
-  const [hasDownloaded, setHasDownloaded] = useState(false);
-  const [showSafetyDialog, setShowSafetyDialog] = useState(false);
-  const [mimeType, setMimeType] = useState<string>('');
   
   // Timer State
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -87,8 +135,7 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   const timerRef = useRef<any>(null);
   
   // PCM Data Buffer for WAV file (Cumulative across reconnections)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const pcmDataRef = useRef<Float32Array[]>([]);
 
   const silenceTimeoutRef = useRef<any>(null);
   const conversationScrollRef = useRef<HTMLDivElement>(null);
@@ -140,11 +187,9 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
             setError(null);
             
             // Send initial wake-up message
-            /* TODO: Fix text input for Live API
             sessionPromise.then(s => s.sendRealtimeInput({
                 content: { role: 'user', parts: [{ text: "SESSION_START/RESUME: Monitoring active." }] }
             }));
-            */
           },
           onmessage: async (msg: LiveServerMessage) => {
             // A. Handle User Input Transcription
@@ -258,41 +303,16 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
      try {
         setError(null);
         setRecordedAudioUrl(null);
-        setHasDownloaded(false);
         setTranscriptSegments([]);
         setStrategyCards([]);
         setSessionDuration(0);
         isUserStoppingRef.current = false;
-        audioChunksRef.current = []; // Clear audio buffer
+        pcmDataRef.current = []; // Clear audio buffer
         
         // 1. Get Stream
         const stream = await navigator.mediaDevices.getUserMedia({ 
             audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true } 
         });
-
-        // 1.5 Setup MediaRecorder (Smart Compression)
-        let selectedMimeType = 'audio/webm;codecs=opus';
-        if (!MediaRecorder.isTypeSupported(selectedMimeType)) {
-            selectedMimeType = 'audio/mp4;codecs=mp4a.40.2'; // Safari fallback
-        }
-        if (!MediaRecorder.isTypeSupported(selectedMimeType)) {
-            selectedMimeType = ''; // Browser default
-        }
-        setMimeType(selectedMimeType);
-
-        const recorder = new MediaRecorder(stream, {
-            mimeType: selectedMimeType || undefined,
-            audioBitsPerSecond: 64000 // 64kbps for voice clarity & small size
-        });
-
-        recorder.ondataavailable = (e) => {
-            if (e.data.size > 0) {
-                audioChunksRef.current.push(e.data);
-            }
-        };
-        
-        recorder.start(1000); // Collect chunks every second
-        mediaRecorderRef.current = recorder;
 
         // 2. Setup Audio Context
         const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -310,6 +330,11 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         // 4. Audio Processing Loop
         processor.onaudioprocess = (e) => {
             const inputData = e.inputBuffer.getChannelData(0);
+            
+            // ALWAYS Save data for WAV file (Continuous Recording)
+            // Even if AI is reconnecting, this keeps running.
+            const dataCopy = new Float32Array(inputData);
+            pcmDataRef.current.push(dataCopy);
             
             // Send to Gemini IF session is active
             if (activeSessionRef.current) {
@@ -361,12 +386,6 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         activeSessionRef.current.then((s: any) => s.close());
         activeSessionRef.current = null;
     }
-
-    // 1.5 Stop MediaRecorder
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        mediaRecorderRef.current.stop();
-        mediaRecorderRef.current = null;
-    }
     
     // 2. Stop Audio & Timer
     if (sourceRef.current) { sourceRef.current.disconnect(); sourceRef.current = null; }
@@ -377,15 +396,24 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
     setIsActive(false);
     setIsReconnecting(false);
     
-    // 3. Save Final Audio (Wait for last chunk)
-    setTimeout(() => saveAudioFile(), 200);
+    // 3. Save Final Audio
+    saveWavFile();
   };
 
-  const saveAudioFile = () => {
-    if (audioChunksRef.current.length > 0) {
-        const blob = new Blob(audioChunksRef.current, { type: mimeType || 'audio/webm' });
-        const url = URL.createObjectURL(blob);
-        setRecordedAudioUrl(url);
+  const saveWavFile = () => {
+    if (pcmDataRef.current.length > 0) {
+        const totalLength = pcmDataRef.current.reduce((acc, curr) => acc + curr.length, 0);
+        const mergedBuffer = new Float32Array(totalLength);
+        let offset = 0;
+        for (const chunk of pcmDataRef.current) {
+            mergedBuffer.set(chunk, offset);
+            offset += chunk.length;
+        }
+
+        const wavBlob = encodeWAV(mergedBuffer, 16000);
+        const reader = new FileReader();
+        reader.onloadend = () => setRecordedAudioUrl(reader.result as string);
+        reader.readAsDataURL(wavBlob);
     }
   };
 
@@ -393,24 +421,13 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
     if (recordedAudioUrl) {
         const link = document.createElement('a');
         link.href = recordedAudioUrl;
-        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-        link.download = `ME_Live_Session_${new Date().toLocaleString().replace(/[\/\s:]/g, '_')}.${ext}`;
+        link.download = `ME_Live_Session_${new Date().toLocaleString().replace(/[\/\s:]/g, '_')}.wav`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        setHasDownloaded(true);
-        setShowSafetyDialog(false);
     }
   };
   
-  const handleAnalyzeClick = () => {
-    if (!hasDownloaded) {
-        setShowSafetyDialog(true);
-    } else {
-        onSaveAndAnalyze?.(recordedAudioUrl!);
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -419,64 +436,72 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
   // Render Helpers
   const renderCard = (card: StrategyCard) => {
-    let bgColor = 'bg-navy-50';
-    let borderColor = 'border-navy-200';
-    let icon = <Bot size={18} className="text-navy-600" />;
-    let textColor = 'text-navy-700';
+    let bgColor = 'bg-slate-800';
+    let borderColor = 'border-slate-700';
+    let icon = <Bot size={18} />;
     
     if (card.type === 'risk') {
-        bgColor = 'bg-white';
-        borderColor = 'border-navy-900';
-        icon = <ShieldAlert className="text-navy-900" size={18} />;
-        textColor = 'text-navy-900';
+        bgColor = 'bg-red-950/40';
+        borderColor = 'border-red-500/50';
+        icon = <ShieldAlert className="text-red-500" size={18} />;
     } else if (card.type === 'script') {
-        bgColor = 'bg-navy-50';
-        borderColor = 'border-navy-200';
-        icon = <Play className="text-navy-600" size={18} />;
-        textColor = 'text-navy-800';
+        bgColor = 'bg-emerald-950/40';
+        borderColor = 'border-emerald-500/50';
+        icon = <Play className="text-emerald-500" size={18} />;
     } else if (card.type === 'insight') {
-        bgColor = 'bg-gold-50';
-        borderColor = 'border-gold-200';
-        icon = <Brain className="text-gold-600" size={18} />;
-        textColor = 'text-navy-900';
+        bgColor = 'bg-indigo-950/40';
+        borderColor = 'border-indigo-500/50';
+        icon = <Brain className="text-indigo-400" size={18} />;
     }
 
     return (
-        <div key={card.id} className={`p-4 rounded-xl border-l-4 ${borderColor} ${bgColor} shadow-sm mb-4 animate-in slide-in-from-right-2`}>
-            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-black/5">
+        <div key={card.id} className={`p-4 rounded-xl border-l-4 ${borderColor} ${bgColor} shadow-lg mb-4 animate-in slide-in-from-right-2`}>
+            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
                 {icon}
-                <span className={`font-bold text-sm ${textColor}`}>{card.title}</span>
+                <span className="font-bold text-sm text-white/90">{card.title}</span>
             </div>
-            <div className="prose prose-sm max-w-none text-navy-700">
+            <div className="prose prose-invert prose-sm max-w-none">
                  <ReactMarkdown>{card.content}</ReactMarkdown>
             </div>
         </div>
     );
   };
 
-  const inputClass = "w-full p-3 bg-navy-50 border border-navy-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors text-navy-900 placeholder:text-navy-400 shadow-sm";
+  const inputClass = "w-full p-3 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-colors text-slate-900 placeholder:text-slate-500 shadow-sm";
 
   // Setup Step
   if (step === 'setup') {
     return (
       <div className="max-w-3xl mx-auto h-full flex flex-col p-4 md:p-6 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-lg border border-navy-200 p-6 md:p-8">
-            <div className="text-center py-12">
-              <div className="w-20 h-20 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                <Mic className="w-10 h-10 text-navy-600" />
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8">
+           <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+              <Zap className="text-blue-600 w-8 h-8" />
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">Live 纯文字看板配置</h2>
+                <p className="text-slate-500 text-sm">静默模式 • <span className="text-blue-600 font-bold">120min自动续连</span> • 全程录音</p>
               </div>
-              <h3 className="text-2xl font-bold text-navy-900 mb-3">实时销售助手已就绪</h3>
-              <p className="text-navy-600 mb-8 max-w-md mx-auto">
-                我们将实时分析您的对话，提供话术建议、风险预警和机会提示。
-              </p>
-              <button
-                onClick={() => setStep('live')}
-                className="bg-navy-900 hover:bg-navy-800 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95 w-full md:w-auto justify-center mx-auto"
-              >
-                <Play className="w-5 h-5" />
-                开始实时辅助
-              </button>
-            </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">客户称呼</label>
+                <input type="text" value={clientProfile.name} onChange={(e) => updateProfile('name', e.target.value)} placeholder="例如: 王先生" className={inputClass} />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">意向产品</label>
+                <input type="text" value={clientProfile.learningGoal} onChange={(e) => updateProfile('learningGoal', e.target.value)} placeholder="例如: 雅思 7 分" className={inputClass} />
+              </div>
+           </div>
+           
+           <div className="mt-6 pt-6 border-t border-slate-100">
+             <ToneSelector selectedTones={globalTones} onChange={setGlobalTones} />
+           </div>
+
+           <div className="mt-8 flex justify-end">
+             <button onClick={() => setStep('live')} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-transform active:scale-95 w-full md:w-auto justify-center">
+               <Play fill="currentColor" size={18} /> 启动看板
+             </button>
+           </div>
         </div>
       </div>
     );
@@ -486,12 +511,12 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   return (
     <div className="h-full flex flex-col w-full mx-auto p-0 md:p-0 gap-3 md:gap-4 overflow-hidden">
       {/* Settings Bar */}
-      <div className="bg-white p-3 md:p-4 rounded-xl border border-navy-200 flex flex-wrap justify-between items-center shadow-sm flex-shrink-0 gap-2">
+      <div className="bg-white p-3 md:p-4 rounded-xl border border-slate-200 flex flex-wrap justify-between items-center shadow-sm flex-shrink-0 gap-2">
          <div className="flex items-center gap-2">
-            <VolumeX className="text-navy-400" size={20} />
+            <VolumeX className="text-slate-400" size={20} />
             <div className="flex flex-col md:flex-row md:items-center">
-                <h2 className="font-bold text-navy-800 text-sm md:text-base">实时看板</h2>
-                <div className={`text-xs px-2 py-0.5 md:px-3 md:py-1 rounded-full md:ml-2 font-bold flex items-center gap-1.5 transition-colors w-fit mt-1 md:mt-0 ${isActive ? (isReconnecting ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700') : 'bg-navy-100 text-navy-500'}`}>
+                <h2 className="font-bold text-slate-800 text-sm md:text-base">实时看板</h2>
+                <div className={`text-xs px-2 py-0.5 md:px-3 md:py-1 rounded-full md:ml-2 font-bold flex items-center gap-1.5 transition-colors w-fit mt-1 md:mt-0 ${isActive ? (isReconnecting ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700') : 'bg-slate-100 text-slate-500'}`}>
                 {isActive && !isReconnecting && <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>}
                 {isActive && isReconnecting && <RefreshCw size={10} className="animate-spin"/>}
                 {isActive ? (isReconnecting ? '重连中...' : formatTime(sessionDuration)) : '已暂停'}
@@ -509,17 +534,17 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       </div>
 
       {/* Mobile Tabs Switcher */}
-      <div className="flex md:hidden bg-white border border-navy-200 rounded-lg p-1 flex-shrink-0">
+      <div className="flex md:hidden bg-white border border-slate-200 rounded-lg p-1 flex-shrink-0">
           <button 
              onClick={() => setMobileTab('strategy')}
-             className={`flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 transition-all ${mobileTab === 'strategy' ? 'bg-navy-900 text-white shadow' : 'text-navy-400'}`}
+             className={`flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 transition-all ${mobileTab === 'strategy' ? 'bg-slate-900 text-white shadow' : 'text-slate-500'}`}
           >
              <Brain size={16}/> AI 策略
              {strategyCards.length > 0 && <span className="bg-red-500 text-white text-[10px] px-1.5 rounded-full">{strategyCards.length}</span>}
           </button>
           <button 
              onClick={() => setMobileTab('transcript')}
-             className={`flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 transition-all ${mobileTab === 'transcript' ? 'bg-blue-600 text-white shadow' : 'text-navy-400'}`}
+             className={`flex-1 py-2 text-sm font-bold rounded-md flex items-center justify-center gap-2 transition-all ${mobileTab === 'transcript' ? 'bg-blue-600 text-white shadow' : 'text-slate-500'}`}
           >
              <FileText size={16}/> 实时文字
           </button>
@@ -527,29 +552,29 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
       <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden relative">
         {/* Left: Transcript (Hidden on mobile if tab is strategy) */}
-        <div className={`flex-1 bg-white rounded-2xl border border-navy-200 flex-col overflow-hidden shadow-sm ${mobileTab === 'transcript' ? 'flex' : 'hidden md:flex'}`}>
-           <div className="bg-navy-50 border-b border-navy-100 p-3 flex justify-between items-center flex-shrink-0">
-             <span className="text-sm font-bold text-white bg-navy-800 px-3 py-1 rounded-lg flex items-center gap-2"><User size={16}/> 实时录入</span>
+        <div className={`flex-1 bg-white rounded-2xl border border-slate-200 flex-col overflow-hidden shadow-sm ${mobileTab === 'transcript' ? 'flex' : 'hidden md:flex'}`}>
+           <div className="bg-slate-50 border-b border-slate-100 p-3 flex justify-between items-center flex-shrink-0">
+             <span className="text-sm font-bold text-white bg-slate-800 px-3 py-1 rounded-lg flex items-center gap-2"><User size={16}/> 实时录入</span>
              {isReconnecting && <span className="text-[10px] text-yellow-600 font-medium flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded"><Wifi size={10}/> 保持通话，AI正在无感切换...</span>}
            </div>
-           <div className="flex-1 p-4 overflow-y-auto bg-navy-50/50 space-y-4" ref={conversationScrollRef}>
-              {transcriptSegments.length === 0 && !currentSegment && <div className="text-center mt-20 text-navy-400 italic text-sm">等待对话开始...</div>}
+           <div className="flex-1 p-4 overflow-y-auto bg-slate-50/50 space-y-4" ref={conversationScrollRef}>
+              {transcriptSegments.length === 0 && !currentSegment && <div className="text-center mt-20 text-slate-400 italic text-sm">等待对话开始...</div>}
               {transcriptSegments.map((seg) => (
-                 <div key={seg.id} className="bg-white border border-navy-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%]">
-                    <p className="text-white bg-navy-800 px-3 py-2 rounded-lg text-sm font-medium">{seg.text}</p>
+                 <div key={seg.id} className="bg-white border border-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%]">
+                    <p className="text-white bg-slate-800 px-3 py-2 rounded-lg text-sm font-medium">{seg.text}</p>
                  </div>
               ))}
               {currentSegment && (
-                 <div className="bg-navy-100 border border-navy-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%] opacity-70">
-                    <p className="text-white bg-navy-700 px-3 py-2 rounded-lg text-sm font-medium">{currentSegment} <span className="animate-pulse">|</span></p>
+                 <div className="bg-slate-100 border border-slate-200 p-3 rounded-xl rounded-tl-none shadow-sm w-fit max-w-[90%] opacity-70">
+                    <p className="text-white bg-slate-700 px-3 py-2 rounded-lg text-sm font-medium">{currentSegment} <span className="animate-pulse">|</span></p>
                  </div>
               )}
            </div>
         </div>
 
         {/* Right: Strategy Dashboard (Hidden on mobile if tab is transcript) */}
-        <div className={`flex-1 bg-navy-900 rounded-2xl border border-navy-700 flex-col overflow-hidden shadow-xl ${mobileTab === 'strategy' ? 'flex' : 'hidden md:flex'}`}>
-           <div className="bg-navy-800 border-b border-navy-700 p-3 flex justify-between items-center flex-shrink-0">
+        <div className={`flex-1 bg-slate-900 rounded-2xl border border-slate-700 flex-col overflow-hidden shadow-xl ${mobileTab === 'strategy' ? 'flex' : 'hidden md:flex'}`}>
+           <div className="bg-slate-800 border-b border-slate-700 p-3 flex justify-between items-center flex-shrink-0">
              <span className="text-sm font-bold text-white flex items-center gap-2"><Brain size={16} className="text-yellow-400"/> 策略看板</span>
            </div>
            <div className="flex-1 p-4 overflow-y-auto" ref={hintsScrollRef}>
@@ -564,18 +589,18 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
            
            {/* Footer: Save & Download Actions */}
            {recordedAudioUrl && !isActive && (
-              <div className="p-4 bg-navy-800 border-t border-navy-700 flex flex-wrap justify-center gap-3 animate-in slide-in-from-bottom-2 flex-shrink-0">
+              <div className="p-4 bg-slate-800 border-t border-slate-700 flex flex-wrap justify-center gap-3 animate-in slide-in-from-bottom-2 flex-shrink-0">
                 <button 
-                  onClick={handleAnalyzeClick} 
+                  onClick={() => onSaveAndAnalyze?.(recordedAudioUrl)} 
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-blue-700 transition-colors"
                 >
                   <Save size={16}/> 存入并复盘
                 </button>
                 <button 
                   onClick={downloadRecordedAudio} 
-                  className="bg-navy-700 text-navy-100 border border-navy-600 px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-navy-600 transition-colors"
+                  className="bg-slate-700 text-slate-200 border border-slate-600 px-5 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-slate-600 transition-colors"
                 >
-                  <Download size={16}/> 下载录音 ({mimeType.includes('mp4') ? '.mp4' : '.webm'})
+                  <Download size={16}/> 下载录音 (.wav)
                 </button>
               </div>
            )}
@@ -583,41 +608,6 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       </div>
       
       {error && <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 flex-shrink-0"><AlertCircle size={16}/> {error}</div>}
-
-      {/* Safety Dialog */}
-      {showSafetyDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-navy-900 border border-navy-700 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95">
-                <div className="flex items-center gap-3 text-amber-500 mb-4">
-                    <ShieldAlert size={28} />
-                    <h3 className="text-xl font-bold text-white">录音未保存警告</h3>
-                </div>
-                <p className="text-navy-200 mb-6 leading-relaxed">
-                    检测到您尚未下载原始录音文件。如果直接进入复盘页面，<span className="text-red-400 font-bold">原始录音将无法再次找回</span>（数据仅保存在当前浏览器内存中）。
-                </p>
-                <div className="flex flex-col gap-3">
-                    <button 
-                        onClick={() => { downloadRecordedAudio(); onSaveAndAnalyze?.(recordedAudioUrl!); }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-colors"
-                    >
-                        <Download size={18} /> 安全下载并继续 (推荐)
-                    </button>
-                    <button 
-                        onClick={() => onSaveAndAnalyze?.(recordedAudioUrl!)}
-                        className="bg-navy-800 hover:bg-navy-700 text-navy-200 py-3 rounded-xl font-bold transition-colors"
-                    >
-                        已自行保存，直接继续
-                    </button>
-                    <button 
-                        onClick={() => setShowSafetyDialog(false)}
-                        className="text-navy-400 hover:text-navy-300 py-2 font-medium text-sm"
-                    >
-                        取消
-                    </button>
-                </div>
-            </div>
-        </div>
-      )}
     </div>
   );
 };

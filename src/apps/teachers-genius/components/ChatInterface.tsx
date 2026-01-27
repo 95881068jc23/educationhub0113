@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageRole, ChatMessage, ProductType } from '../types';
 import { sendMessageToGemini } from '../services/gemini';
-import { uploadFile, logUserAction } from '../../../services/storageService';
-import { useAuth } from '../../../contexts/AuthContext';
 import { ANALYSIS_PROMPT_TEMPLATE } from '../constants';
 import { Send, Image as ImageIcon, Loader2, Link as LinkIcon, Trash2, Mic, Square, Wand2, FileAudio, Clock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -13,56 +11,57 @@ const MarkdownComponents: React.ComponentProps<typeof ReactMarkdown>['components
   // Headers: distinct sections with spacing and icons implied by the text
   h3: ({ node, ...props }) => (
     <h3 
-      className="text-lg font-bold text-navy-800 mt-6 mb-3 flex items-center gap-2 border-b pb-2 border-navy-100" 
+      className="text-lg font-bold text-slate-800 mt-6 mb-3 flex items-center gap-2 border-b pb-2 border-slate-200" 
       {...props} 
     />
   ),
   // Blockquote: Used for "Scripts" / "Recommended Replies" - High visibility box
   blockquote: ({ node, ...props }) => (
     <div className="relative group my-4">
-       <blockquote className="bg-navy-50 border-l-4 border-navy-600 rounded-r-lg p-4 shadow-sm text-navy-800 italic leading-relaxed" {...props} />
+       <div className="bg-indigo-50 border-l-4 border-indigo-600 rounded-r-lg p-4 shadow-sm">
+          <div className="text-slate-800 italic leading-relaxed" {...props} />
+       </div>
     </div>
   ),
   // Lists: Cleaner spacing
   ul: ({ node, ...props }) => (
-    <ul className="list-disc list-outside ml-5 space-y-2 text-navy-700 mb-4" {...props} />
+    <ul className="list-disc list-outside ml-5 space-y-2 text-slate-700 mb-4" {...props} />
   ),
   li: ({ node, ...props }) => (
     <li className="pl-1 leading-relaxed" {...props} />
   ),
   // Strong: Highlight key terms
   strong: ({ node, ...props }) => (
-    <span className="font-bold text-navy-800 bg-navy-100/60 px-1 rounded-sm" {...props} />
+    <span className="font-bold text-indigo-800 bg-indigo-100/60 px-1 rounded-sm" {...props} />
   ),
   // Paragraphs
   p: ({ node, ...props }) => (
-    <p className="mb-3 leading-relaxed text-navy-700" {...props} />
+    <p className="mb-3 leading-relaxed text-slate-700" {...props} />
   ),
   // TABLES: Styling for data comparison
   table: ({ node, ...props }) => (
-    <div className="overflow-x-auto my-4 rounded-lg border border-navy-200 shadow-sm">
-      <table className="min-w-full divide-y divide-navy-200" {...props} />
+    <div className="overflow-x-auto my-4 rounded-lg border border-slate-200 shadow-sm">
+      <table className="min-w-full divide-y divide-slate-200" {...props} />
     </div>
   ),
   thead: ({ node, ...props }) => (
-    <thead className="bg-navy-600 text-white" {...props} />
+    <thead className="bg-blue-600 text-white" {...props} />
   ),
   tbody: ({ node, ...props }) => (
-    <tbody className="bg-white divide-y divide-navy-200" {...props} />
+    <tbody className="bg-white divide-y divide-slate-200" {...props} />
   ),
   tr: ({ node, ...props }) => (
-    <tr className="hover:bg-navy-50 transition-colors" {...props} />
+    <tr className="hover:bg-slate-50 transition-colors" {...props} />
   ),
   th: ({ node, ...props }) => (
-    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white border-r border-navy-500 last:border-r-0" {...props} />
+    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-white border-r border-blue-500 last:border-r-0" {...props} />
   ),
   td: ({ node, ...props }) => (
-    <td className="px-4 py-3 text-sm text-navy-700 whitespace-pre-wrap border-r border-navy-100 last:border-r-0" {...props} />
+    <td className="px-4 py-3 text-sm text-slate-700 whitespace-pre-wrap border-r border-slate-100 last:border-r-0" {...props} />
   ),
 };
 
 export const ChatInterface: React.FC = () => {
-  const { user } = useAuth();
   const [selectedProduct, setSelectedProduct] = useState<ProductType>(ProductType.ADULT);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -208,7 +207,6 @@ export const ChatInterface: React.FC = () => {
 
     // 如果有录音，先上传到 Supabase Storage
     let audioUrl = recordedAudio || undefined;
-    
     if (recordedAudio && user) {
       try {
         // 将 Base64 转换为 Blob
@@ -309,17 +307,17 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-navy-50/50 rounded-2xl shadow-sm border border-navy-200 overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50/50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* Product Selector Header */}
-      <div className="bg-white border-b border-navy-200 p-3 flex gap-2 overflow-x-auto scrollbar-hide shadow-sm z-10">
+      <div className="bg-white border-b border-slate-200 p-3 flex gap-2 overflow-x-auto scrollbar-hide shadow-sm z-10">
         {Object.values(ProductType).map((type) => (
           <button
             key={type}
             onClick={() => setSelectedProduct(type)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
               selectedProduct === type
-                ? 'bg-navy-600 text-white shadow-md transform scale-105'
-                : 'bg-navy-50 text-navy-600 border border-navy-200 hover:bg-navy-100 hover:text-navy-900'
+                ? 'bg-blue-600 text-white shadow-md transform scale-105'
+                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 hover:text-slate-900'
             }`}
           >
             {type}
@@ -328,18 +326,18 @@ export const ChatInterface: React.FC = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-navy-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-slate-50">
         {messages.map((msg) => (
           <div
             key={msg.id}
             className={`flex ${msg.role === MessageRole.USER ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[90%] md:max-w-[85%] rounded-2xl p-5 shadow-sm transition-all duration-300 ${
+              className={`max-w-[90%] md:max-w-[85%] rounded-2xl p-5 shadow-sm transition-all ${
                 msg.role === MessageRole.USER
-                  ? 'bg-navy-600 text-white rounded-br-none shadow-navy-200'
-                  : 'bg-white text-navy-800 border border-navy-200 rounded-bl-none shadow-sm'
-              } ${msg.isError ? 'bg-gold-50 text-gold-700 border-gold-200' : ''}`}
+                  ? 'bg-blue-600 text-white rounded-br-none shadow-blue-200'
+                  : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-slate-200'
+              } ${msg.isError ? 'bg-red-50 text-red-600 border-red-200' : ''}`}
             >
               {/* Display Images */}
               {msg.images && msg.images.length > 0 && (
@@ -363,7 +361,7 @@ export const ChatInterface: React.FC = () => {
               )}
 
               {/* Markdown Content */}
-              <div className={`text-sm ${msg.role === MessageRole.USER ? 'text-white' : 'text-navy-800'}`}>
+              <div className={`text-sm ${msg.role === MessageRole.USER ? 'text-white' : 'text-slate-800'}`}>
                 {/* Only use complex markdown rendering for Model to avoid styling issues with User text */}
                 {msg.role === MessageRole.MODEL ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>
@@ -375,7 +373,7 @@ export const ChatInterface: React.FC = () => {
               </div>
               
               {msg.groundingUrls && msg.groundingUrls.length > 0 && (
-                <div className="mt-4 pt-3 border-t border-navy-100/50">
+                <div className="mt-4 pt-3 border-t border-slate-100/50">
                   <p className="text-xs font-semibold mb-2 flex items-center gap-1 opacity-70">
                     <LinkIcon size={12} /> 参考来源:
                   </p>
@@ -400,9 +398,9 @@ export const ChatInterface: React.FC = () => {
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white border border-navy-200 rounded-2xl rounded-bl-none p-5 shadow-sm">
-              <div className="flex items-center gap-3 text-navy-600">
-                <Loader2 className="w-5 h-5 animate-spin text-navy-600" />
+            <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-none p-5 shadow-sm">
+              <div className="flex items-center gap-3 text-slate-600">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
                 <span className="text-sm font-medium">ME 智能顾问正在分析数据...</span>
               </div>
             </div>
@@ -412,17 +410,17 @@ export const ChatInterface: React.FC = () => {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white border-t border-navy-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
+      <div className="p-4 bg-white border-t border-slate-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)]">
         
         {/* Previews */}
         {(selectedImages.length > 0 || recordedAudio) && (
-          <div className="flex flex-wrap gap-2 mb-3 p-3 bg-navy-50 rounded-xl border border-navy-100 shadow-inner">
+          <div className="flex flex-wrap gap-2 mb-3 p-3 bg-slate-50 rounded-xl border border-slate-100 shadow-inner">
             {selectedImages.map((img, idx) => (
               <div key={idx} className="relative group">
-                <img src={img} alt="Preview" className="w-16 h-16 object-cover rounded-lg border border-navy-200" />
+                <img src={img} alt="Preview" className="w-16 h-16 object-cover rounded-lg border border-slate-200" />
                 <button 
                   onClick={() => removeImage(idx)}
-                  className="absolute -top-2 -right-2 bg-white text-gold-600 border border-navy-200 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gold-50"
+                  className="absolute -top-2 -right-2 bg-white text-red-500 border border-slate-200 rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50"
                 >
                   <Trash2 size={12} />
                 </button>
@@ -431,11 +429,11 @@ export const ChatInterface: React.FC = () => {
             
             {/* Audio Indicator */}
             {recordedAudio && !isRecording && (
-              <div className="flex items-center gap-2 bg-navy-50 px-3 py-1 rounded-lg border border-navy-100 relative group">
-                <Mic size={16} className="text-navy-600" />
+              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 relative group">
+                <Mic size={16} className="text-blue-600" />
                 <div className="flex flex-col">
-                   <span className="text-xs text-navy-800 font-bold">音频就绪</span>
-                   {recordingDuration > 0 && <span className="text-[10px] text-navy-600 font-mono">{formatTime(recordingDuration)}</span>}
+                   <span className="text-xs text-blue-800 font-bold">音频就绪</span>
+                   {recordingDuration > 0 && <span className="text-[10px] text-blue-600 font-mono">{formatTime(recordingDuration)}</span>}
                 </div>
                 <audio src={recordedAudio} className="hidden" />
                 <button 
@@ -443,7 +441,7 @@ export const ChatInterface: React.FC = () => {
                     setRecordedAudio(null);
                     setRecordingDuration(0);
                   }}
-                  className="ml-2 text-navy-400 hover:text-gold-600 p-1"
+                  className="ml-2 text-slate-400 hover:text-red-500 p-1"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -453,7 +451,7 @@ export const ChatInterface: React.FC = () => {
             {/* One Click Analysis Button */}
             <button
               onClick={handleOneClickAnalysis}
-              className="ml-auto flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-navy-600 to-navy-500 text-white text-xs font-bold rounded-lg hover:from-navy-700 hover:to-navy-600 shadow-md transform hover:-translate-y-0.5 transition-all duration-300"
+              className="ml-auto flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-xs font-bold rounded-lg hover:from-indigo-700 hover:to-blue-700 shadow-md transform hover:-translate-y-0.5 transition-all"
             >
               <Wand2 size={14} /> 一键智能分析
             </button>
@@ -462,15 +460,15 @@ export const ChatInterface: React.FC = () => {
 
         {/* Recording Active Status */}
         {isRecording && (
-           <div className="mb-3 px-4 py-3 bg-gold-50 border border-gold-100 rounded-xl flex items-center justify-between animate-pulse">
+           <div className="mb-3 px-4 py-3 bg-red-50 border border-red-100 rounded-xl flex items-center justify-between animate-pulse">
              <div className="flex items-center gap-3">
                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-gold-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                 </span>
-               <span className="text-sm font-bold text-gold-800 font-mono">{formatTime(recordingDuration)} / 120:00</span>
+               <span className="text-sm font-bold text-red-700 font-mono">{formatTime(recordingDuration)} / 120:00</span>
              </div>
-             <button onClick={stopRecording} className="text-xs bg-white text-gold-700 border border-gold-200 px-3 py-1.5 rounded-lg shadow-sm font-medium hover:bg-gold-50 transition-colors duration-300">
+             <button onClick={stopRecording} className="text-xs bg-white text-red-600 border border-red-200 px-3 py-1.5 rounded-lg shadow-sm font-medium hover:bg-red-50">
                结束录音
              </button>
            </div>
@@ -480,7 +478,7 @@ export const ChatInterface: React.FC = () => {
           {/* Image Upload */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-3 text-navy-500 hover:text-navy-600 hover:bg-navy-50 rounded-xl transition-all duration-300 active:scale-95"
+            className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95"
             title="上传聊天截图"
             disabled={isRecording}
           >
@@ -498,7 +496,7 @@ export const ChatInterface: React.FC = () => {
           {/* Audio File Upload */}
           <button
             onClick={() => audioInputRef.current?.click()}
-            className="p-3 text-navy-500 hover:text-navy-600 hover:bg-navy-50 rounded-xl transition-all duration-300 active:scale-95"
+            className="p-3 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95"
             title="上传录音文件"
             disabled={isRecording}
           >
@@ -515,17 +513,16 @@ export const ChatInterface: React.FC = () => {
           {/* Audio Recorder */}
           <button
             onClick={isRecording ? stopRecording : startRecording}
-            className={`p-3 rounded-xl transition-all duration-300 active:scale-95 ${
+            className={`p-3 rounded-xl transition-all active:scale-95 ${
               isRecording 
-                ? 'bg-gold-500 text-white animate-pulse shadow-lg shadow-gold-200'
-                : 'text-navy-400 bg-navy-50 hover:bg-navy-100 hover:text-navy-600'
+                ? 'text-red-600 bg-red-100 hover:bg-red-200 ring-2 ring-red-100' 
+                : 'text-slate-500 hover:text-blue-600 hover:bg-blue-50'
             }`}
-            title={isRecording ? "停止录音" : "开始录音"}
+            title="实时录音 (最大120分钟)"
           >
             {isRecording ? <Square size={22} fill="currentColor" /> : <Mic size={22} />}
           </button>
 
-          {/* Text Input */}
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -535,19 +532,17 @@ export const ChatInterface: React.FC = () => {
                 handleSend();
               }
             }}
-            placeholder={isRecording ? "正在录音..." : "输入您的问题，或上传图片/录音..."}
-            className="flex-1 resize-none bg-white border border-navy-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:border-transparent max-h-32 text-sm text-navy-900 placeholder:text-navy-400 disabled:bg-navy-50 shadow-sm"
+            placeholder={isRecording ? "正在录音中..." : "输入问题，或上传素材后点击一键分析..."}
+            disabled={isRecording}
+            className="flex-1 resize-none bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32 text-sm text-slate-900 placeholder:text-slate-400 disabled:bg-slate-50 shadow-sm"
             rows={1}
-            disabled={isRecording || isLoading}
           />
-
-          {/* Send Button */}
           <button
             onClick={() => handleSend()}
             disabled={(!input.trim() && selectedImages.length === 0 && !recordedAudio) || isLoading || isRecording}
-            className="p-3 bg-navy-600 text-white rounded-xl hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-md active:scale-95"
+            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md transition-all active:scale-95 flex-shrink-0"
           >
-            {isLoading ? <Loader2 size={22} className="animate-spin" /> : <Send size={22} />}
+            <Send size={20} />
           </button>
         </div>
       </div>

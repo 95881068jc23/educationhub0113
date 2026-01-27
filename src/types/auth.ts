@@ -13,10 +13,9 @@ export type AuditStatus = 0 | 1 | 2;
 /**
  * 用户角色枚举
  * user = 普通用户
- * admin = 超级管理员
- * tiered_admin = 分级管理员
+ * admin = 管理员
  */
-export type UserRole = 'user' | 'admin' | 'tiered_admin';
+export type UserRole = 'user' | 'admin';
 
 /**
  * 用户身份枚举
@@ -39,7 +38,6 @@ export interface User {
   auditStatus: AuditStatus;
   role: UserRole;
   identity: UserIdentity; // 用户身份：顾问或教师
-  managedUsers?: string[]; // 分级管理员管理的特定用户ID列表
   createTime: string;
   createdAt: string; // 保留向后兼容
 }
@@ -74,8 +72,6 @@ export interface AuthContextType extends AuthState {
   getAllUsers: () => Promise<StoredUser[]>;
   auditUser: (userId: string, status: AuditStatus) => Promise<void>;
   updateUserIdentity: (userId: string, identity: UserIdentity) => Promise<void>;
-  updateUserRole: (userId: string, role: UserRole) => Promise<void>;
-  updateUserScope: (userId: string, managedUsers: string[]) => Promise<void>;
   isAudited: () => boolean;
   hasIdentity: (identity: UserIdentityType) => boolean;
 }

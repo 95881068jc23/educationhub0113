@@ -8,31 +8,25 @@ import { callGeminiAPI } from "../../../services/geminiProxy";
  * Finds the first '{' and the last '}' to isolate the object.
  */
 const extractJson = (text: string): string => {
-  if (!text) return "[]";
+  if (!text) return "{}";
   
   // 1. Remove markdown code blocks if present
   let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
   
-  // 2. Determine if we are looking for an Array or Object
+  // 2. Find the index of the first '{' and last '}'
   const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  
+  // 3. If valid braces found, extract the substring
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    return cleaned.substring(firstBrace, lastBrace + 1);
+  }
+  
+  // 4. Fallback: try to find array brackets if it's a list generation
   const firstBracket = cleaned.indexOf('[');
-  
-  // If neither found, return original (will likely fail parse, but nothing better to do)
-  if (firstBrace === -1 && firstBracket === -1) return cleaned;
-  
-  // Check which comes first to decide if it's an Array or Object
-  const isArray = firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace);
-  
-  if (isArray) {
-    const lastBracket = cleaned.lastIndexOf(']');
-    if (lastBracket !== -1 && lastBracket > firstBracket) {
-      return cleaned.substring(firstBracket, lastBracket + 1);
-    }
-  } else {
-    const lastBrace = cleaned.lastIndexOf('}');
-    if (lastBrace !== -1 && lastBrace > firstBrace) {
-      return cleaned.substring(firstBrace, lastBrace + 1);
-    }
+  const lastBracket = cleaned.lastIndexOf(']');
+  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+    return cleaned.substring(firstBracket, lastBracket + 1);
   }
 
   return cleaned;
@@ -57,15 +51,6 @@ export const generateCustomTopics = async (
     3. Provide titles in "Chinese / English" format.
     4. DO NOT include Pinyin.
     5. Return ONLY valid JSON array. No conversational text.
-    
-    Required JSON Structure (Array of Objects):
-    [
-      {
-        "title_zh": "Chinese Title",
-        "title_en": "English Title",
-        "practicalScenario": "Bilingual scenario description..."
-      }
-    ]
   `;
 
   try {
@@ -85,7 +70,7 @@ export const generateCustomTopics = async (
     
     return rawTopics.map((t: any) => ({
       id: Math.random().toString(36).substr(2, 9),
-      title: t.title || `${t.title_zh || 'Custom Topic'} / ${t.title_en || '定制话题'}`,
+      title: t.title,
       description: t.description,
       practicalScenario: t.practicalScenario,
       minHours: 2,

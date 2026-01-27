@@ -14,12 +14,10 @@ export default async function handler(req: Request) {
     const body = await req.json();
     const { model, contents, config } = body;
     
-    // Get API Key from environment variables
-    // Support multiple env var names for compatibility
+    // Get API Key
     const apiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY || process.env.VITE_API_KEY;
 
     if (!apiKey) {
-      console.error('Missing API Key configuration');
       return new Response(JSON.stringify({ 
         error: 'Server Configuration Error: Missing API Key' 
       }), { 
@@ -28,33 +26,44 @@ export default async function handler(req: Request) {
       });
     }
 
-    // Initialize Gemini Client
-    const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Get Model
-    // Use the model requested by client, or fallback
-    const modelId = model || 'gemini-2.0-flash-exp';
-
-    // Extract systemInstruction and tools from config, as they belong to model initialization
-    // generationConfig should only contain generation parameters (temperature, topP, etc.)
+    // Extract systemInstruction and tools from config
     const { systemInstruction, tools, ...generationConfig } = config || {};
 
-    const aiModel = genAI.getGenerativeModel({ 
-      model: modelId,
-      systemInstruction,
-      tools
-    });
-
-    // Generate Content
-    const result = await aiModel.generateContent({
+    // Construct request body for REST API
+    const requestBody: any = {
       contents,
       generationConfig,
+    };
+
+    if (systemInstruction) {
+      requestBody.systemInstruction = systemInstruction;
+    }
+    
+    if (tools) {
+      requestBody.tools = tools;
+    }
+
+    // Use custom base URL: https://api.n1n.ai
+    // User requested to change version to /v1
+    const modelId = model || 'gemini-2.0-flash-exp';
+    const endpoint = `https://api.n1n.ai/v1/models/${modelId}:generateContent?key=${apiKey}`;
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody)
     });
 
-    const response = result.response;
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json();
     
-    // Return the response as JSON
-    return new Response(JSON.stringify(response), {
+    return new Response(JSON.stringify(data), {
       headers: { 
         'Content-Type': 'application/json',
         'Cache-Control': 'no-store' 
@@ -64,13 +73,12 @@ export default async function handler(req: Request) {
   } catch (error: any) {
     console.error('Gemini API Error:', error);
     
-    // Determine status code
     let status = 500;
     let message = error.message || 'Internal Server Error';
 
     if (message.includes('429') || message.includes('quota')) {
       status = 429;
-    } else if (message.includes('400') || message.includes('INVALID_ARGUMENT')) {
+    } else if (message.includes('400')) {
       status = 400;
     }
 
