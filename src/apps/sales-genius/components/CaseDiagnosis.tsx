@@ -281,9 +281,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Let's run it.
         uploadOriginalFile();
 
-        // Updated Strategy: Use smaller chunks (1MB) to avoid Vercel 4.5MB Payload Limit
-        // 1MB * 1.33 (Base64 overhead) = ~1.33MB << 4.5MB Safe
-        const CHUNK_SIZE = 1 * 1024 * 1024; 
+        // Updated Strategy: Use larger chunks (3MB) to reduce request frequency while staying under Vercel's 4.5MB Payload Limit
+        // 3MB * 1.33 (Base64 overhead) = ~4MB << 4.5MB Safe
+        const CHUNK_SIZE = 3 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
         // Helper for delay
@@ -296,13 +296,13 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           const chunkBase64 = await blobToBase64(chunk, audioFile.type || 'audio/wav');
           
           let retryCount = 0;
-          const maxRetries = 3;
+          const maxRetries = 5; // Increased from 3 to 5
           let success = false;
 
           while (!success && retryCount <= maxRetries) {
             try {
               if (retryCount > 0) {
-                 setProgressStatus(`正在处理音频片段 ${i + 1}/${totalChunks}... (重试 ${retryCount}/${maxRetries})`);
+                 setProgressStatus(`正在处理音频片段 ${i + 1}/${totalChunks}... (正在重试 ${retryCount}/${maxRetries})`);
               } else {
                  setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
               }
@@ -319,9 +319,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
               }
               success = true;
 
-              // Throttling: Wait 1s between chunks to avoid hitting Rate Limits (RPM)
+              // Throttling: Wait 2s between chunks to avoid hitting Rate Limits (RPM)
               if (i < totalChunks - 1) {
-                  await delay(1000); 
+                  await delay(2000); 
               }
 
             } catch (chunkError: any) {
@@ -333,7 +333,7 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
                if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限') || errorMessage.includes('500') || errorMessage.includes('503') || errorMessage.includes('Internal Server Error')) {
                    retryCount++;
                    if (retryCount <= maxRetries) {
-                       // Exponential Backoff: 2s, 4s, 8s
+                       // Exponential Backoff: 2s, 4s, 8s, 16s, 32s
                        const waitTime = 2000 * Math.pow(2, retryCount - 1); 
                        console.warn(`Rate limit hit. Waiting ${waitTime}ms before retry...`);
                        await delay(waitTime);

@@ -45,8 +45,11 @@ interface GeminiResponse {
 export async function callGeminiAPI(request: GeminiGenerateContentRequest): Promise<GeminiResponse> {
   const apiUrl = '/api/gemini';
   
-  try {
-    const response = await fetch(apiUrl, {
+  let retryCount = 0;
+  const maxRetries = 2; // Client-side proxy level retries
+  
+  const executeRequest = async (): Promise<Response> => {
+    return await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +60,35 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
         config: request.config || {},
       }),
     });
+  };
 
+  let response: Response;
+  
+  while (true) {
+    try {
+      response = await executeRequest();
+      
+      // If rate limited at proxy level, wait and retry once or twice
+      if (response.status === 429 && retryCount < maxRetries) {
+        retryCount++;
+        const waitTime = 2000 * retryCount;
+        console.warn(`Gemini Proxy rate limit hit (429). Retrying in ${waitTime}ms... (Attempt ${retryCount}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
+      break;
+    } catch (fetchError) {
+      if (retryCount < maxRetries) {
+        retryCount++;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+      throw fetchError;
+    }
+  }
+
+  try {
     if (!response.ok) {
       // 对于 413 错误，提供更详细的错误信息
       if (response.status === 413) {
