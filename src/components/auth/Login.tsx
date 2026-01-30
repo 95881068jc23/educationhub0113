@@ -65,7 +65,7 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex bg-slate-50 overflow-hidden font-sans">
       {/* Left Side - Feature Introduction */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col justify-between p-12 text-slate-900 border-r border-slate-200">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col p-12 text-slate-900 border-r border-slate-200">
         {/* Background Gradients/Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-200/30 rounded-full blur-[100px] animate-blob"></div>
@@ -73,15 +73,18 @@ export const Login: React.FC = () => {
            <div className="absolute top-[40%] left-[20%] w-[300px] h-[300px] bg-purple-200/30 rounded-full blur-[80px] animate-blob animation-delay-4000"></div>
         </div>
 
-        {/* Content */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
+        {/* Logo */}
+        <div className="relative z-10 flex-none">
+          <div className="flex items-center gap-3">
             <div className="bg-white/80 backdrop-blur-md p-2.5 rounded-xl border border-slate-200 shadow-sm">
               <GraduationCap className="w-6 h-6 text-brand-600" />
             </div>
             <span className="text-xl font-bold tracking-wide text-slate-900">Marvel Education</span>
           </div>
+        </div>
 
+        {/* Main Content - Centered */}
+        <div className="relative z-10 flex-1 flex flex-col justify-center">
           <div className="max-w-md">
             <h2 className="text-4xl font-serif font-bold mb-6 leading-tight text-slate-900">
               开启您的<br/>
@@ -116,7 +119,7 @@ export const Login: React.FC = () => {
         </div>
 
         {/* Footer/Quote */}
-        <div className="relative z-10 mt-12">
+        <div className="relative z-10 flex-none">
            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-sm max-w-sm">
              <p className="text-slate-600 italic mb-4 font-serif">"教育不是注满一桶水，而是点燃一把火。"</p>
              <div className="flex items-center gap-3">
