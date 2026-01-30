@@ -186,9 +186,22 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
         console.error('Failed to log AI usage:', logError);
       }
 
-      // Clean Markdown code blocks if response is expected to be JSON
+      // Clean Markdown code blocks and extract JSON if response is expected to be JSON
       let cleanedText = fullText;
-      if (request.config?.responseMimeType === 'application/json' || fullText.trim().startsWith('```')) {
+      
+      if (request.config?.responseMimeType === 'application/json') {
+        // Find the first '{' and the last '}' to extract the JSON object
+        // This handles cases where the model includes "Thinking Process" or other text before/after the JSON
+        const firstOpen = fullText.indexOf('{');
+        const lastClose = fullText.lastIndexOf('}');
+        
+        if (firstOpen !== -1 && lastClose !== -1 && lastClose > firstOpen) {
+          cleanedText = fullText.substring(firstOpen, lastClose + 1);
+        } else {
+          // Fallback cleanup if no clear JSON object is found
+          cleanedText = fullText.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+        }
+      } else if (fullText.trim().startsWith('```')) {
         cleanedText = fullText.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
       }
 
@@ -205,8 +218,17 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     const firstCandidate = data.candidates?.[0];
     let text = firstCandidate?.content?.parts?.[0]?.text || '';
 
-    // Clean Markdown code blocks if response is expected to be JSON
-    if (request.config?.responseMimeType === 'application/json' || text.trim().startsWith('```')) {
+    // Clean Markdown code blocks and extract JSON if response is expected to be JSON
+    if (request.config?.responseMimeType === 'application/json') {
+      const firstOpen = text.indexOf('{');
+      const lastClose = text.lastIndexOf('}');
+      
+      if (firstOpen !== -1 && lastClose !== -1 && lastClose > firstOpen) {
+        text = text.substring(firstOpen, lastClose + 1);
+      } else {
+        text = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+      }
+    } else if (text.trim().startsWith('```')) {
       text = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
     }
     
