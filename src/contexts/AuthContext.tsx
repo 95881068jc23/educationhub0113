@@ -263,9 +263,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: credentials.email,
       name: credentials.name,
       password: credentials.password, // 实际应用中应使用哈希
-      auditStatus: 0, // 默认待审核
+      auditStatus: 1, // 开发环境默认已审核
       role: 'user', // 默认普通用户
-      identity: null, // 默认无身份，需要管理员分配
+      identity: ['teacher', 'consultant'], // 开发环境默认拥有所有身份
       createTime: createTime,
       createdAt: createTime, // 保留向后兼容
     };
