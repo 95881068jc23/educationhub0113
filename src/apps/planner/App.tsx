@@ -1,5 +1,8 @@
 
 import React, { useState } from 'react';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
 import ImportSection from './components/ImportSection';
 import StudentProfileForm from './components/StudentProfileForm';
 import PlanBuilder from './components/PlanBuilder';
@@ -40,47 +43,52 @@ const App: React.FC = () => {
     });
 
     const opt = {
-      margin: [0.3, 0.3, 0.3, 0.3], // Top, Left, Bottom, Right
+      margin: [0.3, 0.3, 0.3, 0.3] as [number, number, number, number], // Top, Left, Bottom, Right
       filename: `${profile.name || 'Student'}_Marvellous_Plan.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
+      image: { type: 'jpeg' as 'jpeg', quality: 0.98 },
       html2canvas: { 
         scale: 2, 
         useCORS: true, 
         letterRendering: true, 
         scrollY: 0,
+        onclone: (clonedDoc: Document) => {
+            // Hide elements marked for exclusion in PDF
+            const excluded = clonedDoc.querySelectorAll('.pdf-exclude');
+            excluded.forEach((el: any) => el.style.display = 'none');
+        }
       },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
       // 'avoid-all' tries to avoid breaking elements, 'css' respects break-inside-avoid
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } 
     };
 
-    // Use html2pdf global from CDN
-    (window as any).html2pdf().set(opt).from(element).save();
+    // Use html2pdf library
+    html2pdf().set(opt as any).from(element).save();
   };
 
   const handleDownloadImage = async () => {
     const element = document.querySelector('main');
     if (!element) return;
-    const html2canvas = (window as any).html2canvas;
 
-    if (html2canvas) {
-      try {
-        const canvas = await html2canvas(element, { 
-            scale: 2, 
-            useCORS: true, 
-            scrollY: 0,
-            backgroundColor: '#ffffff'
-        });
-        const link = document.createElement('a');
-        link.download = `${profile.name || 'Student'}_Marvellous_Plan.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      } catch (err) {
-        console.error("Image generation failed:", err);
-        alert("Could not generate image. Please try again.");
-      }
-    } else {
-      alert("Image export module not loaded.");
+    try {
+      const canvas = await html2canvas(element as HTMLElement, { 
+          scale: 2, 
+          useCORS: true, 
+          scrollY: 0,
+          backgroundColor: '#ffffff',
+          onclone: (clonedDoc: Document) => {
+              // Hide elements marked for exclusion in Image as well (consistent with PDF)
+              const excluded = clonedDoc.querySelectorAll('.pdf-exclude');
+              excluded.forEach((el: any) => el.style.display = 'none');
+          }
+      });
+      const link = document.createElement('a');
+      link.download = `${profile.name || 'Student'}_Marvellous_Plan.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error("Image generation failed:", err);
+      alert("Could not generate image. Please try again.");
     }
   };
 
@@ -150,12 +158,12 @@ const App: React.FC = () => {
            <h1 className="text-4xl font-bold text-navy-900 mt-4 relative z-10">Course Proposal / 课程规划书</h1>
            <div className="grid grid-cols-2 gap-4 mt-6 text-navy-700 bg-navy-50 p-6 rounded-lg border border-navy-100 relative z-10">
              <div><strong>Student:</strong> {profile.name}</div>
-             <div><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
+             <div className="pdf-exclude"><strong>Date:</strong> {new Date().toLocaleDateString()}</div>
              <div><strong>Target:</strong> {profile.currentLevel} → {profile.targetLevel}</div>
              <div><strong>Focus:</strong> {profile.learningDirections.join(', ')}</div>
              <div><strong>Frequency:</strong> {profile.weeklyFrequency}x / week</div>
              {profile.jobDescription && (
-                <div className="col-span-2 mt-2 pt-2 border-t border-navy-200 text-sm">
+                <div className="col-span-2 mt-2 pt-2 border-t border-navy-200 text-sm pdf-exclude">
                    <strong>Job Context:</strong> {profile.jobDescription}
                 </div>
              )}

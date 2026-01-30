@@ -21,12 +21,12 @@ export const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <nav className="bg-white/70 backdrop-blur-md border-b border-white/50 sticky top-0 z-50 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/home" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="bg-brand-600 p-2 rounded-lg">
+            <div className="bg-brand-600/90 backdrop-blur-sm p-2 rounded-lg shadow-lg shadow-brand-200/50">
               <GraduationCap className="w-6 h-6 text-white" />
             </div>
             <div className="hidden sm:block">
@@ -43,10 +43,10 @@ export const Navbar: React.FC = () => {
               <>
                 {/* Audit Status Badge */}
                 {user && user.auditStatus !== 1 && (
-                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium ${
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium backdrop-blur-sm ${
                     user.auditStatus === 0
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-red-100 text-red-700'
+                      ? 'bg-yellow-100/80 text-yellow-700 border border-yellow-200'
+                      : 'bg-red-100/80 text-red-700 border border-red-200'
                   }`}>
                     {user.auditStatus === 0 ? (
                       <>
@@ -62,7 +62,7 @@ export const Navbar: React.FC = () => {
                   </div>
                 )}
                 {user && user.auditStatus === 1 && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100/80 backdrop-blur-sm text-green-700 border border-green-200">
                     <CheckCircle className="w-3 h-3" />
                     <span>已审核</span>
                   </div>
@@ -71,14 +71,14 @@ export const Navbar: React.FC = () => {
                 {user && user.role === 'admin' && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-purple-200"
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-600/90 backdrop-blur-sm hover:bg-purple-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-purple-200/50"
                   >
                     <Shield className="w-4 h-4" />
                     <span>管理员后台</span>
                   </Link>
                 )}
-                <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-lg">
-                  <div className="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center">
+                <div className="flex items-center gap-3 px-4 py-2 bg-white/50 backdrop-blur-sm border border-white/50 rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-brand-100/80 rounded-full flex items-center justify-center">
                     <User className="w-4 h-4 text-brand-600" />
                   </div>
                   <div>
@@ -88,7 +88,7 @@ export const Navbar: React.FC = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors font-medium"
+                  className="flex items-center gap-2 px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-white/50 rounded-lg transition-colors font-medium"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>退出</span>
@@ -97,7 +97,7 @@ export const Navbar: React.FC = () => {
             ) : (
               <Link
                 to="/"
-                className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-brand-200"
+                className="flex items-center gap-2 px-4 py-2 bg-brand-600/90 backdrop-blur-sm hover:bg-brand-700 text-white rounded-lg transition-colors font-medium shadow-md shadow-brand-200/50"
               >
                 <LogIn className="w-4 h-4" />
                 <span>登录</span>

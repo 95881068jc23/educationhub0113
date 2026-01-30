@@ -102,53 +102,62 @@ const LandingPage = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Marvel Education Hub
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Empowering education with AI-driven tools for students, teachers, and professionals.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col relative overflow-hidden">
+      {/* Background Blobs */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl mix-blend-multiply animate-blob"></div>
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-300/20 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl mix-blend-multiply animate-blob animation-delay-4000"></div>
+      </div>
 
-        {apps.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-lg text-slate-600 mb-4">您还没有被分配身份，请联系管理员</p>
-            <p className="text-sm text-slate-500">审核通过后，管理员会为您分配相应的身份权限</p>
+      <div className="relative z-10 flex-1 flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 mb-4 tracking-tight drop-shadow-sm">
+              Marvel Education Hub
+            </h1>
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto font-medium">
+              Empowering education with AI-driven tools for students, teachers, and professionals.
+            </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
-            {apps.map((app) => (
-            <Link 
-              key={app.id} 
-              to={app.path}
-              className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:-translate-y-1"
-            >
-              <div className={`absolute top-0 left-0 w-2 h-full ${app.color}`}></div>
-              <div className="p-8">
-                <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform`}>
-                  {app.icon}
+
+          {apps.length === 0 ? (
+            <div className="text-center py-12 bg-white/40 backdrop-blur-md rounded-2xl border border-white/50 p-8 shadow-lg">
+              <p className="text-lg text-slate-600 mb-4 font-medium">您还没有被分配身份，请联系管理员</p>
+              <p className="text-sm text-slate-500">审核通过后，管理员会为您分配相应的身份权限</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl w-full">
+              {apps.map((app) => (
+              <Link 
+                key={app.id} 
+                to={app.path}
+                className="group relative bg-white/40 backdrop-blur-xl rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-white/60 transform hover:-translate-y-1 hover:bg-white/60"
+              >
+                <div className={`absolute top-0 left-0 w-2 h-full ${app.color} opacity-90`}></div>
+                <div className="p-8">
+                  <div className={`w-14 h-14 ${app.color} rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-gray-200/50 group-hover:scale-110 transition-transform`}>
+                    {app.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{app.name}</h3>
+                  <div className="text-sm font-medium text-gray-500 mb-3">{app.nameCn}</div>
+                  <p className="text-gray-600 leading-relaxed">
+                    {app.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{app.name}</h3>
-                <div className="text-sm font-medium text-gray-500 mb-3">{app.nameCn}</div>
-                <p className="text-gray-600 leading-relaxed">
-                  {app.description}
-                </p>
-              </div>
-              <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                 <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-              </div>
-            </Link>
-            ))}
-          </div>
-        )}
+                <div className="absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </div>
+              </Link>
+              ))}
+            </div>
+          )}
 
-        <footer className="mt-16 text-center text-gray-400 text-sm">
-          <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
-        </footer>
+          <footer className="mt-16 text-center text-slate-400 text-sm font-medium">
+            <p>&copy; 2026 Marvellous Education. All rights reserved.</p>
+          </footer>
+        </div>
       </div>
     </div>
   );
