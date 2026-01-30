@@ -186,8 +186,14 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
         console.error('Failed to log AI usage:', logError);
       }
 
+      // Clean Markdown code blocks if response is expected to be JSON
+      let cleanedText = fullText;
+      if (request.config?.responseMimeType === 'application/json' || fullText.trim().startsWith('```')) {
+        cleanedText = fullText.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+      }
+
       return {
-        text: fullText,
+        text: cleanedText,
         candidates: candidates
       };
     }
@@ -197,7 +203,12 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     
     // 转换响应格式以匹配 @google/genai 的响应格式
     const firstCandidate = data.candidates?.[0];
-    const text = firstCandidate?.content?.parts?.[0]?.text || '';
+    let text = firstCandidate?.content?.parts?.[0]?.text || '';
+
+    // Clean Markdown code blocks if response is expected to be JSON
+    if (request.config?.responseMimeType === 'application/json' || text.trim().startsWith('```')) {
+      text = text.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '').trim();
+    }
     
     // 记录 AI 调用日志
     try {
