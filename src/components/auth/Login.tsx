@@ -65,7 +65,7 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex bg-slate-50 overflow-hidden font-sans">
       {/* Left Side - Feature Introduction */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col justify-center p-12 text-slate-900 border-r border-slate-200">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col justify-center items-center p-12 xl:p-16 2xl:p-24 text-slate-900 border-r border-slate-200">
         {/* Background Gradients/Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-200/30 rounded-full blur-[100px] animate-blob"></div>
@@ -74,7 +74,7 @@ export const Login: React.FC = () => {
         </div>
 
         {/* Logo - Absolute Positioned */}
-        <div className="absolute top-12 left-12 z-20">
+        <div className="absolute top-8 left-8 xl:top-12 xl:left-12 z-20">
           <div className="flex items-center gap-3">
             <div className="bg-white/80 backdrop-blur-md p-2.5 rounded-xl border border-slate-200 shadow-sm">
               <GraduationCap className="w-6 h-6 text-brand-600" />
@@ -84,22 +84,22 @@ export const Login: React.FC = () => {
         </div>
 
         {/* Main Content & Quote - Grouped and Centered */}
-        <div className="relative z-10 w-full max-w-lg">
-            <h2 className="text-4xl font-serif font-bold mb-6 leading-tight text-slate-900">
+        <div className="relative z-10 w-full max-w-lg xl:max-w-xl">
+            <h2 className="text-4xl xl:text-5xl font-serif font-bold mb-6 xl:mb-8 leading-tight text-slate-900">
               开启您的<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">智慧教育之旅</span>
             </h2>
-            <p className="text-slate-600 text-lg leading-relaxed mb-8 font-light">
+            <p className="text-slate-600 text-lg xl:text-xl leading-relaxed mb-8 xl:mb-12 font-light">
               在一个宁静的空间里，探索AI驱动的教育工具。从课程规划到学生评估，我们为您提供全方位的支持，让教育回归本质。
             </p>
             
-            <div className="space-y-4 mb-12">
+            <div className="space-y-4 mb-12 xl:mb-16">
                <div className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm hover:shadow-md transition-all">
                  <div className="bg-brand-50 p-3 rounded-xl">
                    <GraduationCap className="w-6 h-6 text-brand-600" />
                  </div>
                  <div>
-                   <h3 className="font-semibold text-slate-900">智能规划</h3>
+                   <h3 className="font-semibold text-slate-900 text-lg">智能规划</h3>
                    <p className="text-sm text-slate-500">个性化的学习与教学路径</p>
                  </div>
                </div>
@@ -109,7 +109,7 @@ export const Login: React.FC = () => {
                    <Mail className="w-6 h-6 text-indigo-600" />
                  </div>
                  <div>
-                   <h3 className="font-semibold text-slate-900">高效沟通</h3>
+                   <h3 className="font-semibold text-slate-900 text-lg">高效沟通</h3>
                    <p className="text-sm text-slate-500">连接教师、学生与家长的桥梁</p>
                  </div>
                </div>
@@ -117,7 +117,7 @@ export const Login: React.FC = () => {
 
             {/* Quote Card */}
            <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-sm">
-             <p className="text-slate-600 italic mb-4 font-serif">"教育不是注满一桶水，而是点燃一把火。"</p>
+             <p className="text-slate-600 italic mb-4 font-serif text-lg">"教育不是注满一桶水，而是点燃一把火。"</p>
              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold">W</div>
                 <div>
