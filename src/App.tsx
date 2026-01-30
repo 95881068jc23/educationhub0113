@@ -131,7 +131,7 @@ const LandingPage = () => {
               <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
                  <UserCheck className="w-8 h-8 text-slate-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">等待分配身份</h3>
+              <h3 className="text-xl font-serif font-bold text-slate-900 mb-2">等待分配身份</h3>
               <p className="text-slate-500 mb-6">您还没有被分配身份，请联系管理员。审核通过后，管理员会为您分配相应的身份权限。</p>
               <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors">
                 联系支持
@@ -156,7 +156,7 @@ const LandingPage = () => {
                   </div>
                   
                   <h3 className="text-xl font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors">{app.name}</h3>
-                  <div className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wider">{app.nameCn}</div>
+                  <div className="text-sm font-serif font-semibold text-slate-500 mb-4 tracking-wide">{app.nameCn}</div>
                   
                   <p className="text-slate-600 leading-relaxed text-sm flex-grow">
                     {app.description}

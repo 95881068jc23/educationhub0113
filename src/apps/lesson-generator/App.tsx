@@ -87,7 +87,7 @@ const App: React.FC = () => {
               <div className="bg-brand-600 p-2 rounded-lg shadow-brand-200 shadow-md">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-slate-800 tracking-tight">麦迩威教育 <span className="text-slate-400 font-normal text-base border-l border-slate-300 pl-3 ml-1">AI Lesson Architect</span></span>
+              <span className="font-serif font-bold text-xl text-slate-800 tracking-tight">麦迩威教育 <span className="font-sans text-slate-400 font-normal text-base border-l border-slate-300 pl-3 ml-1">AI Lesson Architect</span></span>
             </div>
             <div className="text-xs font-semibold text-brand-600 bg-brand-50 px-3 py-1 rounded-full hidden sm:block border border-brand-100">
               Professional Teacher Edition

@@ -65,7 +65,7 @@ export const Login: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex bg-slate-50 overflow-hidden font-sans">
       {/* Left Side - Feature Introduction */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col p-12 text-slate-900 border-r border-slate-200">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-slate-50 overflow-hidden flex-col justify-center p-12 text-slate-900 border-r border-slate-200">
         {/* Background Gradients/Blobs */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
            <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-200/30 rounded-full blur-[100px] animate-blob"></div>
@@ -73,8 +73,8 @@ export const Login: React.FC = () => {
            <div className="absolute top-[40%] left-[20%] w-[300px] h-[300px] bg-purple-200/30 rounded-full blur-[80px] animate-blob animation-delay-4000"></div>
         </div>
 
-        {/* Logo */}
-        <div className="relative z-10 flex-none">
+        {/* Logo - Absolute Positioned */}
+        <div className="absolute top-12 left-12 z-20">
           <div className="flex items-center gap-3">
             <div className="bg-white/80 backdrop-blur-md p-2.5 rounded-xl border border-slate-200 shadow-sm">
               <GraduationCap className="w-6 h-6 text-brand-600" />
@@ -83,9 +83,8 @@ export const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content - Centered */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center">
-          <div className="max-w-md">
+        {/* Main Content & Quote - Grouped and Centered */}
+        <div className="relative z-10 w-full max-w-lg">
             <h2 className="text-4xl font-serif font-bold mb-6 leading-tight text-slate-900">
               开启您的<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-indigo-600">智慧教育之旅</span>
@@ -94,7 +93,7 @@ export const Login: React.FC = () => {
               在一个宁静的空间里，探索AI驱动的教育工具。从课程规划到学生评估，我们为您提供全方位的支持，让教育回归本质。
             </p>
             
-            <div className="space-y-4">
+            <div className="space-y-4 mb-12">
                <div className="flex items-center gap-4 p-4 bg-white/60 backdrop-blur-md rounded-2xl border border-white/50 shadow-sm hover:shadow-md transition-all">
                  <div className="bg-brand-50 p-3 rounded-xl">
                    <GraduationCap className="w-6 h-6 text-brand-600" />
@@ -115,12 +114,9 @@ export const Login: React.FC = () => {
                  </div>
                </div>
             </div>
-          </div>
-        </div>
 
-        {/* Footer/Quote */}
-        <div className="relative z-10 flex-none">
-           <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-sm max-w-sm">
+            {/* Quote Card */}
+           <div className="bg-white/60 backdrop-blur-md rounded-2xl p-6 border border-white/50 shadow-sm">
              <p className="text-slate-600 italic mb-4 font-serif">"教育不是注满一桶水，而是点燃一把火。"</p>
              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold">W</div>
