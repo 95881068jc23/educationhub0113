@@ -184,6 +184,8 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
   // Analysis State
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string>('');
+  const [progressPercentage, setProgressPercentage] = useState<number>(0);
+  const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState<string>('');
   const [report, setReport] = useState<string | null>(null); // The main initial report
   const [customDirection, setCustomDirection] = useState('');
 
@@ -336,9 +338,10 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
         // Parallel Processing Configuration
-        const CONCURRENCY_LIMIT = 3; // Process 3 chunks at a time to balance speed and Rate Limits
+        const CONCURRENCY_LIMIT = 5; // Increased to 5 to speed up processing
         const chunkResults: string[] = new Array(totalChunks).fill('');
         let completedChunks = 0;
+        const startTime = Date.now();
 
         // Process a single chunk function
         const processChunk = async (i: number) => {
@@ -373,8 +376,27 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
               }
               success = true;
               completedChunks++;
-              // Update progress based on completed chunks
-              setProgressStatus(`正在处理音频... 已完成 ${Math.round((completedChunks / totalChunks) * 100)}% (${completedChunks}/${totalChunks})`);
+              
+              // Calculate Progress & ETA
+              const percentage = Math.round((completedChunks / totalChunks) * 100);
+              setProgressPercentage(percentage);
+              
+              const elapsedTime = (Date.now() - startTime) / 1000; // seconds
+              const avgTimePerChunk = elapsedTime / completedChunks;
+              const remainingChunks = totalChunks - completedChunks;
+              const etaSeconds = Math.ceil(remainingChunks * avgTimePerChunk);
+              
+              // Format ETA
+              let etaText = '';
+              if (etaSeconds > 60) {
+                  etaText = `约 ${Math.ceil(etaSeconds / 60)} 分钟`;
+              } else {
+                  etaText = `约 ${etaSeconds} 秒`;
+              }
+              setEstimatedTimeRemaining(etaText);
+
+              // Update progress status
+              setProgressStatus(`正在转录音频... 已完成 ${percentage}% (${completedChunks}/${totalChunks})`);
 
             } catch (chunkError: any) {
                console.error(`Error transcribing chunk ${i} (Attempt ${retryCount + 1})`, chunkError);
@@ -745,9 +767,29 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           className="w-full py-3 bg-navy-900 text-white rounded-xl font-bold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.99] flex items-center justify-center gap-2"
         >
           {isAnalyzing ? (
-            <>
-              <Loader2 className="animate-spin" /> 正在深度诊断中...
-            </>
+            <div className="flex flex-col items-center w-full">
+               <div className="flex items-center gap-2 mb-2">
+                 <Loader2 className="animate-spin" /> 
+                 <span>{progressStatus || '正在深度诊断中...'}</span>
+               </div>
+               
+               {/* Progress Bar */}
+               {progressPercentage > 0 && progressPercentage < 100 && (
+                 <div className="w-full max-w-xs mt-2">
+                   <div className="w-full bg-navy-800/30 rounded-full h-2.5 mb-1 overflow-hidden">
+                     <div 
+                       className="bg-gold-500 h-2.5 rounded-full transition-all duration-500 ease-out" 
+                       style={{ width: `${progressPercentage}%` }}
+                     ></div>
+                   </div>
+                   {estimatedTimeRemaining && (
+                      <div className="text-xs text-slate-300 text-center">
+                         预计剩余时间: {estimatedTimeRemaining}
+                      </div>
+                   )}
+                 </div>
+               )}
+            </div>
           ) : (
             <>
               <Wand2 /> 开始教学诊断
