@@ -10,7 +10,13 @@ const apiKey = import.meta.env.VITE_API_KEY || '';
 if (!apiKey) {
   console.error('VITE_API_KEY 未配置。请在 Vercel 环境变量中设置 VITE_API_KEY。');
 }
-const ai = new GoogleGenAI({ apiKey });
+// Use n1n.ai proxy for Gemini Live
+// @ts-ignore - baseUrl is supported but types might be outdated
+const ai = new GoogleGenAI({ 
+  apiKey,
+  // @ts-ignore
+  baseUrl: 'https://api.n1n.ai/v1'
+});
 
 const MAX_RECORDING_TIME = 7200; // 120 minutes
 
