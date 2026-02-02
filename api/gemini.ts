@@ -70,11 +70,13 @@ export default async function handler(req: Request) {
 
     // Directly pipe the stream to the client
     // This allows Vercel Edge Function to start sending data immediately, preventing timeouts
+    // Add custom keep-alive headers
     return new Response(response.body, {
       headers: { 
         'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-store',
-        'Connection': 'keep-alive'
+        'Cache-Control': 'no-store, no-transform',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no', // Disable buffering for Nginx/Vercel
       },
     });
 

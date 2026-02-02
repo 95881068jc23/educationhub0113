@@ -68,11 +68,13 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
     try {
       response = await executeRequest();
       
-      // If rate limited at proxy level, wait and retry once or twice
-      if (response.status === 429 && retryCount < maxRetries) {
+      // If rate limited at proxy level (429) or Gateway Timeout (504), wait and retry
+      if ((response.status === 429 || response.status === 504) && retryCount < maxRetries) {
         retryCount++;
+        // Exponential backoff: 2s, 4s
         const waitTime = 2000 * retryCount;
-        console.warn(`Gemini Proxy rate limit hit (429). Retrying in ${waitTime}ms... (Attempt ${retryCount}/${maxRetries})`);
+        const errorType = response.status === 429 ? 'Rate limit' : 'Gateway Timeout';
+        console.warn(`Gemini Proxy ${errorType} (${response.status}). Retrying in ${waitTime}ms... (Attempt ${retryCount}/${maxRetries})`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
         continue;
       }
