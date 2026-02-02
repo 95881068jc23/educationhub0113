@@ -171,8 +171,6 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                 responseModalities: [Modality.AUDIO], 
                 speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
                 systemInstruction: { parts: [{ text: LIVE_SYSTEM_INSTRUCTION(globalTones, studentProfile) }] },
-                inputAudioTranscription: {}, 
-                outputAudioTranscription: {}, 
             },
             callbacks: {
                 onopen: () => {
@@ -182,12 +180,7 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                     retryCountRef.current = 0; // Reset retries on success
                     
                     // Primer Message to kickstart Insights
-                    sessionPromise.then(s => s.sendRealtimeInput({ 
-                        content: { 
-                            role: 'user', 
-                            parts: [{ text: "Start monitoring. Please output insights using tags like 【建议】 or [Warning] immediately if you detect issues." }] 
-                        } 
-                    }));
+                    sessionPromise.then(s => s.sendRealtimeInput([{ mimeType: "text/plain", data: "Start monitoring. Please output insights using tags like 【建议】 or [Warning] immediately if you detect issues." }]));
                 },
                 onmessage: async (msg: LiveServerMessage) => {
                     // 1. Handle User Input Transcription
@@ -244,9 +237,16 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                 },
                 onerror: (e) => { 
                     console.error("Gemini Session Error", e);
-                    isSessionActiveRef.current = false;
                     // Error usually triggers onclose, so we let onclose handle the retry logic
                     // to avoid double-firing retries.
+                    
+                    const errStr = String(e).toLowerCase();
+                    if (errStr.includes('403') || errStr.includes('permission') || errStr.includes('unauthorized')) {
+                        isRecordingRef.current = false; // Stop recording
+                        setConnectionStatus('error');
+                        alert("AI 服务权限不足 (403)。请检查 API Key 配置。");
+                        stopEverything();
+                    }
                 }
             }
         });
@@ -278,6 +278,18 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       setDuration(0);
       retryCountRef.current = 0;
       
+      // Check permission status explicitly
+      if (navigator.permissions && navigator.permissions.query) {
+             try {
+                const result = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+                if (result.state === 'denied') {
+                    throw new Error("PermissionDeniedExplicit");
+                }
+             } catch(e) {
+                // Ignore query errors
+             }
+      }
+
       // Flags
       isRecordingRef.current = true; // MIC is ON
       setIsActive(true);
@@ -357,10 +369,15 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       // 4. Connect to AI
       connectToGemini();
 
-    } catch (e) {
-        alert("Microphone Access Failed. Please check permissions.");
+    } catch (e: any) {
         setIsActive(false);
         isRecordingRef.current = false;
+        
+        let msg = "Microphone Access Failed. Please check permissions.";
+        if (e.message === "PermissionDeniedExplicit" || e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
+            msg = "麦克风权限被拒绝。请点击浏览器地址栏的“锁”图标🔒，允许麦克风访问。";
+        }
+        alert(msg);
     }
   };
 

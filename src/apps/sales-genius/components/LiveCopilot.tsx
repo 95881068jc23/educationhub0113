@@ -133,6 +133,8 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   const activeSessionRef = useRef<any>(null); // To store the current Gemini Session object
   const isUserStoppingRef = useRef(false);
   const timerRef = useRef<any>(null);
+  const retryCountRef = useRef(0); // Track retries
+  const MAX_RETRIES = 5; // Max reconnection attempts
   
   // PCM Data Buffer for WAV file (Cumulative across reconnections)
   const pcmDataRef = useRef<Float32Array[]>([]);
@@ -167,8 +169,24 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
    * This is separate from audio recording so we can restart it without killing the mic.
    */
   const connectToGemini = async () => {
+    // If user explicitly stopped, do not reconnect
+    if (isUserStoppingRef.current) return;
+
+    // Circuit breaker: Prevent infinite loops
+    if (retryCountRef.current >= MAX_RETRIES) {
+        setError("无法连接 AI 服务 (多次重试失败)。请检查网络或刷新页面。");
+        setIsReconnecting(false);
+        return;
+    }
+
     try {
-      console.log("Initiating Gemini Connection...");
+      console.log(`Initiating Gemini Connection (Attempt ${retryCountRef.current + 1})...`);
+      
+      // Close existing if any (cleanup)
+      if (activeSessionRef.current) {
+          try { (await activeSessionRef.current).close(); } catch(e) {}
+      }
+
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         config: {
@@ -177,19 +195,16 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
             voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
           },
           systemInstruction: { parts: [{ text: LIVE_SYSTEM_INSTRUCTION(globalTones, clientProfile) }] },
-          inputAudioTranscription: {}, 
-          outputAudioTranscription: {}, 
         },
         callbacks: {
           onopen: () => {
             console.log("Gemini Live Session Opened");
             setIsReconnecting(false);
             setError(null);
+            retryCountRef.current = 0; // Reset retries on success
             
             // Send initial wake-up message
-            sessionPromise.then(s => s.sendRealtimeInput({
-                content: { role: 'user', parts: [{ text: "SESSION_START/RESUME: Monitoring active." }] }
-            }));
+            sessionPromise.then(s => s.sendRealtimeInput([{ mimeType: "text/plain", data: "SESSION_START/RESUME: Monitoring active." }]));
           },
           onmessage: async (msg: LiveServerMessage) => {
             // A. Handle User Input Transcription
@@ -259,15 +274,18 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
             }
             if (msg.serverContent?.turnComplete) setCurrentStreamBuffer('');
           },
-          onclose: () => {
-            console.log("Gemini Session Closed");
+          onclose: (e) => {
+            console.log("Gemini Session Closed", e);
             activeSessionRef.current = null; // Clear the active session ref
             
             // Critical Logic: If user didn't stop it, and we haven't hit 120 mins, RECONNECT.
             if (!isUserStoppingRef.current && sessionDuration < maxDurationRef.current) {
-                console.log("Auto-reconnecting due to server limit...");
+                // Exponential Backoff
+                const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 10000); // 1s, 2s, 4s... max 10s
+                console.log(`Auto-reconnecting in ${delay}ms...`);
                 setIsReconnecting(true);
-                connectToGemini(); // Recursive call to restart session
+                retryCountRef.current++;
+                setTimeout(() => connectToGemini(), delay);
             } else if (!isUserStoppingRef.current && sessionDuration >= maxDurationRef.current) {
                 stopEverything(false);
                 setError("已达到 120 分钟自动截止时间。录音已保存。");
@@ -275,10 +293,13 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
           },
           onerror: (err) => {
             console.error("Gemini Session Error:", err);
-            // On error, also try to reconnect unless stopped
-             if (!isUserStoppingRef.current) {
-                setIsReconnecting(true);
-                setTimeout(() => connectToGemini(), 2000); // Wait 2s before retry
+            // On error, we rely on onclose to handle reconnection logic
+            // But if it's a permission error (403), stop immediately
+            const errStr = String(err).toLowerCase();
+            if (errStr.includes('403') || errStr.includes('permission') || errStr.includes('unauthorized')) {
+                isUserStoppingRef.current = true; // Stop infinite retries
+                setError("AI 服务权限不足 (403)。请检查 API Key 配置。");
+                stopEverything(true);
             }
           }
         }
@@ -289,9 +310,11 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
       
     } catch (e) {
       console.error("Connection Failed", e);
-      setError("连接 AI 服务失败，正在重试...");
+      // Don't just blindly retry immediately
+      const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 5000);
       setIsReconnecting(true);
-      setTimeout(() => connectToGemini(), 3000);
+      retryCountRef.current++;
+      setTimeout(() => connectToGemini(), delay);
     }
   };
 
@@ -301,12 +324,27 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
    */
   const startRecordingSystem = async () => {
      try {
+        // Reset Error State first
         setError(null);
+        
+        // Check permission status explicitly (if supported)
+        if (navigator.permissions && navigator.permissions.query) {
+             try {
+                const result = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+                if (result.state === 'denied') {
+                    throw new Error("PermissionDeniedExplicit");
+                }
+             } catch(e) {
+                // Ignore query errors, proceed to getUserMedia
+             }
+        }
+
         setRecordedAudioUrl(null);
         setTranscriptSegments([]);
         setStrategyCards([]);
         setSessionDuration(0);
         isUserStoppingRef.current = false;
+        retryCountRef.current = 0; // Reset retries
         pcmDataRef.current = []; // Clear audio buffer
         
         // 1. Get Stream
@@ -372,9 +410,17 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
         // 6. Connect AI
         connectToGemini();
 
-     } catch (e) {
+     } catch (e: any) {
         console.error(e);
-        setError("无法启动录音系统 (麦克风权限/硬件错误)");
+        let msg = "无法启动录音系统 (未知错误)";
+        if (e.message === "PermissionDeniedExplicit" || e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
+            msg = "麦克风权限被拒绝。请点击浏览器地址栏的“锁”图标🔒，允许麦克风访问，然后刷新页面重试。";
+        } else if (e.name === "NotFoundError" || e.name === "DevicesNotFoundError") {
+            msg = "未检测到麦克风设备。请检查硬件连接。";
+        } else if (e.name === "NotReadableError" || e.name === "TrackStartError") {
+            msg = "麦克风被其他程序占用。请关闭其他录音软件后重试。";
+        }
+        setError(msg);
      }
   };
 
