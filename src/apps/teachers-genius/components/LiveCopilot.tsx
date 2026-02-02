@@ -219,6 +219,17 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
                     isSessionActiveRef.current = false;
                     sessionRef.current = null;
                     
+                    // 1. Check for Fatal Errors in Close Event (e.g., Invalid API Key)
+                    // Code 1007 = Invalid Frame Payload Data, often used for policy violations or auth failures in some WS implementations
+                    if (e.code === 1007 || e.reason?.includes('API key') || e.reason?.includes('not valid')) {
+                        console.error("Fatal WebSocket Error:", e.reason);
+                        isRecordingRef.current = false; // Stop recording
+                        setConnectionStatus('error');
+                        alert(`连接断开: ${e.reason || 'API Key 无效，请检查配置'}`);
+                        stopEverything();
+                        return;
+                    }
+
                     // AUTO-RECONNECT LOGIC (Exponential Backoff)
                     if (isRecordingRef.current) {
                         setConnectionStatus('reconnecting');

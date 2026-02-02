@@ -278,7 +278,16 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
             console.log("Gemini Session Closed", e);
             activeSessionRef.current = null; // Clear the active session ref
             
-            // Critical Logic: If user didn't stop it, and we haven't hit 120 mins, RECONNECT.
+            // 1. Check for Fatal Errors in Close Event (e.g., Invalid API Key)
+            if (e.code === 1007 || e.reason?.includes('API key') || e.reason?.includes('not valid')) {
+                console.error("Fatal WebSocket Error:", e.reason);
+                isUserStoppingRef.current = true; // Stop infinite retries
+                setError(`连接断开: ${e.reason || 'API Key 无效'}`);
+                stopEverything(true);
+                return;
+            }
+
+            // 2. Critical Logic: If user didn't stop it, and we haven't hit 120 mins, RECONNECT.
             if (!isUserStoppingRef.current && sessionDuration < maxDurationRef.current) {
                 // Exponential Backoff
                 const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 10000); // 1s, 2s, 4s... max 10s
