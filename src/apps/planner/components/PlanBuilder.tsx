@@ -123,6 +123,12 @@ const ModuleView: React.FC<{
                    "{topic.practicalScenario}"
                 </div>
               )}
+              {/* Show description for AI Generated topics */}
+              {topic.source === 'AI' && topic.description && (
+                <div className="text-[10px] text-gray-500 mt-1 leading-tight">
+                   {topic.description}
+                </div>
+              )}
                {isClickable && !isGeneratingThis && (
                 <div className="text-[10px] text-gold-500 font-medium mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   {topic.syllabus ? 'View Syllabus / 查看大纲' : 'Click to Generate Syllabus / 点击生成大纲'}

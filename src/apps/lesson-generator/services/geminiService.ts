@@ -303,7 +303,7 @@ export const regenerateModulePractice = async (moduleTitle: string, instruction:
 };
 
 export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): Promise<string> => {
-  // 使用 MiniMax TTS 替代 Gemini TTS
+  // 使用 n1n.ai TTS (OpenAI Compatible)
   
   // Extract speakers from text (assuming "Name: Message" format)
   const lines = text.split('\n');
@@ -334,33 +334,22 @@ export const generateSpeech = async (text: string, voiceConfig?: VoiceConfig): P
     voiceId = getMiniMaxVoiceId(voiceName);
   }
 
-  // 调用 MiniMax TTS
+  // 调用 n1n.ai TTS
   return retryWithBackoff(async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'geminiService.ts:338',message:'generateSpeech: calling generateMiniMaxTTS',data:{textLength:text.length,voiceId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
     const result = await generateMiniMaxTTS({
       text: text,
-      model: 'speech-2.6-hd', // 使用高质量模型
+      model: 'tts-1', // 使用 OpenAI 模型
       voiceId: voiceId,
       speed: 1.0,
-      vol: 1.0,
-      pitch: 0,
-      format: 'mp3', // MiniMax 返回 MP3 格式
-      sampleRate: 32000,
+      format: 'mp3', // OpenAI 返回 MP3
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/f6eb7805-d6a8-43ac-b2d6-2ea2f99017b1',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'geminiService.ts:349',message:'generateSpeech: generateMiniMaxTTS result',data:{success:result.success,hasAudioBase64:!!result.audioBase64,audioBase64Type:typeof result.audioBase64,audioBase64Length:result.audioBase64?.length,audioBase64Preview:result.audioBase64?.substring(0,50),error:result.error},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,D'})}).catch(()=>{});
-    // #endregion
 
     if (!result.success || !result.audioBase64) {
       throw new Error(result.error || "Failed to generate audio");
     }
 
-    // 将 MP3 Base64 转换为 WAV Base64（兼容现有代码）
-    // 注意：这里返回的是 MP3 Base64，前端需要相应调整
-    // 或者我们可以在这里进行转换，但需要额外的库支持
-    // 暂时返回 MP3 Base64，前端可以处理 MP3 格式
+    // OpenAI/n1n 返回 MP3 Base64，这里直接返回
+    // 假设前端已经能够播放 MP3 或有处理逻辑
     return result.audioBase64;
   });
 };

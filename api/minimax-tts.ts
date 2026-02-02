@@ -43,6 +43,7 @@ export default async function handler(
     }
 
     // n1n.ai TTS endpoint (OpenAI compatible)
+    // IMPORTANT: This API mimics OpenAI's TTS interface but routes through n1n.ai
     // User requested to change version to /v1
     const ttsUrl = 'https://api.n1n.ai/v1/audio/speech';
     

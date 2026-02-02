@@ -1,17 +1,17 @@
 /**
- * MiniMax TTS 服务
- * 使用 MiniMax 的文本转语音 API
+ * n1n.ai TTS 服务 (OpenAI Compatible)
+ * 使用 n1n.ai 的 OpenAI 兼容 TTS API
  */
 
 interface MiniMaxTTSOptions {
   text: string;
-  model?: 'speech-2.6-hd' | 'speech-2.6-turbo' | 'speech-02-hd' | 'speech-02-turbo';
-  voiceId?: string; // MiniMax 语音 ID，如 'male-qn-qingse', 'female-shaonv' 等
-  speed?: number; // 语速：0.5 - 2.0，默认 1.0
-  vol?: number; // 音量：0.1 - 5.0，默认 1.0
-  pitch?: number; // 音调：-12 - 12，默认 0
-  format?: 'mp3' | 'wav' | 'pcm'; // 音频格式
-  sampleRate?: 16000 | 24000 | 32000 | 44100 | 48000; // 采样率
+  model?: string; // OpenAI TTS model, e.g., 'tts-1', 'tts-1-hd'
+  voiceId?: string; // OpenAI voice ID, e.g., 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
+  speed?: number; // 语速：0.25 - 4.0，默认 1.0
+  vol?: number; // 音量 (Unused in OpenAI API, kept for compatibility)
+  pitch?: number; // 音调 (Unused in OpenAI API, kept for compatibility)
+  format?: 'mp3' | 'opus' | 'aac' | 'flac'; // 音频格式
+  sampleRate?: number; // 采样率 (Unused in OpenAI API, kept for compatibility)
 }
 
 interface MiniMaxTTSResponse {
@@ -22,19 +22,16 @@ interface MiniMaxTTSResponse {
 }
 
 /**
- * 调用 MiniMax TTS API 生成语音
+ * 调用 n1n.ai TTS API 生成语音 (OpenAI Compatible)
  */
 export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<MiniMaxTTSResponse> {
   try {
     const {
       text,
-      model = 'speech-2.6-hd',
-      voiceId = 'male-qn-qingse',
+      model = 'tts-1',
+      voiceId = 'alloy',
       speed = 1.0,
-      vol = 1.0,
-      pitch = 0,
       format = 'mp3',
-      sampleRate = 32000,
     } = options;
 
     // 调用后端 API 路由
@@ -48,10 +45,7 @@ export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<Mi
         model,
         voiceId,
         speed,
-        vol,
-        pitch,
         format,
-        sampleRate,
       }),
     });
 
@@ -67,7 +61,7 @@ export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<Mi
       audioUrl: data.audioUrl,
     };
   } catch (error) {
-    console.error('MiniMax TTS 生成失败:', error);
+    console.error('TTS 生成失败:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : '未知错误',
@@ -76,37 +70,32 @@ export async function generateMiniMaxTTS(options: MiniMaxTTSOptions): Promise<Mi
 }
 
 /**
- * 将 MiniMax 返回的音频转换为 WAV Base64（兼容现有代码）
+ * 将音频转换为 WAV Base64（兼容现有代码）
  */
 export function convertMiniMaxAudioToWav(audioBase64: string, format: string = 'mp3'): string {
-  // 如果已经是 WAV 格式，直接返回
-  if (format === 'wav') {
-    return audioBase64;
-  }
-
-  // 对于 MP3 格式，需要转换为 WAV
-  // 注意：这是一个简化的实现，实际可能需要使用 AudioContext 进行转换
-  // 由于浏览器限制，这里先返回原始 Base64，让前端处理
+  // OpenAI API returns binary data, usually handled by backend. 
+  // Here we just return the base64 string provided by our backend.
   return audioBase64;
 }
 
 /**
- * MiniMax 语音 ID 映射
- * 将 Gemini 语音名称映射到 MiniMax voice_id
+ * OpenAI 语音 ID 映射
+ * 将内部语音名称映射到 OpenAI voice_id
  */
 export const MINIMAX_VOICE_MAP: Record<string, string> = {
-  // Gemini 语音 -> MiniMax voice_id
-  'Kore': 'male-qn-qingse', // 默认男声
-  'Puck': 'female-shaonv', // 女声
-  'Fenrir': 'male-qn-qingse',
-  'Charon': 'male-qn-qingse',
-  'Zephyr': 'female-shaonv',
+  // Gemini/Internal Voice Name -> OpenAI voice_id
+  'Kore': 'alloy', 
+  'Puck': 'nova', 
+  'Fenrir': 'echo',
+  'Charon': 'onyx',
+  'Zephyr': 'shimmer',
+  'Fable': 'fable',
   // 默认值
-  'default': 'male-qn-qingse',
+  'default': 'alloy',
 };
 
 /**
- * 获取 MiniMax voice_id
+ * 获取 OpenAI voice_id
  */
 export function getMiniMaxVoiceId(geminiVoiceName: string): string {
   return MINIMAX_VOICE_MAP[geminiVoiceName] || MINIMAX_VOICE_MAP['default'];

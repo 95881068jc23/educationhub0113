@@ -4,11 +4,10 @@ import { CaseDiagnosis } from './components/CaseDiagnosis';
 import { LiveCopilot } from './components/LiveCopilot';
 import { LessonPlanner } from './components/LessonPlanner';
 import { TeachingToolbox } from './components/TeachingToolbox';
-import { MockTeaching } from './components/MockTeaching';
 import { MessageSquare, GraduationCap, Zap, FileText, Bot, Layers, BookOpen, Menu, X } from 'lucide-react';
 import { TONE_OPTIONS } from './constants';
 
-type Tab = 'toolbox' | 'chat' | 'planner' | 'diagnosis' | 'live' | 'mock';
+type Tab = 'toolbox' | 'chat' | 'planner' | 'diagnosis' | 'live';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('toolbox');
@@ -38,7 +37,6 @@ const App: React.FC = () => {
       case 'planner': return <LessonPlanner globalTones={globalTones} />;
       case 'diagnosis': return <CaseDiagnosis importedAudio={importedAudio} onClearImport={() => setImportedAudio(null)} globalTones={globalTones} setGlobalTones={setGlobalTones} />;
       case 'live': return <LiveCopilot onSaveAndAnalyze={handleImportAudio} globalTones={globalTones} setGlobalTones={setGlobalTones} />;
-      case 'mock': return <MockTeaching />;
       default: return <TeachingToolbox />;
     }
   };
@@ -50,7 +48,6 @@ const App: React.FC = () => {
       case 'planner': return 'Lesson Material Generator';
       case 'diagnosis': return 'Teaching Quality Diagnosis';
       case 'live': return 'Live Class Copilot';
-      case 'mock': return 'Mock Teaching Simulation';
     }
   };
 
@@ -112,7 +109,6 @@ const App: React.FC = () => {
           <NavButton tab="planner" icon={Layers} label="Lesson Planner" subLabel="Generate Materials" />
           <NavButton tab="diagnosis" icon={FileText} label="Class Diagnosis" subLabel="Analyze Audio/Screenshots" />
           <NavButton tab="live" icon={Zap} label="Live Copilot" subLabel="Real-time Hints" />
-          <NavButton tab="mock" icon={Bot} label="Mock Teaching" subLabel="Simulate Students" />
         </div>
         
         <div className="p-4 border-t border-navy-800 text-xs text-slate-500 text-center">

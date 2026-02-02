@@ -86,7 +86,8 @@ export const generateCustomTopics = async (
       practicalScenario: t.practicalScenario,
       minHours: 2,
       maxHours: 4,
-      category: TopicCategory.AI_Generated
+      category: TopicCategory.AI_Generated,
+      source: 'AI' // Explicitly mark as AI generated
     }));
 
   } catch (error) {

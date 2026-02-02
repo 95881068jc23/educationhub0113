@@ -159,7 +159,10 @@ export const generateExamFullGuide = async (exam: ExamType, city: string = ""): 
 
   const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: [{ text: prompt }],
+    contents: [{ 
+      role: "user",
+      parts: [{ text: prompt }] 
+    }],
     config: {
         tools: [{ googleSearch: {} }] // Use search for accuracy
     }
@@ -192,7 +195,10 @@ export const askExamQuestion = async (
 
   const response = await callGeminiAPI({
     model: MODEL_NAME,
-    contents: [{ text: prompt }],
+    contents: [{ 
+      role: "user",
+      parts: [{ text: prompt }] 
+    }],
     config: {
         tools: [{ googleSearch: {} }]
     }
