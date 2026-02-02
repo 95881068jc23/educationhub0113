@@ -49,17 +49,28 @@ export async function callGeminiAPI(request: GeminiGenerateContentRequest): Prom
   const maxRetries = 2; // Client-side proxy level retries
   
   const executeRequest = async (): Promise<Response> => {
-    return await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: request.model || 'gemini-3-flash-preview',
-        contents: request.contents,
-        config: request.config || {},
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s Timeout
+
+    try {
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: request.model || 'gemini-3-flash-preview',
+          contents: request.contents,
+          config: request.config || {},
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      return res;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
+    }
   };
 
   let response: Response;

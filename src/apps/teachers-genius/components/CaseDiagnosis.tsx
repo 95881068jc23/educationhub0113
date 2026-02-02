@@ -330,10 +330,13 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         const CHUNK_SIZE = 0.25 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
+        console.log(`[CaseDiagnosis] Starting chunk processing. File Size: ${audioFile.size}, Total Chunks: ${totalChunks}`);
+
         // Helper for delay
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
         for (let i = 0; i < totalChunks; i++) {
+          console.log(`[CaseDiagnosis] Processing Chunk ${i + 1}/${totalChunks}`);
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
