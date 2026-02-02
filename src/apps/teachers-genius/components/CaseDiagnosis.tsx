@@ -335,8 +335,13 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Helper for delay
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-        for (let i = 0; i < totalChunks; i++) {
-          console.log(`[CaseDiagnosis] Processing Chunk ${i + 1}/${totalChunks}`);
+        // Parallel Processing Configuration
+        const CONCURRENCY_LIMIT = 3; // Process 3 chunks at a time to balance speed and Rate Limits
+        const chunkResults: string[] = new Array(totalChunks).fill('');
+        let completedChunks = 0;
+
+        // Process a single chunk function
+        const processChunk = async (i: number) => {
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
@@ -345,13 +350,15 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
           let retryCount = 0;
           const maxRetries = 3;
           let success = false;
+          let chunkText = '';
 
           while (!success && retryCount <= maxRetries) {
             try {
-              if (retryCount > 0) {
-                 setProgressStatus(`正在处理音频片段 ${i + 1}/${totalChunks}... (重试 ${retryCount}/${maxRetries})`);
+              // Only log initial attempt to reduce noise
+              if (retryCount === 0) {
+                 console.log(`[CaseDiagnosis] Processing Chunk ${i + 1}/${totalChunks}`);
               } else {
-                 setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
+                 console.log(`[CaseDiagnosis] Retrying Chunk ${i + 1}/${totalChunks} (Attempt ${retryCount}/${maxRetries})`);
               }
 
               const transRes = await sendMessageToGemini({
@@ -362,42 +369,77 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
               });
               
               if (transRes.text) {
-                  fullTranscript += transRes.text + "\n";
+                  chunkText = transRes.text + "\n";
               }
               success = true;
-
-              // Throttling: Wait 1s between chunks to avoid hitting Rate Limits (RPM)
-              if (i < totalChunks - 1) {
-                  await delay(1000); 
-              }
+              completedChunks++;
+              // Update progress based on completed chunks
+              setProgressStatus(`正在处理音频... 已完成 ${Math.round((completedChunks / totalChunks) * 100)}% (${completedChunks}/${totalChunks})`);
 
             } catch (chunkError: any) {
                console.error(`Error transcribing chunk ${i} (Attempt ${retryCount + 1})`, chunkError);
-               
                const errorMessage = chunkError?.message || JSON.stringify(chunkError);
                
-               // Check for Rate Limit (429) or Quota Exceeded
-               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限')) {
+               // Retry on rate limit, timeout, or network error
+               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('504') || errorMessage.includes('timeout') || errorMessage.includes('network')) {
                    retryCount++;
                    if (retryCount <= maxRetries) {
-                       // Exponential Backoff: 2s, 4s, 8s
                        const waitTime = 2000 * Math.pow(2, retryCount - 1); 
-                       console.warn(`Rate limit hit. Waiting ${waitTime}ms before retry...`);
                        await delay(waitTime);
                    } else {
                        console.error(`Max retries reached for chunk ${i}. Skipping.`);
-                       fullTranscript += `\n[系统提示：音频片段 ${i+1} 转写失败，已跳过]\n`;
-                       break; // Exit retry loop, move to next chunk
+                       chunkText = `\n[系统提示：音频片段 ${i+1} 转写失败]\n`;
+                       completedChunks++; // Mark as completed even if failed to advance queue
+                       break;
                    }
                } else {
-                   // Non-retriable error (e.g. 400 Bad Request), skip immediately
                    console.error(`Non-retriable error for chunk ${i}. Skipping.`);
-                   fullTranscript += `\n[系统提示：音频片段 ${i+1} 发生错误，已跳过]\n`;
+                   chunkText = `\n[系统提示：音频片段 ${i+1} 错误]\n`;
+                   completedChunks++;
                    break;
                }
             }
           }
+          return { index: i, text: chunkText };
+        };
+
+        // Execution Queue
+        const queue: number[] = Array.from({ length: totalChunks }, (_, i) => i);
+        const activePromises: Promise<void>[] = [];
+        
+        // Initial pool population
+        while (queue.length > 0 || activePromises.length > 0) {
+            // Fill the pool up to CONCURRENCY_LIMIT
+            while (queue.length > 0 && activePromises.length < CONCURRENCY_LIMIT) {
+                const chunkIndex = queue.shift()!;
+                const promise = processChunk(chunkIndex).then((result) => {
+                    chunkResults[result.index] = result.text;
+                });
+                
+                // Add to active pool
+                activePromises.push(promise);
+                
+                // When this promise resolves, remove it from the active pool
+                // We wrap it to ensure we can identify which promise finished, 
+                // but actually we just need to wait for *any* to finish to start the next one.
+                // A cleaner way is to use the promise object itself for removal.
+                promise.then(() => {
+                    const index = activePromises.indexOf(promise);
+                    if (index > -1) {
+                        activePromises.splice(index, 1);
+                    }
+                });
+            }
+
+            // If we have active promises, wait for at least one to finish before loop continues to add more
+            if (activePromises.length > 0) {
+                await Promise.race(activePromises);
+            }
         }
+
+        // Combine all results in order
+        fullTranscript = chunkResults.join('');
+        console.log(`[CaseDiagnosis] All chunks processed. Total length: ${fullTranscript.length}`);
         setProgressStatus('音频转写完成，正在进行深度诊断...');
       }
 

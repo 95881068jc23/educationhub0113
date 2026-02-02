@@ -289,22 +289,29 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Helper for delay
         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-        for (let i = 0; i < totalChunks; i++) {
+        // Parallel Processing Configuration
+        const CONCURRENCY_LIMIT = 3; // Process 3 chunks at a time
+        const chunkResults: string[] = new Array(totalChunks).fill('');
+        let completedChunks = 0;
+
+        // Process a single chunk function
+        const processChunk = async (i: number) => {
           const start = i * CHUNK_SIZE;
           const end = Math.min(start + CHUNK_SIZE, audioFile.size);
           const chunk = audioFile.slice(start, end);
           const chunkBase64 = await blobToBase64(chunk, audioFile.type || 'audio/wav');
           
           let retryCount = 0;
-          const maxRetries = 5; // Increased from 3 to 5
+          const maxRetries = 3;
           let success = false;
+          let chunkText = '';
 
           while (!success && retryCount <= maxRetries) {
             try {
-              if (retryCount > 0) {
-                 setProgressStatus(`正在处理音频片段 ${i + 1}/${totalChunks}... (正在重试 ${retryCount}/${maxRetries})`);
+              if (retryCount === 0) {
+                 console.log(`[SalesDiagnosis] Processing Chunk ${i + 1}/${totalChunks}`);
               } else {
-                 setProgressStatus(`正在预处理并解析音频片段 ${i + 1}/${totalChunks}... (AI 听写中)`);
+                 console.log(`[SalesDiagnosis] Retrying Chunk ${i + 1}/${totalChunks} (Attempt ${retryCount}/${maxRetries})`);
               }
 
               const transRes = await sendMessageToGemini({
@@ -315,42 +322,61 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
               });
               
               if (transRes.text) {
-                  fullTranscript += transRes.text + "\n";
+                  chunkText = transRes.text + "\n";
               }
               success = true;
-
-              // Throttling: Wait 2s between chunks to avoid hitting Rate Limits (RPM)
-              if (i < totalChunks - 1) {
-                  await delay(2000); 
-              }
+              completedChunks++;
+              setProgressStatus(`正在处理音频... 已完成 ${Math.round((completedChunks / totalChunks) * 100)}% (${completedChunks}/${totalChunks})`);
 
             } catch (chunkError: any) {
                console.error(`Error transcribing chunk ${i} (Attempt ${retryCount + 1})`, chunkError);
-               
                const errorMessage = chunkError?.message || JSON.stringify(chunkError);
                
-               // Check for Rate Limit (429), Quota Exceeded, or Server Error (500/503)
-               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('Resource has been exhausted') || errorMessage.includes('API 调用次数已达上限') || errorMessage.includes('500') || errorMessage.includes('503') || errorMessage.includes('Internal Server Error')) {
+               if (errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('504') || errorMessage.includes('timeout') || errorMessage.includes('network')) {
                    retryCount++;
                    if (retryCount <= maxRetries) {
-                       // Exponential Backoff: 2s, 4s, 8s, 16s, 32s
                        const waitTime = 2000 * Math.pow(2, retryCount - 1); 
-                       console.warn(`Rate limit hit. Waiting ${waitTime}ms before retry...`);
                        await delay(waitTime);
                    } else {
                        console.error(`Max retries reached for chunk ${i}. Skipping.`);
-                       fullTranscript += `\n[系统提示：音频片段 ${i+1} 转写失败，已跳过]\n`;
-                       break; // Exit retry loop, move to next chunk
+                       chunkText = `\n[系统提示：音频片段 ${i+1} 转写失败]\n`;
+                       completedChunks++;
+                       break;
                    }
                } else {
-                   // Non-retriable error (e.g. 400 Bad Request), skip immediately
                    console.error(`Non-retriable error for chunk ${i}. Skipping.`);
-                   fullTranscript += `\n[系统提示：音频片段 ${i+1} 发生错误，已跳过]\n`;
+                   chunkText = `\n[系统提示：音频片段 ${i+1} 错误]\n`;
+                   completedChunks++;
                    break;
                }
             }
           }
+          return { index: i, text: chunkText };
+        };
+
+        // Execution Queue
+        const queue: number[] = Array.from({ length: totalChunks }, (_, i) => i);
+        const activePromises: Promise<void>[] = [];
+        
+        while (queue.length > 0 || activePromises.length > 0) {
+            while (queue.length > 0 && activePromises.length < CONCURRENCY_LIMIT) {
+                const chunkIndex = queue.shift()!;
+                const promise = processChunk(chunkIndex).then((result) => {
+                    chunkResults[result.index] = result.text;
+                });
+                activePromises.push(promise);
+                promise.then(() => {
+                    const index = activePromises.indexOf(promise);
+                    if (index > -1) activePromises.splice(index, 1);
+                });
+            }
+            if (activePromises.length > 0) {
+                await Promise.race(activePromises);
+            }
         }
+
+        fullTranscript = chunkResults.join('');
+        console.log(`[SalesDiagnosis] All chunks processed. Total length: ${fullTranscript.length}`);
         setProgressStatus('音频转写完成，正在进行深度诊断...');
       }
 
