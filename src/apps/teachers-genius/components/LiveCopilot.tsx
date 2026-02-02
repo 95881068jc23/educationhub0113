@@ -173,6 +173,8 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
 
         const sessionPromise = ai.live.connect({
             model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+            // @ts-ignore
+            apiVersion: 'v1alpha',
             config: {
                 responseModalities: [Modality.AUDIO], 
                 speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } } },
