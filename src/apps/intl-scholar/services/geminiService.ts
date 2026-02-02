@@ -438,8 +438,26 @@ export const generateCoursePlan = async (
   });
 
   if (response.text) {
-    const data = JSON.parse(response.text) as any[];
-    return data.map((item, idx) => ({ ...item, id: `${targetPhase}-${idx}` })); // Ensure unique IDs
+    let cleanText = response.text.trim();
+    // Strip markdown fences if present
+    if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+
+    try {
+        const data = JSON.parse(cleanText) as any[];
+        return data.map((item, idx) => ({ 
+            ...item, 
+            id: `${targetPhase}-${idx}`,
+            // Ensure hours is a number
+            hours: typeof item.hours === 'string' ? parseFloat(item.hours) || 2 : item.hours
+        })); 
+    } catch (e) {
+        console.error("JSON Parse Failed", e, cleanText);
+        throw new Error("Failed to parse course plan. Please try again.");
+    }
   }
   return [];
 };
@@ -619,7 +637,18 @@ export const generatePlacementTest = async (
   });
 
   if (response.text) {
-    return JSON.parse(response.text) as Question[];
+    let cleanText = response.text.trim();
+    if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    }
+    try {
+        return JSON.parse(cleanText) as Question[];
+    } catch (e) {
+        console.error("JSON Parse Failed", e, cleanText);
+        return [];
+    }
   }
   return [];
 };

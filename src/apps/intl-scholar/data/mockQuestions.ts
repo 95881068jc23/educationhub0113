@@ -470,16 +470,27 @@ export const getRandom20Questions = (exam: ExamType): MockQuestion[] => {
   const count = Math.min(20, shuffledPool.length);
   const selectedItems = shuffledPool.slice(0, count);
 
-  // 4. Map to Type
-  const questions: MockQuestion[] = selectedItems.map((item, i) => ({
-      id: `q-${exam}-${Date.now()}-${i}`,
-      examType: exam,
-      question: item.q,
-      options: item.opts,
-      answer: item.a,
-      explanation: item.exp,
-      context: item.context
-  }));
+  // 4. Map to Type AND Shuffle Options (Fix for "All A" issue)
+  const questions: MockQuestion[] = selectedItems.map((item, i) => {
+      // Get the correct answer string before shuffling
+      const correctAnswerText = item.opts[item.a];
+      
+      // Shuffle options
+      const shuffledOptions = shuffleArray([...item.opts]);
+      
+      // Find new index of the correct answer
+      const newAnswerIndex = shuffledOptions.indexOf(correctAnswerText);
+
+      return {
+        id: `q-${exam}-${Date.now()}-${i}`,
+        examType: exam,
+        question: item.q,
+        options: shuffledOptions,
+        answer: newAnswerIndex,
+        explanation: item.exp,
+        context: item.context
+      };
+  });
 
   return questions;
 };

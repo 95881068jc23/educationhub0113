@@ -96,7 +96,14 @@ const Courseware: React.FC<Props> = ({ exam, language, plan, onBack }) => {
 
   const handleGenerate = async (targetMode: Mode = 'lesson', extraPrompt: string = '') => {
     // For resources, we don't need topic/details necessarily, but we can pass exam
-    if (targetMode !== 'resources' && !topic && !details && !file && !extraPrompt) return;
+    if (targetMode === 'resources') {
+        // pass
+    } else {
+        if (!topic && !details && !file && !extraPrompt) {
+            alert("请输入课题名称或上下文信息 (Topic or Context is required)");
+            return;
+        }
+    }
     
     setLoading(true);
     
