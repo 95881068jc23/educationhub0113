@@ -46,11 +46,22 @@ export const generateCustomTopics = async (
     Target CEFR Level: ${level} (STRICT ADHERENCE REQUIRED)
 
     Rules:
-    1. Topics MUST be SCENARIO-BASED.
-    2. Include a "practicalScenario" field (Bilingual Chinese/English).
-    3. Provide titles in "Chinese / English" format.
-    4. DO NOT include Pinyin.
-    5. Return ONLY valid JSON array. No conversational text.
+    1. Topics MUST be SCENARIO-BASED and strictly derived from the context above.
+    2. BILINGUAL MANDATE (English & Chinese):
+       - "title": "中文标题 / English Title"
+       - "description": "中文描述 / English Description"
+       - "practicalScenario": "详细的中英双语场景描述 / Detailed bilingual scenario description"
+    3. DO NOT include Pinyin.
+    4. Return ONLY valid JSON array. No conversational text.
+    
+    Expected JSON Structure:
+    [
+      {
+        "title": "...",
+        "description": "...",
+        "practicalScenario": "..."
+      }
+    ]
   `;
 
   try {
@@ -80,6 +91,10 @@ export const generateCustomTopics = async (
 
   } catch (error) {
     console.error("Gemini API Error:", error);
+    // If we have a text response but failed to parse, log it
+    if (error instanceof SyntaxError) {
+       console.error("Failed to parse JSON. Raw text might be invalid.");
+    }
     return generateMockTopics(count);
   }
 };

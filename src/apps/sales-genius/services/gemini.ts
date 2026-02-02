@@ -8,12 +8,13 @@ interface GeminiMessageOptions {
   images?: string[]; // Array of Base64 strings
   audio?: string; // Base64 string
   temperature?: number; // Control randomness (0.0 to 2.0)
+  systemInstruction?: string; // Custom system instruction override
 }
 
 export const sendMessageToGemini = async (
   options: GeminiMessageOptions
 ): Promise<GenerateContentResponse> => {
-  const { message, images = [], audio, temperature } = options;
+  const { message, images = [], audio, temperature, systemInstruction } = options;
 
   try {
     const modelId = "gemini-3-flash-preview";
@@ -69,7 +70,7 @@ export const sendMessageToGemini = async (
         parts: parts
       }],
       config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
+        systemInstruction: systemInstruction || SYSTEM_INSTRUCTION,
         tools: tools,
         temperature: temperature ?? 0.7,
       }
