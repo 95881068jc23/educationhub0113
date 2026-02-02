@@ -325,9 +325,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Let's run it.
         uploadOriginalFile();
 
-        // Updated Strategy: Use smaller chunks (512KB) to avoid Vercel Function Timeout (10s limit on free tier)
-        // 512KB * 1.33 (Base64 overhead) = ~680KB << 4.5MB Safe
-        const CHUNK_SIZE = 0.5 * 1024 * 1024; 
+        // Updated Strategy: Use smaller chunks (256KB) to avoid Vercel Function Timeout (10s limit on free tier)
+        // 256KB * 1.33 (Base64 overhead) = ~340KB << 4.5MB Safe
+        const CHUNK_SIZE = 0.25 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
         // Helper for delay
