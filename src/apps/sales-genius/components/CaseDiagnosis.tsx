@@ -281,9 +281,9 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
         // Let's run it.
         uploadOriginalFile();
 
-        // Updated Strategy: Use smaller chunks (1MB) to prevent Vercel Function Timeout (25s limit)
-        // 1MB audio takes much less time to transcribe than 3MB, ensuring response within limits.
-        const CHUNK_SIZE = 1 * 1024 * 1024; 
+        // Updated Strategy: Use smaller chunks (512KB) to prevent Vercel Function Timeout (10s limit on free tier)
+        // 512KB audio takes much less time to transcribe than 1MB, ensuring response within limits.
+        const CHUNK_SIZE = 0.5 * 1024 * 1024; 
         const totalChunks = Math.ceil(audioFile.size / CHUNK_SIZE);
         
         // Helper for delay
