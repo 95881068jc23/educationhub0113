@@ -447,15 +447,22 @@ export const generateCoursePlan = async (
     if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
         cleanText = cleanText.substring(startIndex, endIndex + 1);
     } else {
-        // Fallback: Strip markdown fences if present (for cases where it might be wrapped but not found above)
-        if (cleanText.startsWith('```json')) {
-            cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-        } else if (cleanText.startsWith('```')) {
-            cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        // Fallback: If no array brackets, maybe it's a single object or list of objects?
+        // Try to wrap in brackets if it looks like objects
+        const firstBrace = cleanText.indexOf('{');
+        const lastBrace = cleanText.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1) {
+             // Check if it's already a valid JSON object
+             const potentialJson = cleanText.substring(firstBrace, lastBrace + 1);
+             // If it starts with { and we expect an array, wrap it
+             cleanText = `[${potentialJson}]`;
         }
     }
 
     try {
+        // Attempt to fix common JSON errors (like trailing commas)
+        cleanText = cleanText.replace(/,\s*]/g, ']').replace(/,\s*}/g, '}');
+        
         const data = JSON.parse(cleanText) as any[];
         return data.map((item, idx) => ({ 
             ...item, 
@@ -464,7 +471,9 @@ export const generateCoursePlan = async (
             hours: typeof item.hours === 'string' ? parseFloat(item.hours) || 2 : item.hours
         })); 
     } catch (e) {
-        console.error("JSON Parse Failed", e, cleanText);
+        console.error("JSON Parse Failed. Raw Text:", response.text);
+        console.error("Cleaned Text:", cleanText);
+        console.error("Error:", e);
         throw new Error("Failed to parse course plan. Please try again.");
     }
   }
