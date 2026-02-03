@@ -125,6 +125,10 @@ const StudyPlan: React.FC<Props> = ({ exam, language, plan, setPlan, analysisRes
   const handleImportNeeds = () => {
     if (analysisResult) {
       setManualInput(prev => (prev ? prev + '\n\n' : '') + `[Imported Analysis]\n${analysisResult}`);
+      // Give feedback to user
+      alert("✅ 需求分析已成功导入！\n\n内容已填充到下方的文本框中。请检查并点击底部的“生成内容”按钮开始规划。");
+    } else {
+      alert("⚠️ 暂无需求分析数据。\n\n请先在“智能学情诊断分析”板块生成报告。");
     }
   };
 
