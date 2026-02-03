@@ -151,7 +151,33 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
   };
 
   // --- 1. AI Connection Logic (Resilient) ---
-  const connectToGemini = async () => {
+  // --- WebSocket Interceptor for Debugging ---
+    useEffect(() => {
+        const OriginalWebSocket = window.WebSocket;
+        // @ts-ignore
+        if (!window.WebSocket._isMonkeyPatched) {
+          // @ts-ignore
+          window.WebSocket = function(url, protocols) {
+            console.log("🔍 [Debug] Attempting WebSocket Connection to:", url);
+            // @ts-ignore
+            return new OriginalWebSocket(url, protocols);
+          };
+          // @ts-ignore
+          window.WebSocket.prototype = OriginalWebSocket.prototype;
+          // @ts-ignore
+          window.WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
+          // @ts-ignore
+          window.WebSocket.OPEN = OriginalWebSocket.OPEN;
+          // @ts-ignore
+          window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
+          // @ts-ignore
+          window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
+          // @ts-ignore
+          window.WebSocket._isMonkeyPatched = true;
+        }
+      }, []);
+
+    const connectToGemini = async () => {
     // If user stopped recording, do not reconnect
     if (!isRecordingRef.current) return;
 
