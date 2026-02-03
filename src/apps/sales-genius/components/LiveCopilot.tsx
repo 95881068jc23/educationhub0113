@@ -174,16 +174,22 @@ export const LiveCopilot: React.FC<LiveCopilotProps> = ({ onSaveAndAnalyze, glob
    * Connects (or reconnects) to the Gemini Live API.
    * This is separate from audio recording so we can restart it without killing the mic.
    */
-  // --- WebSocket Interceptor for Debugging ---
+  // --- WebSocket Interceptor for Debugging & Proxy Redirection ---
   useEffect(() => {
     const OriginalWebSocket = window.WebSocket;
     // @ts-ignore
     if (!window.WebSocket._isMonkeyPatched) {
       // @ts-ignore
       window.WebSocket = function(url, protocols) {
-        console.log("🔍 [Debug] Attempting WebSocket Connection to:", url);
+        let finalUrl = url;
+        if (typeof url === 'string' && url.includes('generativelanguage.googleapis.com')) {
+            console.log("🔄 [Proxy] Redirecting Google WebSocket to n1n.ai...");
+            finalUrl = url.replace('generativelanguage.googleapis.com', 'api.n1n.ai');
+        }
+        
+        console.log("🔍 [Debug] Final WebSocket URL:", finalUrl);
         // @ts-ignore
-        return new OriginalWebSocket(url, protocols);
+        return new OriginalWebSocket(finalUrl, protocols);
       };
       // @ts-ignore
       window.WebSocket.prototype = OriginalWebSocket.prototype;
