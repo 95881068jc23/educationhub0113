@@ -439,11 +439,20 @@ export const generateCoursePlan = async (
 
   if (response.text) {
     let cleanText = response.text.trim();
-    // Strip markdown fences if present
-    if (cleanText.startsWith('```json')) {
-        cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    } else if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    
+    // Robust JSON Extraction
+    const startIndex = cleanText.indexOf('[');
+    const endIndex = cleanText.lastIndexOf(']');
+    
+    if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+        cleanText = cleanText.substring(startIndex, endIndex + 1);
+    } else {
+        // Fallback: Strip markdown fences if present (for cases where it might be wrapped but not found above)
+        if (cleanText.startsWith('```json')) {
+            cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanText.startsWith('```')) {
+            cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
     }
 
     try {
