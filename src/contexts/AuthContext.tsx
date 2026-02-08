@@ -174,47 +174,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * 登录
    */
   const login = useCallback(async (credentials: LoginCredentials): Promise<void> => {
-    const users = await getStoredUsers();
-    const user = users.find(
-      (u) => u.email === credentials.email && u.password === credentials.password
-    );
-
-    if (!user) {
-      throw new Error('邮箱或密码错误');
-    }
-
-    // 移除密码字段
-    const { password, ...userWithoutPassword } = user;
-    // 兼容旧数据：如果是字符串身份，转换为数组
-    let identity: UserIdentity = userWithoutPassword.identity ?? null;
-    if (identity && typeof identity === 'string') {
-      identity = [identity as 'consultant' | 'teacher'];
-    }
-    const currentUser: User = {
-      ...userWithoutPassword,
-      identity,
-    };
-
-    saveCurrentUser(currentUser);
-    setAuthState({
-      user: currentUser,
-      isAuthenticated: true,
-      isLoading: false,
-    });
-
-    // 记录登录日志
     try {
-      await fetch('/api/logs', {
+      const response = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          actionType: 'login',
-          actionDetails: { email: credentials.email },
-        }),
+        body: JSON.stringify(credentials),
       });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || '登录失败');
+      }
+
+      const data = await response.json();
+      const user = data.user;
+
+      // 兼容旧数据：如果是字符串身份，转换为数组
+      let identity: UserIdentity = user.identity ?? null;
+      if (identity && typeof identity === 'string') {
+        identity = [identity as 'consultant' | 'teacher'];
+      }
+      const currentUser: User = {
+        ...user,
+        identity,
+      };
+
+      saveCurrentUser(currentUser);
+      setAuthState({
+        user: currentUser,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+
+      // 记录登录日志
+      try {
+        await fetch('/api/logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: currentUser.id,
+            actionType: 'login',
+            actionDetails: { email: credentials.email },
+          }),
+        });
+      } catch (error) {
+        console.error('记录登录日志失败:', error);
+      }
     } catch (error) {
-      console.error('记录登录日志失败:', error);
+      console.error('登录错误:', error);
+      throw error;
     }
   }, []);
 
@@ -326,28 +334,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * 审核用户（管理员功能）
    */
   const auditUser = useCallback(async (userId: string, status: AuditStatus): Promise<void> => {
-    const users = await getStoredUsers();
-    const userIndex = users.findIndex((u) => u.id === userId);
-    
-    if (userIndex === -1) {
-      throw new Error('用户不存在');
-    }
+    try {
+      const response = await fetch('/api/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, updates: { auditStatus: status } }),
+      });
 
-    users[userIndex].auditStatus = status;
-    await saveStoredUsers(users);
+      if (!response.ok) {
+        throw new Error('审核用户失败');
+      }
 
-    // 如果审核的是当前登录用户，更新当前用户状态
-    const currentUser = getCurrentUser();
-    if (currentUser && currentUser.id === userId) {
-      const updatedUser: User = {
-        ...currentUser,
-        auditStatus: status,
-      };
-      saveCurrentUser(updatedUser);
-      setAuthState((prev) => ({
-        ...prev,
-        user: updatedUser,
-      }));
+      // 更新本地状态（为了 UI 响应速度）
+      // 重新拉取一次列表以保持同步
+      await getStoredUsers();
+
+      // 如果审核的是当前登录用户，更新当前用户状态
+      const currentUser = getCurrentUser();
+      if (currentUser && currentUser.id === userId) {
+        const updatedUser: User = {
+          ...currentUser,
+          auditStatus: status,
+        };
+        saveCurrentUser(updatedUser);
+        setAuthState((prev) => ({
+          ...prev,
+          user: updatedUser,
+        }));
+      }
+    } catch (error) {
+      console.error('Audit user failed:', error);
+      throw error;
     }
   }, []);
 
@@ -379,28 +396,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    * 更新用户身份（管理员功能）
    */
   const updateUserIdentity = useCallback(async (userId: string, identity: UserIdentity): Promise<void> => {
-    const users = await getStoredUsers();
-    const userIndex = users.findIndex((u) => u.id === userId);
-    
-    if (userIndex === -1) {
-      throw new Error('用户不存在');
-    }
+    try {
+      const response = await fetch('/api/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, updates: { identity } }),
+      });
 
-    users[userIndex].identity = identity;
-    await saveStoredUsers(users);
+      if (!response.ok) {
+        throw new Error('更新用户身份失败');
+      }
 
-    // 如果更新的是当前登录用户，更新当前用户状态
-    const currentUser = getCurrentUser();
-    if (currentUser && currentUser.id === userId) {
-      const updatedUser: User = {
-        ...currentUser,
-        identity: identity,
-      };
-      saveCurrentUser(updatedUser);
-      setAuthState((prev) => ({
-        ...prev,
-        user: updatedUser,
-      }));
+      // 更新本地状态
+      await getStoredUsers();
+
+      // 如果更新的是当前登录用户，更新当前用户状态
+      const currentUser = getCurrentUser();
+      if (currentUser && currentUser.id === userId) {
+        const updatedUser: User = {
+          ...currentUser,
+          identity: identity,
+        };
+        saveCurrentUser(updatedUser);
+        setAuthState((prev) => ({
+          ...prev,
+          user: updatedUser,
+        }));
+      }
+    } catch (error) {
+      console.error('Update user identity failed:', error);
+      throw error;
     }
   }, []);
 
