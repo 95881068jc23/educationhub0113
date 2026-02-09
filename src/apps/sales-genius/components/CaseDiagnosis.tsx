@@ -159,6 +159,22 @@ export const CaseDiagnosis: React.FC<CaseDiagnosisProps> = ({ importedAudio, onC
     if (importedAudio) {
       setAudio(importedAudio.data);
       setAudioName(importedAudio.name);
+
+      // Convert Base64 to File to enable Chunking & Progress Bar
+      try {
+          const arr = importedAudio.data.split(',');
+          const mime = arr[0].match(/:(.*?);/)?.[1] || 'audio/wav';
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          const file = new File([u8arr], importedAudio.name, { type: mime });
+          setAudioFile(file);
+      } catch (e) {
+          console.error("Failed to convert imported audio to file:", e);
+      }
     }
   }, [importedAudio]);
 

@@ -6,6 +6,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AuditedRoute } from './components/auth/AuditedRoute';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
+import { ForgotPassword } from './components/auth/ForgotPassword';
 import { Navbar } from './components/Navbar';
 import { AdminPanel } from './pages/Admin/AdminPanel';
 import { useAuth } from './contexts/AuthContext';
@@ -195,6 +196,7 @@ const App = () => {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         
         {/* Protected Routes - Home Page */}
         <Route

@@ -8,25 +8,32 @@ import { callGeminiAPI } from "../../../services/geminiProxy";
  * Finds the first '{' and the last '}' to isolate the object.
  */
 const extractJson = (text: string): string => {
-  if (!text) return "{}";
+  if (!text) return "[]";
   
   // 1. Remove markdown code blocks if present
   let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
   
-  // 2. Find the index of the first '{' and last '}'
   const firstBrace = cleaned.indexOf('{');
-  const lastBrace = cleaned.lastIndexOf('}');
-  
-  // 3. If valid braces found, extract the substring
-  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    return cleaned.substring(firstBrace, lastBrace + 1);
-  }
-  
-  // 4. Fallback: try to find array brackets if it's a list generation
   const firstBracket = cleaned.indexOf('[');
-  const lastBracket = cleaned.lastIndexOf(']');
-  if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
-    return cleaned.substring(firstBracket, lastBracket + 1);
+
+  // If neither found, return cleaned
+  if (firstBrace === -1 && firstBracket === -1) return cleaned;
+
+  // Determine priority based on which appears first
+  // Case 1: Array starts first (or only array exists)
+  if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
+      const lastBracket = cleaned.lastIndexOf(']');
+      if (lastBracket > firstBracket) {
+          return cleaned.substring(firstBracket, lastBracket + 1);
+      }
+  } 
+  
+  // Case 2: Object starts first (or only object exists)
+  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (lastBrace > firstBrace) {
+          return cleaned.substring(firstBrace, lastBrace + 1);
+      }
   }
 
   return cleaned;
@@ -77,7 +84,17 @@ export const generateCustomTopics = async (
     });
 
     const jsonStr = extractJson(response.text || "[]");
-    const rawTopics = JSON.parse(jsonStr);
+    let rawTopics = JSON.parse(jsonStr);
+
+    // Handle case where AI wraps array in an object (e.g. { "topics": [...] })
+    if (!Array.isArray(rawTopics) && rawTopics.topics && Array.isArray(rawTopics.topics)) {
+        rawTopics = rawTopics.topics;
+    }
+
+    if (!Array.isArray(rawTopics)) {
+        console.warn("Gemini response is not an array:", rawTopics);
+        throw new Error("Parsed JSON is not an array");
+    }
     
     return rawTopics.map((t: any) => ({
       id: Math.random().toString(36).substr(2, 9),

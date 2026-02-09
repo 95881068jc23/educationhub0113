@@ -212,7 +212,7 @@ export const Login: React.FC = () => {
                    <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
                      密码
                    </label>
-                   <a href="#" className="text-xs font-medium text-brand-600 hover:text-brand-700">忘记密码？</a>
+                   <Link to="/forgot-password" className="text-xs font-medium text-brand-600 hover:text-brand-700">忘记密码？</Link>
                 </div>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-brand-600">
