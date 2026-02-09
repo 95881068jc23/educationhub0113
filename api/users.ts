@@ -60,7 +60,7 @@ export default async function handler(
         username: user.username,
         email: user.email,
         name: user.name,
-        password: user.password,
+        // password: user.password, // REMOVED: Do not return password
         auditStatus: user.audit_status,
         role: user.role,
         identity: user.identity || null,
@@ -142,13 +142,17 @@ export default async function handler(
         username: data.username,
         email: data.email,
         name: data.name,
-        password: data.password,
+        // password: data.password, // REMOVED: Do not return password
+        password: '', // Placeholder if type requires it, but better to remove from type or ignore
         auditStatus: data.audit_status,
         role: data.role,
         identity: data.identity || null,
         createTime: data.create_time || data.created_at,
         createdAt: data.created_at || data.create_time,
       };
+
+      // Remove password key entirely if possible or keep empty
+      delete (savedUser as any).password;
 
       return response.status(200).json({ success: true, user: savedUser });
     }
@@ -190,13 +194,17 @@ export default async function handler(
         username: data.username,
         email: data.email,
         name: data.name,
-        password: data.password,
+        // password: data.password, // REMOVED: Do not return password
+        password: '',
         auditStatus: data.audit_status,
         role: data.role,
         identity: data.identity || null,
         createTime: data.create_time || data.created_at,
         createdAt: data.created_at || data.create_time,
       };
+
+      // Remove password key entirely
+      delete (updatedUser as any).password;
 
       return response.status(200).json({ success: true, user: updatedUser });
     }
