@@ -97,13 +97,24 @@ export const generateCustomTopics = async (
 
     let rawTopics = robustParseJson(response.text || "[]");
 
-    // Handle case where AI wraps array in an object (e.g. { "topics": [...] })
-    if (!Array.isArray(rawTopics) && rawTopics.topics && Array.isArray(rawTopics.topics)) {
-        rawTopics = rawTopics.topics;
+    // Enhanced Unpacking Logic:
+    // If it's not an array, look for ANY value that is an array inside the object.
+    if (!Array.isArray(rawTopics) && typeof rawTopics === 'object' && rawTopics !== null) {
+        // 1. Check known keys first
+        if (Array.isArray(rawTopics.topics)) {
+            rawTopics = rawTopics.topics;
+        } else {
+            // 2. Generic search: find the first value that is an array
+            const values = Object.values(rawTopics);
+            const foundArray = values.find(v => Array.isArray(v));
+            if (foundArray) {
+                rawTopics = foundArray;
+            }
+        }
     }
 
     if (!Array.isArray(rawTopics)) {
-        console.warn("Gemini response is not an array:", rawTopics);
+        console.warn("Gemini response is not an array and no array found inside object:", rawTopics);
         throw new Error("Parsed JSON is not an array");
     }
     
