@@ -4,39 +4,51 @@ import { Topic, TopicCategory, TopicSyllabus, StudentProfile, PlannedModule } fr
 import { callGeminiAPI } from "../../../services/geminiProxy";
 
 /**
- * Robustly extracts JSON from a string that might contain markdown or conversational text.
- * Finds the first '{' and the last '}' to isolate the object.
+ * Robustly parses JSON from a string that might contain markdown or conversational text.
+ * Uses a backward-search strategy to handle extra text after the JSON block.
  */
-const extractJson = (text: string): string => {
-  if (!text) return "[]";
-  
+const robustParseJson = (text: string): any => {
+  if (!text) return [];
+
   // 1. Remove markdown code blocks if present
   let cleaned = text.replace(/```json/g, "").replace(/```/g, "").trim();
-  
-  const firstBrace = cleaned.indexOf('{');
-  const firstBracket = cleaned.indexOf('[');
 
-  // If neither found, return cleaned
-  if (firstBrace === -1 && firstBracket === -1) return cleaned;
+  // 2. Determine if we are looking for an Array or an Object
+  const firstSquare = cleaned.indexOf('[');
+  const firstCurly = cleaned.indexOf('{');
 
-  // Determine priority based on which appears first
-  // Case 1: Array starts first (or only array exists)
-  if (firstBracket !== -1 && (firstBrace === -1 || firstBracket < firstBrace)) {
-      const lastBracket = cleaned.lastIndexOf(']');
-      if (lastBracket > firstBracket) {
-          return cleaned.substring(firstBracket, lastBracket + 1);
-      }
-  } 
-  
-  // Case 2: Object starts first (or only object exists)
-  if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
-      const lastBrace = cleaned.lastIndexOf('}');
-      if (lastBrace > firstBrace) {
-          return cleaned.substring(firstBrace, lastBrace + 1);
+  let start = -1;
+  let endChar = '';
+
+  // Determine priority: which one comes first?
+  if (firstSquare !== -1 && (firstCurly === -1 || firstSquare < firstCurly)) {
+      start = firstSquare;
+      endChar = ']';
+  } else if (firstCurly !== -1) {
+      start = firstCurly;
+      endChar = '}';
+  } else {
+      // No JSON structure found
+      throw new Error("No JSON start character found ([ or {)");
+  }
+
+  // 3. Backward Search Strategy
+  // Find the last occurrence of the endChar, try to parse.
+  // If fail, find the previous occurrence, and repeat.
+  let end = cleaned.lastIndexOf(endChar);
+
+  while (end !== -1 && end > start) {
+      const potentialJson = cleaned.substring(start, end + 1);
+      try {
+          return JSON.parse(potentialJson);
+      } catch (e) {
+          // Parse failed, maybe we included some extra text with the same closing char?
+          // Try the next previous closing char.
+          end = cleaned.lastIndexOf(endChar, end - 1);
       }
   }
 
-  return cleaned;
+  throw new Error("Failed to parse JSON after multiple attempts.");
 };
 
 export const generateCustomTopics = async (
@@ -83,8 +95,7 @@ export const generateCustomTopics = async (
       config: { responseMimeType: "application/json" }
     });
 
-    const jsonStr = extractJson(response.text || "[]");
-    let rawTopics = JSON.parse(jsonStr);
+    let rawTopics = robustParseJson(response.text || "[]");
 
     // Handle case where AI wraps array in an object (e.g. { "topics": [...] })
     if (!Array.isArray(rawTopics) && rawTopics.topics && Array.isArray(rawTopics.topics)) {
@@ -174,8 +185,7 @@ export const generateTopicSyllabus = async (
       }
     });
 
-    const cleanJson = extractJson(response.text || "{}");
-    const parsed = JSON.parse(cleanJson);
+    const parsed = robustParseJson(response.text || "{}");
     
     // Simple validation to ensure it's not empty or malformed
     if (!parsed.coreVocab || !Array.isArray(parsed.coreVocab)) {
